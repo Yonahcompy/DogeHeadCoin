@@ -17,8 +17,8 @@ Ensure you have the following tools installed:
 1. **Installation:** Clone the repository and install dependencies.
 
    ```bash
-   git clone https://github.com/degencap777/Solana-presale-smart-contract.git
-   cd Solana-presale-smart-contract
+   git clone https://github.com/preciousken/doge-head-contract.git
+   cd Doge-head-presale-project-contract
    yarn
    ```
 
