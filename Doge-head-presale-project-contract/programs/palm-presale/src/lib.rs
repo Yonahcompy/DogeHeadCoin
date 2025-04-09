@@ -23,6 +23,7 @@ pub mod palm_presale {
         price_per_token: u64,
         start_time: u64,
         end_time: u64,
+        total_stages: u8,
         // identifier: u8
     ) -> Result<()> {
         return create_presale::create_presale(
@@ -35,6 +36,7 @@ pub mod palm_presale {
             price_per_token,
             start_time,
             end_time,
+            total_stages,
             // identifier,
         );
     }
@@ -87,11 +89,13 @@ pub mod palm_presale {
         ctx: Context<BuyToken>,
         token_amount: u64,
         quote_amount: u64,
+        referrer_code: Option<[u8; 8]>,
     ) -> Result<()> {
         return buy_token::buy_token (
             ctx,
-            token_amount,
             quote_amount,
+            token_amount,
+            referrer_code,
         );
     }
 
@@ -123,6 +127,58 @@ pub mod palm_presale {
     ) -> Result<()> {
         return withdraw_token::withdraw_token (
             ctx, amount, bump
+        );
+    }
+
+    pub fn create_referral(
+        ctx: Context<CreateReferral>,
+    ) -> Result<()> {
+        return create_referral::create_referral(
+            ctx,
+        );
+    }
+    
+    pub fn claim_referral_rewards(
+        ctx: Context<ClaimReferralRewards>,
+    ) -> Result<()> {
+        return claim_referral_rewards::claim_referral_rewards(
+            ctx,
+        );
+    }
+    
+    pub fn get_referral_stats(
+        ctx: Context<GetReferralStats>,
+    ) -> Result<()> {
+        return get_referral_stats::get_referral_stats(
+            ctx,
+        );
+    }
+
+    pub fn add_presale_stage(
+        ctx: Context<AddPresaleStage>,
+        stage_number: u8,
+        available_tokens: u64,
+        price_per_token: u64,
+        start_time: u64,
+        end_time: u64,
+    ) -> Result<()> {
+        return add_presale_stage::add_presale_stage(
+            ctx,
+            stage_number,
+            available_tokens,
+            price_per_token,
+            start_time,
+            end_time,
+        );
+    }
+    
+    pub fn activate_stage(
+        ctx: Context<ActivateStage>,
+        stage_number: u8,
+    ) -> Result<()> {
+        return activate_stage::activate_stage(
+            ctx,
+            stage_number,
         );
     }
 }

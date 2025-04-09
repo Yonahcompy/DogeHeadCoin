@@ -21,5 +21,25 @@ pub enum PresaleError {
     #[msg("Presale not ended yet")]
     PresaleNotEnded,
     #[msg("Presale already ended")]
-    HardCapped
+    HardCapped,
+    #[msg("Invalid presale stage")]
+    InvalidStageNumber,
+    #[msg("Stage not active")]
+    StageNotActive,
+    #[msg("Invalid time settings")]
+    InvalidTimeSettings,
+    #[msg("Invalid authority")]
+    InvalidAuthority,
+    #[msg("Stage already exists")]
+    StageAlreadyExists,
+    #[msg("Stage already active")]
+    StageAlreadyActive,
+    #[msg("Self-referral is not allowed")]
+    SelfReferral,
+    #[msg("Invalid referral code")]
+    InvalidReferralCode,
+    #[msg("No referral rewards to claim")]
+    NoReferralRewards,
+    #[msg("Referral rewards already claimed")]
+    RewardsAlreadyClaimed,
 }

@@ -29,4 +29,8 @@ pub struct PresaleInfo {
     pub is_soft_capped: bool,
     // Status of hardcapped
     pub is_hard_capped: bool,
+    // Current active stage number
+    pub current_stage: u8,
+    // Total number of stages in the presale
+    pub total_stages: u8,
 }

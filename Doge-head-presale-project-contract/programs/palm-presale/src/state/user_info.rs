@@ -13,4 +13,12 @@ pub struct UserInfo {
     // pub claim_amount: u64,
     // claim time
     pub claim_time: u64,
+    // Referrer's public key (if any)
+    pub referrer: Pubkey,
+    // Whether this user was referred
+    pub was_referred: bool,
+    // Total rewards earned from referring others
+    pub referral_rewards_earned: u64,
+    // Total rewards claimed from referring others
+    pub referral_rewards_claimed: u64,
 }

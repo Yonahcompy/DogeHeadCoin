@@ -13,6 +13,7 @@ pub fn create_presale(
     price_per_token: u64,
     start_time: u64,
     end_time: u64,
+    total_stages: u8,
 ) -> Result<()> {
     
     let presale_info = &mut ctx.accounts.presale_info;
@@ -31,10 +32,13 @@ pub fn create_presale(
     presale_info.authority = authority.key();
     presale_info.is_soft_capped = false;
     presale_info.is_hard_capped = false;
+    presale_info.current_stage = 0; // No active stage initially
+    presale_info.total_stages = total_stages;
 
     msg!(
-        "Presale has created for token: {}",
-        presale_info.token_mint_address
+        "Presale has created for token: {} with {} stages",
+        presale_info.token_mint_address,
+        total_stages
     );
 
     Ok(())
