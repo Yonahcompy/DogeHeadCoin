@@ -39,7 +39,7 @@ pub fn deposit_token(ctx: Context<DepositToken>, amount: u64) -> Result<()> {
         amount,
     )?;
 
-    // transfer Sol to the presaleVault
+    // transfer Sol to the presaleVault.
     msg!(
         "From Wallet Address: {}",
         &ctx.accounts.from_associated_token_account.key()
