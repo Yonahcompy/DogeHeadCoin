@@ -20,11 +20,16 @@ pub fn get_referral_stats(
     msg!("Total purchase amount via referrals: {} lamports", referral_info.total_referral_purchases);
     msg!("Total rewards earned: {} lamports", referral_info.total_rewards_earned);
     
-    // Convert the referral code to a displayable hex string
+    // Convert the referral code to a displayable hex string - process in chunks to reduce stack usage
     let code = referral_info.referral_code;
-    let code_hex = format!("{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}", 
-        code[0], code[1], code[2], code[3], code[4], code[5], code[6], code[7]);
-    msg!("Referral code: {}", code_hex);
+    
+    // Process in two parts to reduce stack usage
+    let code_hex_part1 = format!("{:02x}{:02x}{:02x}{:02x}", 
+        code[0], code[1], code[2], code[3]);
+    let code_hex_part2 = format!("{:02x}{:02x}{:02x}{:02x}", 
+        code[4], code[5], code[6], code[7]);
+    
+    msg!("Referral code: {}{}", code_hex_part1, code_hex_part2);
     
     Ok(())
 }

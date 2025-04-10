@@ -122,3 +122,27 @@ Ensure you have the following tools installed:
    ```bash
    anchor deploy
    ```
+
+
+
+   if you want to extend instead of redeploying
+   solana program extend Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd 20000 -u devnet -k ./id.json
+
+
+   <!-- create a buffer -->
+   solana program write-buffer target/deploy/palm_presale.so --keypair ./id.json
+
+   <!-- upgrade using the buffer -->
+
+   solana program deploy --buffer 7zZVMAvdVa1mpr4YhH3ysbvfSqbBFMPymsGESNbFje5o --program-id Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd --keypair ./id.json
+
+
+
+
+
+syntaxloom@ademolas-MacBook-Pro Doge-head-presale-project-contract % spl-token mint 8fAdv9nFhxNPTVX9YnBjJ3ERxyLKgUANXHFqCCz4Atrq 3000000000
+Minting 3000000000 tokens
+  Token: 8fAdv9nFhxNPTVX9YnBjJ3ERxyLKgUANXHFqCCz4Atrq
+  Recipient: GsVUdSAXCaFbzPYuSRtDNu3aRpvEgVXRLoeHJ45oxUpw
+
+Signature: 4hNGHigjuot8GQ5ehaaRddbC45TLzngipJrXnSkk8m1fXPtgY3TLiiGmK3k34AwRco54EUKtNrj7ZnoqVAzyHfSe

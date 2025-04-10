@@ -10,7 +10,6 @@ use solana_program::clock::Clock;
 
 use crate::constants::PRESALE_VAULT;
 use crate::constants::STAGE_SEED;
-use crate::constants::REFERRAL_SEED;
 use crate::state::PresaleInfo;
 use crate::state::PresaleStage;
 use crate::state::UserInfo;
@@ -91,7 +90,6 @@ pub fn buy_token(
     }
     
     // Handle referral if provided
-    let mut referrer_reward = 0;
     let mut referee_reward = 0;
     
     if let Some(ref_code) = referrer_code {
@@ -108,7 +106,7 @@ pub fn buy_token(
             }
             
             // Calculate rewards
-            referrer_reward = (quote_amount as u128)
+            let referrer_reward = (quote_amount as u128)
                 .checked_mul(REFERRER_REWARD_BPS as u128)
                 .unwrap_or(0)
                 .checked_div(BPS_DENOMINATOR as u128)

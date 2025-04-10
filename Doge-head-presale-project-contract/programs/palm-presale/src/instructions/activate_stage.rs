@@ -25,48 +25,48 @@ pub fn activate_stage(
         return Err(PresaleError::InvalidStageNumber.into());
     }
     
-    // Check if stage is already active
-    if presale_stage.is_active {
-        return Err(PresaleError::StageAlreadyActive.into());
+    // Validate stage exists
+    if presale_stage.stage_number != stage_number {
+        return Err(PresaleError::InvalidStageNumber.into());
     }
     
-    // Check if this is the first stage or if the previous stage is completed
+    // For stages > 1, validate previous stage
     if stage_number > 1 {
-        // For stages after the first, we need to verify the previous stage was completed
-        // We'll need the previous stage account to check
-        if let Some(previous_stage) = &ctx.accounts.previous_stage {
-            // Verify the previous stage is the right one
-            if previous_stage.stage_number != stage_number - 1 {
-                return Err(PresaleError::InvalidStageNumber.into());
+        if let Some(prev_stage) = &ctx.accounts.previous_stage {
+            // Check if previous stage is completed
+            if !prev_stage.is_active {
+                return Err(PresaleError::PreviousStageNotCompleted.into());
             }
             
-            // Check if previous stage was completed (tokens_sold >= available_tokens)
-            if previous_stage.tokens_sold < previous_stage.available_tokens {
-                msg!("Previous stage {} must sell all tokens first", stage_number - 1);
-                return Err(PresaleError::StageNotActive.into());
-            }
-            
-            // Ensure previous stage is inactive
-            if previous_stage.is_active {
-                msg!("Previous stage {} must be deactivated first", stage_number - 1);
-                return Err(PresaleError::StageAlreadyActive.into());
+            // Check if previous stage has sold all tokens
+            if prev_stage.available_tokens > prev_stage.tokens_sold {
+                return Err(PresaleError::PreviousStageNotSoldOut.into());
             }
         } else {
-            // If we're activating a stage > 1, we must provide the previous stage
-            return Err(PresaleError::InvalidStageNumber.into());
+            return Err(PresaleError::PreviousStageRequired.into());
+        }
+    }
+    
+    // Check if stage is completely sold - automatically end it
+    if presale_stage.tokens_sold >= presale_stage.available_tokens {
+        presale_stage.is_active = false;
+        msg!("Stage {} is fully sold out", stage_number);
+        
+        // Check if there are more stages to potentially activate
+        if stage_number < presale_info.total_stages {
+            msg!("Please activate stage {} to continue the presale", stage_number + 1);
+        } else {
+            // This was the final stage
+            presale_info.is_live = false;
+            msg!("Final stage completed. Presale is now finished.");
         }
     }
     
     // Activate the stage
     presale_stage.is_active = true;
     presale_info.current_stage = stage_number;
-    presale_info.is_live = true;
     
-    // Update presale info with the active stage's values
-    presale_info.price_per_token = presale_stage.price_per_token;
-    
-    msg!("Activated stage {} with price {} per token", 
-        stage_number, presale_stage.price_per_token);
+    msg!("Stage {} activated successfully", stage_number);
     
     Ok(())
 }

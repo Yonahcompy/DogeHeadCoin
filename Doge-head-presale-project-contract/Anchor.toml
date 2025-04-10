@@ -8,10 +8,10 @@ startup_wait = 10000
 
 
 [programs.localnet]  
-palm_presale = "7aYEBRpxCPonAPvguXQrnjMnRjnKmo6pQWGbVNtTZLRP"
+palm_presale = "Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd"
 
 [programs.devnet]  
-palm_presale = "7aYEBRpxCPonAPvguXQrnjMnRjnKmo6pQWGbVNtTZLRP"
+palm_presale = "Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd"
 
 [registry]
 url = "https://api.apr.dev"

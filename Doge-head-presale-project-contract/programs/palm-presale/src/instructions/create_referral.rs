@@ -2,12 +2,18 @@ use anchor_lang::prelude::*;
 
 use crate::constants::REFERRAL_SEED;
 use crate::state::ReferralInfo;
+use crate::errors::PresaleError;
 
 pub fn create_referral(
     ctx: Context<CreateReferral>,
 ) -> Result<()> {
     let referral_info = &mut ctx.accounts.referral_info;
     let user = &ctx.accounts.user;
+    
+    // Check if user already has a referral account
+    if referral_info.owner == user.key() {
+        return Err(PresaleError::ReferralAlreadyExists.into());
+    }
     
     // Initialize referral info
     referral_info.owner = user.key();
@@ -16,19 +22,14 @@ pub fn create_referral(
     referral_info.total_rewards_earned = 0;
     referral_info.rewards_claimed = false;
     
-    // Generate a unique referral code from the account's PDA address
-    // We'll use the first 8 bytes of the account address as a simple referral code
-    let account_bytes = referral_info.to_account_info().key().to_bytes();
-    let mut referral_code = [0u8; 8];
-    referral_code.copy_from_slice(&account_bytes[0..8]);
+    // Generate a unique referral code from the PDA address
+    let account_key = referral_info.to_account_info().key();
+    let referral_code = account_key.to_bytes()[0..8].try_into()
+        .map_err(|_| PresaleError::ReferralCodeGenerationFailed)?;
     referral_info.referral_code = referral_code;
     
-    msg!("Created referral for user: {}", user.key());
-    // Convert the referral code to a displayable hex string for the user
-    let code_hex = format!("{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}", 
-        referral_code[0], referral_code[1], referral_code[2], referral_code[3],
-        referral_code[4], referral_code[5], referral_code[6], referral_code[7]);
-    msg!("Referral code: {}", code_hex);
+    msg!("Created referral account for user: {}", user.key());
+    msg!("Referral code: {:?}", referral_code);
     
     Ok(())
 }

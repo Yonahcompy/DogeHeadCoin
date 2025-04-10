@@ -7,7 +7,7 @@ pub mod state;
 
 use instructions::*;
 
-declare_id!("7aYEBRpxCPonAPvguXQrnjMnRjnKmo6pQWGbVNtTZLRP");
+declare_id!("Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd");
 
 #[program]
 pub mod palm_presale {
