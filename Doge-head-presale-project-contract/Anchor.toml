@@ -8,17 +8,17 @@ startup_wait = 10000
 
 
 [programs.localnet]  
-palm_presale = "Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd"
+palm_presale = "EsySUN7oV4ayVueVak1QVWSibQSu3ePgqfKSEeCoxyTc"
 
 [programs.devnet]  
-palm_presale = "Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd"
+palm_presale = "EsySUN7oV4ayVueVak1QVWSibQSu3ePgqfKSEeCoxyTc"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
 cluster = "devnet"
-wallet = "./id.json"
+wallet = "authority.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

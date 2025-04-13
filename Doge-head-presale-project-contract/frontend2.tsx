@@ -1,32 +1,32 @@
 "use client"
 
+import { DialogFooter } from "../../component/ui/dialog/index"
 import { useState, useEffect, useCallback } from "react"
 import { Button } from "../../component/ui/button/index"
 import { useWallet, useConnection } from "@solana/wallet-adapter-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { Program, AnchorProvider, web3, BN, setProvider } from "@coral-xyz/anchor"
 import { PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js"
-import {
-  getAssociatedTokenAddress,
-  createAssociatedTokenAccountInstruction,
-  TOKEN_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-} from "@solana/spl-token"
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, getMint, ASSOCIATED_TOKEN_PROGRAM_ID, getAccount } from "@solana/spl-token"
 import idl from "../../component/palm_presale.json"
-import { toast } from "react-hot-toast"
 import type { PalmPresale } from "../palm_presale"
 import { Buffer } from "buffer"
 import { Progress } from "../../component/ui/progress"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../component/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../component/ui/dialog"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../component/ui/dialog"
-import { Loader2, Check, AlertCircle, Info, ArrowRight, Clock, ChevronRight, Gift, Users, Layers } from "lucide-react"
+  Loader2,
+  Check,
+  AlertCircle,
+  Info,
+  ArrowRight,
+  Clock,
+  ChevronRight,
+  Gift,
+  Users,
+  Layers,
+  X,
+} from "lucide-react"
 import { Badge } from "../../component/ui/badge/index"
 import { Input } from "../../component/ui/input/index"
 import { Label } from "../../component/ui/label/index"
@@ -40,12 +40,44 @@ const programID = new PublicKey(
 )
 const PRESALE_SEED = Buffer.from([80, 82, 69, 83, 65, 76, 69, 95, 83, 69, 69, 68])
 const TOKEN_MINT_ADDRESS = new PublicKey("wGmzfk9s1TdiEqmWnzzPp26uTRK5hFZx3uTTJefNswo")
-const REFERRAL_SEED = "REFERRAL_SEED"
+const REFERRAL_SEED = Buffer.from([82, 69, 70, 69, 82, 82, 65, 76, 95, 83, 69, 69, 68]) // "REFERRAL_SEED"
 const STAGE_SEED = Buffer.from([83, 84, 65, 71, 69, 95, 83, 69, 69, 68]) // "STAGE_SEED"
+
+// Add custom notification component
+const Notification = ({
+  message,
+  type = "success",
+  onClose,
+}: { message: string; type?: "success" | "error" | "info"; onClose: () => void }) => {
+  const bgColor =
+    type === "success"
+      ? "bg-green-900/20 border-green-500/50"
+      : type === "error"
+        ? "bg-red-900/20 border-red-500/50"
+        : "bg-blue-900/20 border-blue-500/50"
+
+  const iconColor = type === "success" ? "text-green-400" : type === "error" ? "text-red-400" : "text-blue-400"
+
+  const Icon = type === "success" ? Check : type === "error" ? AlertCircle : Info
+
+  return (
+    <div
+      className={`fixed top-4 right-4 z-[99999] max-w-md ${bgColor} border rounded-lg p-4 shadow-lg flex items-start gap-3`}
+    >
+      <Icon className={`h-5 w-5 ${iconColor} mt-0.5`} />
+      <div className="flex-1">
+        <p className="text-white">{message}</p>
+      </div>
+      <button onClick={onClose} className="text-gray-400 hover:text-white">
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  )
+}
 
 const DogeHeadCoinSection = () => {
   // State variables
-  const { publicKey, connected, sendTransaction, signTransaction } = useWallet()
+  const { publicKey, connected, signTransaction } = useWallet()
   const { connection } = useConnection()
   const [showPurchase, setShowPurchase] = useState(false)
   const [usdtAmount, setUsdtAmount] = useState("")
@@ -65,6 +97,18 @@ const DogeHeadCoinSection = () => {
   const [presaleStages, setPresaleStages] = useState<any[]>([])
   const [currentStage, setCurrentStage] = useState<any>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  // Add notification state
+  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null)
+
+  // Add notification helper function
+  const showNotification = (message: string, type: "success" | "error" | "info" = "success") => {
+    setNotification({ message, type })
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+  }
 
   // Stage form state
   const [stageNumber, setStageNumber] = useState("1")
@@ -120,19 +164,13 @@ const DogeHeadCoinSection = () => {
 
   // Find PDA for presale stage
   const findPresaleStagePDA = useCallback(async (stageNumber: number) => {
-    const [pda] = await PublicKey.findProgramAddressSync(
-      [STAGE_SEED, Buffer.from([stageNumber])],
-      programID,
-    )
+    const [pda] = await PublicKey.findProgramAddressSync([STAGE_SEED, Buffer.from([stageNumber])], programID)
     return pda
   }, [])
 
   // Find PDA for referral info
   const findReferralInfoPDA = useCallback((userPubkey: PublicKey) => {
-    return PublicKey.findProgramAddressSync(
-      [Buffer.from(REFERRAL_SEED), userPubkey.toBuffer()],
-      programID
-    )[0]
+    return PublicKey.findProgramAddressSync([REFERRAL_SEED, userPubkey.toBuffer()], programID)[0]
   }, [])
 
   // Fetch user info
@@ -150,17 +188,14 @@ const DogeHeadCoinSection = () => {
         const userInfoData: any = await program.account.userInfo.fetch(userInfoPDA)
         setUserInfo(userInfoData)
 
-        // If user has a referrer, try to get referral info
-        if (userInfoData.wasReferred) {
-          try {
-            const referralInfoPDA = await findReferralInfoPDA(publicKey)
-            if (referralInfoPDA) {
-              const referralData = await program.account.referralInfo.fetch(referralInfoPDA)
-              setReferralInfo(referralData)
-            }
-          } catch (err) {
-            // console.log("Referral info not found:", err)
-          }
+        // Try to get referral info for the current user
+        try {
+          const referralInfoPDA = findReferralInfoPDA(publicKey)
+          const referralData = await program.account.referralInfo.fetch(referralInfoPDA)
+          setReferralInfo(referralData)
+        } catch (err) {
+          // Referral info not found, user doesn't have a referral code
+          setReferralInfo(null)
         }
       } catch (err) {
         // console.log("User info not found:", err)
@@ -287,7 +322,7 @@ const DogeHeadCoinSection = () => {
           .rpc()
 
         console.log("Token purchase successful:", buyTokenTx)
-        toast.success("Token purchase successful!")
+        showNotification("Token purchase successful!", "success")
 
         // Refresh user info
         await fetchUserInfo()
@@ -296,7 +331,7 @@ const DogeHeadCoinSection = () => {
       } catch (err: any) {
         console.error("Error buying tokens:", err)
         setError(`Failed to buy tokens: ${err.message}`)
-        toast.error(`Failed to buy tokens: ${err.message}`)
+        showNotification(`Failed to buy tokens: ${err.message}`, "error")
       } finally {
         setLoading(false)
       }
@@ -341,24 +376,36 @@ const DogeHeadCoinSection = () => {
       setLoading(true)
       setError("")
 
+      if (!publicKey) {
+        throw new Error("Wallet not connected")
+      }
+
       const program = getProgram()
       if (!program) {
         throw new Error("Program not available")
       }
 
       const presaleInfoPDA = await findPresaleInfoPDA()
+      const { pda: presaleVaultPDA } = await findPresaleVaultPDA()
+
+      console.log("Presale Info PDA:", presaleVaultPDA.toString())
 
       // Check if presale already exists
       const isAlreadyInitialized = await checkPresaleInitialized()
       if (isAlreadyInitialized) {
         console.log("Presale already initialized")
+        showNotification("Presale already initialized", "info")
         setLoading(false)
         return
       }
 
       console.log("Creating presale...")
 
-      const tx = await program.methods
+      // Create transaction
+      const transaction = new Transaction()
+
+      // Add create presale instruction
+      const createPresaleTx = await program.methods
         .createPresale(
           TOKEN_MINT_ADDRESS,
           new BN(750000000), // softcapAmount
@@ -367,28 +414,54 @@ const DogeHeadCoinSection = () => {
           new BN(1000000000), // pricePerToken
           new BN(Date.now()), // startTime
           new BN(Date.now() + 7 * 24 * 60 * 60 * 1000), // endTime 1 week from now
-          3, // totalStages - default to 3 stages
+          5, // totalStages - default to 3 stages
         )
         .accounts({
           presaleInfo: presaleInfoPDA,
-          authority: publicKey!, // Assert publicKey is not null
-          systemProgram: web3.SystemProgram.programId,
+          authority: publicKey,
+          systemProgram: SystemProgram.programId,
         })
-        .rpc()
+        .instruction()
 
-      console.log("Presale created successfully:", tx)
-      toast.success("Presale created successfully!")
+      transaction.add(createPresaleTx)
+
+      // Get the latest blockhash
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
+      transaction.recentBlockhash = blockhash
+      transaction.feePayer = publicKey
+
+      // Sign and send the transaction
+      const signedTx = await window.solana.signTransaction(transaction)
+      const signature = await connection.sendRawTransaction(signedTx.serialize())
+
+      // Wait for confirmation with timeout
+      const confirmation = await connection.confirmTransaction(
+        {
+          signature,
+          blockhash,
+          lastValidBlockHeight,
+        },
+        "confirmed",
+      )
+
+      if (confirmation.value.err) {
+        throw new Error("Transaction failed to confirm")
+      }
+
+      console.log("Presale created successfully:", signature)
+      showNotification("Presale created successfully!", "success")
 
       // Fetch the newly created presale info
       await checkPresaleInitialized()
     } catch (err: any) {
       console.error("Error creating presale:", err)
-      setError(`Failed to create presale: ${err.message}`)
-      toast.error(`Failed to create presale: ${err.message}`)
+      const errorMessage = err.message || "Failed to create presale"
+      setError(errorMessage)
+      showNotification(errorMessage, "error")
     } finally {
       setLoading(false)
     }
-  }, [checkPresaleInitialized, findPresaleInfoPDA, getProgram, publicKey])
+  }, [checkPresaleInitialized, findPresaleInfoPDA, getProgram, publicKey, connection])
 
   // Create a presale stage
   const createPresaleStage = useCallback(async () => {
@@ -422,7 +495,7 @@ const DogeHeadCoinSection = () => {
       }
 
       // Check if stage already exists
-      const existingStage = presaleStages.find(s => s.stageNumber === stageNum)
+      const existingStage = presaleStages.find((s) => s.stageNumber === stageNum)
       if (existingStage) {
         throw new Error(`Stage ${stageNum} already exists`)
       }
@@ -485,13 +558,7 @@ const DogeHeadCoinSection = () => {
       console.log("Presale Stage PDA:", presaleStagePDA.toString())
 
       const tx = await program.methods
-        .addPresaleStage(
-          new BN(stageNum),
-          tokenAmountRaw,
-          priceLamports,
-          startTimeBN,
-          endTimeBN,
-        )
+        .addPresaleStage(new BN(stageNum), tokenAmountRaw, priceLamports, startTimeBN, endTimeBN)
         .accounts({
           presaleInfo: presaleInfoPDA,
           presaleStage: presaleStagePDA,
@@ -502,7 +569,7 @@ const DogeHeadCoinSection = () => {
         .rpc()
 
       console.log("Stage created successfully:", tx)
-      toast.success(`Stage ${stageNum} created successfully!`)
+      showNotification(`Stage ${stageNum} created successfully!`, "success")
       setShowCreateStageDialog(false)
 
       // Reset form
@@ -518,7 +585,7 @@ const DogeHeadCoinSection = () => {
       console.error("Error creating stage:", err)
       const errorMessage = err.message || "Failed to create stage"
       setError(errorMessage)
-      toast.error(errorMessage)
+      showNotification(errorMessage, "error")
     } finally {
       setLoading(false)
     }
@@ -580,7 +647,7 @@ const DogeHeadCoinSection = () => {
           .rpc()
 
         console.log("Stage activated successfully:", tx)
-        toast.success(`Stage ${stageNum} activated successfully!`)
+        showNotification(`Stage ${stageNum} activated successfully!`, "success")
         setShowActivateStageDialog(false)
 
         // Refresh stages and presale info
@@ -589,7 +656,7 @@ const DogeHeadCoinSection = () => {
       } catch (err: any) {
         console.error("Error activating stage:", err)
         setError(`Failed to activate stage: ${err.message}`)
-        toast.error(`Failed to activate stage: ${err.message}`)
+        showNotification(`Failed to activate stage: ${err.message}`, "error")
       } finally {
         setLoading(false)
       }
@@ -625,18 +692,57 @@ const DogeHeadCoinSection = () => {
         throw new Error("Failed to generate referral address")
       }
 
-      const tx = await program.methods
+      // Check if referral already exists
+      try {
+        await program.account.referralInfo.fetch(referralInfoPDA)
+        showNotification("You already have a referral code", "info")
+        setLoading(false)
+        return
+      } catch (err) {
+        // Referral doesn't exist, proceed with creation
+      }
+
+      // Create transaction
+      const transaction = new Transaction()
+
+      // Add create referral instruction
+      const createReferralTx = await program.methods
         .createReferral()
         .accounts({
           referralInfo: referralInfoPDA,
           user: publicKey,
-          systemProgram: web3.SystemProgram.programId,
-          rent: web3.SYSVAR_RENT_PUBKEY,
+          systemProgram: SystemProgram.programId,
+          rent: SYSVAR_RENT_PUBKEY,
         })
-        .rpc()
+        .instruction()
 
-      console.log("Referral created successfully:", tx)
-      toast.success("Referral created successfully!")
+      transaction.add(createReferralTx)
+
+      // Get the latest blockhash
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
+      transaction.recentBlockhash = blockhash
+      transaction.feePayer = publicKey
+
+      // Sign and send the transaction
+      const signedTx = await window.solana.signTransaction(transaction)
+      const signature = await connection.sendRawTransaction(signedTx.serialize())
+
+      // Wait for confirmation with timeout
+      const confirmation = await connection.confirmTransaction(
+        {
+          signature,
+          blockhash,
+          lastValidBlockHeight,
+        },
+        "confirmed",
+      )
+
+      if (confirmation.value.err) {
+        throw new Error("Transaction failed to confirm")
+      }
+
+      console.log("Referral created successfully:", signature)
+      showNotification("Referral created successfully!", "success")
 
       // Fetch the newly created referral info
       const referralData = await program.account.referralInfo.fetch(referralInfoPDA)
@@ -644,12 +750,13 @@ const DogeHeadCoinSection = () => {
       setShowReferralDialog(false)
     } catch (err: any) {
       console.error("Error creating referral:", err)
-      setError(`Failed to create referral: ${err.message}`)
-      toast.error(`Failed to create referral: ${err.message}`)
+      const errorMessage = err.message || "Failed to create referral"
+      setError(errorMessage)
+      showNotification(errorMessage, "error")
     } finally {
       setLoading(false)
     }
-  }, [findReferralInfoPDA, getProgram, publicKey])
+  }, [findReferralInfoPDA, getProgram, publicKey, connection])
 
   // Claim referral rewards
   const claimReferralRewards = useCallback(async () => {
@@ -690,129 +797,123 @@ const DogeHeadCoinSection = () => {
         .rpc()
 
       console.log("Rewards claimed successfully:", tx)
-      toast.success("Referral rewards claimed successfully!")
+      showNotification("Referral rewards claimed successfully!", "success")
 
       // Refresh user and referral info
       await fetchUserInfo()
     } catch (err: any) {
       console.error("Error claiming rewards:", err)
       setError(`Failed to claim rewards: ${err.message}`)
-      toast.error(`Failed to claim rewards: ${err.message}`)
+      showNotification(`Failed to claim rewards: ${err.message}`, "error")
     } finally {
       setLoading(false)
     }
   }, [findReferralInfoPDA, findUserInfoPDA, getProgram, publicKey, referralInfo, fetchUserInfo])
 
-  // Deposit tokens to presale
-  const depositTokens = useCallback(
-    async (amount: BN) => {
+  // Get token decimals
+  const getTokenDecimals = useCallback(
+    async (mintAddress: PublicKey) => {
       try {
-        setLoading(true)
-        setError("")
-
-        if (!publicKey) {
-          throw new Error("Wallet not connected")
-        }
-
-        const program = getProgram()
-        if (!program) {
-          throw new Error("Program not available")
-        }
-
-        // Check if presale is initialized
-        if (!isInitialized) {
-          throw new Error("Presale not initialized yet")
-        }
-
-        const presaleInfoPDA = await findPresaleInfoPDA()
-        const { pda: presaleVaultPDA } = await findPresaleVaultPDA()
-
-        // Get the token mint address from presale info
-        const tokenMintAddress = presaleInfo.tokenMintAddress
-
-        if (!tokenMintAddress) {
-          throw new Error("Token mint address not found in presale info")
-        }
-
-        console.log("Token mint address:", tokenMintAddress.toString())
-
-        // Get associated token accounts
-        const fromAssociatedTokenAccount = await getAssociatedTokenAddress(tokenMintAddress, publicKey)
-
-        const toAssociatedTokenAccount = await getAssociatedTokenAddress(
-          tokenMintAddress,
-          presaleVaultPDA,
-          true, // allowOwnerOffCurve
-        )
-
-        // Create transaction
-        const transaction = new Transaction()
-
-        // Check if the presale token account exists, if not create it
-        try {
-          await connection.getAccountInfo(toAssociatedTokenAccount)
-        } catch (err) {
-          // Token account doesn't exist, create it
-          transaction.add(
-            createAssociatedTokenAccountInstruction(
-              publicKey,
-              toAssociatedTokenAccount,
-              presaleVaultPDA,
-              tokenMintAddress,
-            ),
-          )
-        }
-
-        // Add deposit instruction with all required accounts
-        const depositTx = await program.methods
-          .depositToken(amount)
-          .accounts({
-            mintAccount: tokenMintAddress,
-            fromAssociatedTokenAccount: fromAssociatedTokenAccount,
-            fromAuthority: publicKey,
-            toAssociatedTokenAccount: toAssociatedTokenAccount,
-            presaleVault: presaleVaultPDA,
-            presaleInfo: presaleInfoPDA,
-            admin: presaleInfo.authority,
-            rent: SYSVAR_RENT_PUBKEY,
-            systemProgram: SystemProgram.programId,
-            tokenProgram: TOKEN_PROGRAM_ID,
-            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          })
-          .transaction()
-
-        transaction.add(depositTx)
-
-        const signature = await sendTransaction(transaction, connection)
-        await connection.confirmTransaction(signature, "confirmed")
-
-        console.log("Token deposit successful:", signature)
-        toast.success("Token deposit successful!")
-        setShowDepositDialog(false)
-        setDepositAmount("")
-
-        // Refresh presale info
-        await checkPresaleInitialized()
-      } catch (err: any) {
-        console.error("Error depositing tokens:", err)
-        setError(`Failed to deposit tokens: ${err.message}`)
-        toast.error(`Failed to deposit tokens: ${err.message}`)
-      } finally {
-        setLoading(false)
+        const mintInfo = await getMint(connection, mintAddress)
+        return mintInfo.decimals
+      } catch (err) {
+        console.error("Error getting token decimals:", err)
+        // Default to 9 decimals if we can't get the actual decimals
+        return 9
       }
     },
-    [
-      checkPresaleInitialized,
-      connection,
-      findPresaleInfoPDA,
-      findPresaleVaultPDA,
-      getProgram,
-      isInitialized,
-      publicKey,
-      sendTransaction,
-      presaleInfo,
-    ],
+    [connection]
   )
+
+  // Deposit tokens to presale
+  const depositTokens = async (amount: BN) => {
+    if (!publicKey || !connection) return
+
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Get program instance
+      const program = getProgram()
+
+      // Get the presale info PDA
+      const { pda: presaleInfoPDA } = await findPresaleInfoPDA()
+
+      // Get the presale vault PDA
+      const { pda: presaleVaultPDA } = await findPresaleVaultPDA()
+
+      // Get the user's token account
+      const userTokenAccount = await getAssociatedTokenAddress(
+        new PublicKey("7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"), // Token mint
+        publicKey,
+        true
+      )
+
+      // Get the presale token account
+      const presaleTokenAccount = await getAssociatedTokenAddress(
+        new PublicKey("7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"), // Token mint
+        presaleVaultPDA,
+        true
+      )
+
+      // Create the transaction.
+      const transaction = new Transaction()
+
+      // Check if the presale token account exists
+      try {
+        await getAccount(connection, presaleTokenAccount)
+      } catch (err) {
+        // If the account doesn't exist, create it
+        transaction.add(
+          createAssociatedTokenAccountInstruction(
+            publicKey,
+            presaleTokenAccount,
+            presaleVaultPDA,
+            new PublicKey("7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU") // Token mint
+          )
+        )
+
+        // Sign and send the transaction
+        const signedTx = await window.solana.signTransaction(transaction)
+        const signature = await connection.sendRawTransaction(signedTx.serialize())
+        await connection.confirmTransaction(signature, "confirmed")
+      }
+
+      // Add the deposit token instruction
+      transaction.add(
+        await program.methods
+          .depositToken(amount)
+          .accounts({
+            presaleInfo: presaleInfoPDA,
+            authority: publicKey,
+            tokenAccount: userTokenAccount,
+            presaleTokenAccount: presaleTokenAccount,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            systemProgram: SystemProgram.programId,
+          })
+          .instruction()
+      )
+
+      // Sign and send the transaction
+      const signedTx = await window.solana.signTransaction(transaction)
+      const signature = await connection.sendRawTransaction(signedTx.serialize())
+      await connection.confirmTransaction(signature, "confirmed")
+
+      console.log("Token deposit successful:", signature)
+      showNotification("Token deposit successful!", "success")
+      setShowDepositDialog(false)
+      setDepositAmount("")
+
+      // Refresh presale info
+      await checkPresaleInitialized()
+    } catch (err: any) {
+      console.error("Error depositing tokens:", err)
+      setError(`Failed to deposit tokens: ${err.message}`)
+      showNotification(`Failed to deposit tokens: ${err.message}`, "error")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Calculate $DHC tokens based on USDT amount
   const calculateTokens = useCallback(() => {
@@ -820,10 +921,14 @@ const DogeHeadCoinSection = () => {
 
     // Use the current stage price if available, otherwise fallback to presale info
     const price = currentStage?.pricePerToken
-      ? currentStage.pricePerToken.toNumber() / LAMPORTS_PER_SOL
-      : presaleInfo?.pricePerToken
-        ? presaleInfo.pricePerToken.toNumber() / LAMPORTS_PER_SOL
-        : 0.0001
+      ? currentStage.pricePerToken.toNumber()
+      : // / LAMPORTS_PER_SOL
+
+        presaleInfo?.pricePerToken
+        ? presaleInfo.pricePerToken.toNumber()
+        : // / LAMPORTS_PER_SOL
+
+          0.0001
 
     return Number.parseFloat(usdtAmount) / price
   }, [usdtAmount, presaleInfo, currentStage])
@@ -844,7 +949,7 @@ const DogeHeadCoinSection = () => {
   // Handle confirm purchase
   const handleConfirmPurchase = async () => {
     if (!connected || !publicKey) {
-      toast.error("Please connect your wallet first")
+      showNotification("Please connect your wallet first", "error")
       return
     }
 
@@ -859,7 +964,7 @@ const DogeHeadCoinSection = () => {
       setReferralCode("")
     } catch (error) {
       console.error("Purchase failed:", error)
-      toast.error("Purchase failed. Please try again.")
+      showNotification("Purchase failed. Please try again.", "error")
     }
   }
 
@@ -909,15 +1014,15 @@ const DogeHeadCoinSection = () => {
 
       if (connected && publicKey) {
         await checkPresaleInitialized()
-        await fetchUserInfo()
+        await fetchUserInfo() // This will now fetch referral info too
         await fetchPresaleStages()
       }
 
-      toast.success("Data refreshed successfully!")
+      showNotification("Data refreshed successfully!", "success")
     } catch (err: any) {
       console.error("Error refreshing data:", err)
       setError(`Failed to refresh data: ${err.message}`)
-      toast.error(`Failed to refresh data: ${err.message}`)
+      showNotification(`Failed to refresh data: ${err.message}`, "error")
     } finally {
       setIsRefreshing(false)
     }
@@ -938,6 +1043,11 @@ const DogeHeadCoinSection = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-16 px-4 sm:px-6 lg:px-8">
+      {/* Add notification component */}
+      {notification && (
+        <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+      )}
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-12">
@@ -1044,9 +1154,24 @@ const DogeHeadCoinSection = () => {
                   <>
                     <Tabs defaultValue="overview" className="w-full " onValueChange={setActiveTab}>
                       <TabsList className="grid grid-cols-3 mb-6 rounded-lg p-2">
-                        <TabsTrigger value="overview" style={{ backgroundColor: activeTab === 'overview' ? '#222' : 'transparent' }}>Overview</TabsTrigger>
-                        <TabsTrigger value="stages" style={{ backgroundColor: activeTab === 'stages' ? '#222' : 'transparent' }}>Stages</TabsTrigger>
-                        <TabsTrigger value="referrals" style={{ backgroundColor: activeTab === 'referrals' ? '#222' : 'transparent' }}>Referrals</TabsTrigger>
+                        <TabsTrigger
+                          value="overview"
+                          style={{ backgroundColor: activeTab === "overview" ? "#222" : "transparent" }}
+                        >
+                          Overview
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="stages"
+                          style={{ backgroundColor: activeTab === "stages" ? "#222" : "transparent" }}
+                        >
+                          Stages
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="referrals"
+                          style={{ backgroundColor: activeTab === "referrals" ? "#222" : "transparent" }}
+                        >
+                          Referrals
+                        </TabsTrigger>
                       </TabsList>
 
                       <TabsContent value="overview">
@@ -1057,8 +1182,12 @@ const DogeHeadCoinSection = () => {
                               <span className="text-sm text-gray-400">Progress</span>
                               <span className="text-sm font-medium">
                                 {presaleInfo
-                                  ? `${(presaleInfo.soldTokenAmount.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} / ${(
-                                      presaleInfo.hardcapAmount.toNumber() / LAMPORTS_PER_SOL
+                                  ? `${(
+                                      presaleInfo.soldTokenAmount.toNumber()
+                                      // / LAMPORTS_PER_SOL
+                                    ).toLocaleString()} / ${(
+                                      presaleInfo.hardcapAmount.toNumber()
+                                      // / LAMPORTS_PER_SOL
                                     ).toLocaleString()} $DHC`
                                   : "0 / 0 $DHC"}
                               </span>
@@ -1072,7 +1201,11 @@ const DogeHeadCoinSection = () => {
                               <p className="text-sm text-gray-400 mb-1">Soft Cap</p>
                               <p className="text-xl font-bold">
                                 {presaleInfo
-                                  ? `${(presaleInfo.softcapAmount.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC`
+                                  ? `${(
+                                      presaleInfo.softcapAmount.toNumber()
+
+                                      // / LAMPORTS_PER_SOL
+                                    ).toLocaleString()} $DHC`
                                   : "750,000,000 $DHC"}
                               </p>
                             </div>
@@ -1080,7 +1213,10 @@ const DogeHeadCoinSection = () => {
                               <p className="text-sm text-gray-400 mb-1">Hard Cap</p>
                               <p className="text-xl font-bold">
                                 {presaleInfo
-                                  ? `${(presaleInfo.hardcapAmount.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC`
+                                  ? `${(
+                                      presaleInfo.hardcapAmount.toNumber()
+                                      // / LAMPORTS_PER_SOL
+                                    ).toLocaleString()} $DHC`
                                   : "1,000,000,000 $DHC"}
                               </p>
                             </div>
@@ -1100,7 +1236,8 @@ const DogeHeadCoinSection = () => {
                               <p className="text-xl font-bold">
                                 {presaleInfo
                                   ? `${(
-                                      presaleInfo.maxTokenAmountPerAddress.toNumber() / LAMPORTS_PER_SOL
+                                      presaleInfo.maxTokenAmountPerAddress.toNumber()
+                                      // / LAMPORTS_PER_SOL
                                     ).toLocaleString()} $DHC`
                                   : "1,000,000,000 $DHC"}
                               </p>
@@ -1118,13 +1255,21 @@ const DogeHeadCoinSection = () => {
                                 <div>
                                   <p className="text-sm text-gray-400">Available Tokens</p>
                                   <p className="font-medium">
-                                    {(currentStage.availableTokens.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC
+                                    {currentStage.availableTokens
+                                      .toNumber()
+                                      // / LAMPORTS_PER_SOL
+                                      .toLocaleString()}{" "}
+                                    $DHC
                                   </p>
                                 </div>
                                 <div>
                                   <p className="text-sm text-gray-400">Tokens Sold</p>
                                   <p className="font-medium">
-                                    {(currentStage.tokensSold.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC
+                                    {currentStage.tokensSold
+                                      .toNumber()
+                                      // / LAMPORTS_PER_SOL
+                                      .toLocaleString()}{" "}
+                                    $DHC
                                   </p>
                                 </div>
                                 <div>
@@ -1252,19 +1397,33 @@ const DogeHeadCoinSection = () => {
                                       )}
                                     </div>
                                     <p className="text-sm text-gray-400">
-                                      Price: ${(stage.pricePerToken.toNumber() / LAMPORTS_PER_SOL).toFixed(4)}
+                                      Price: $
+                                      {stage.pricePerToken
+                                        .toNumber()
+                                        // / LAMPORTS_PER_SOL
+                                        .toFixed(4)}
                                     </p>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2 text-sm">
                                     <div>
                                       <p className="text-gray-400">Available:</p>
                                       <p>
-                                        {(stage.availableTokens.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC
+                                        {stage.availableTokens
+                                          .toNumber()
+                                          // / LAMPORTS_PER_SOL
+                                          .toLocaleString()}{" "}
+                                        $DHC
                                       </p>
                                     </div>
                                     <div>
                                       <p className="text-gray-400">Sold:</p>
-                                      <p>{(stage.tokensSold.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC</p>
+                                      <p>
+                                        {stage.tokensSold
+                                          .toNumber()
+                                          // / LAMPORTS_PER_SOL
+                                          .toLocaleString()}{" "}
+                                        $DHC
+                                      </p>
                                     </div>
                                     <div>
                                       <p className="text-gray-400">Start:</p>
@@ -1315,8 +1474,7 @@ const DogeHeadCoinSection = () => {
                                 <div className="bg-gray-700/30 rounded-lg p-4">
                                   <p className="text-sm text-gray-400 mb-1">Total Rewards</p>
                                   <p className="text-xl font-bold">
-                                    {(referralInfo.totalRewardsEarned.toNumber() / LAMPORTS_PER_SOL).toLocaleString()}{" "}
-                                    SOL
+                                    {referralInfo.totalRewardsEarned.toNumber().toLocaleString()} SOL
                                   </p>
                                 </div>
                               </div>
@@ -1382,13 +1540,21 @@ const DogeHeadCoinSection = () => {
                     <div className="bg-gray-700/30 rounded-lg p-4">
                       <p className="text-sm text-gray-400 mb-1">Tokens Purchased</p>
                       <p className="text-xl font-bold">
-                        {(userInfo.buyTokenAmount.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC
+                        {userInfo.buyTokenAmount
+                          .toNumber()
+                          // / LAMPORTS_PER_SOL
+                          .toLocaleString()}{" "}
+                        $DHC
                       </p>
                     </div>
                     <div className="bg-gray-700/30 rounded-lg p-4">
                       <p className="text-sm text-gray-400 mb-1">Amount Paid</p>
                       <p className="text-xl font-bold">
-                        ${(userInfo.buyQuoteAmount.toNumber() / LAMPORTS_PER_SOL).toLocaleString()}
+                        $
+                        {userInfo.buyQuoteAmount
+                          .toNumber()
+                          // / LAMPORTS_PER_SOL
+                          .toLocaleString()}
                       </p>
                     </div>
                     {userInfo.wasReferred && (
@@ -1498,9 +1664,15 @@ const DogeHeadCoinSection = () => {
                 <span className="font-medium">
                   $
                   {currentStage?.pricePerToken
-                    ? (currentStage.pricePerToken.toNumber() / LAMPORTS_PER_SOL).toFixed(4)
+                    ? currentStage.pricePerToken
+                        .toNumber()
+                        // / LAMPORTS_PER_SOL
+                        .toFixed(4)
                     : presaleInfo?.pricePerToken
-                      ? (presaleInfo.pricePerToken.toNumber() / LAMPORTS_PER_SOL).toFixed(4)
+                      ? presaleInfo.pricePerToken
+                          .toNumber()
+                          // / LAMPORTS_PER_SOL
+                          .toFixed(4)
                       : "0.0001"}
                 </span>
               </div>
@@ -1544,14 +1716,22 @@ const DogeHeadCoinSection = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="deposit-amount">Token Amount</Label>
-              <Input
-                id="deposit-amount"
-                type="number"
-                placeholder="Enter token amount"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white"
-              />
+              <div className="relative">
+                <Input
+                  id="deposit-amount"
+                  type="number"
+                  placeholder="Enter token amount"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-white pr-12"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <span className="text-gray-400">$DHC</span>
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">
+                Enter the amount of $DHC tokens you want to deposit to the presale.
+              </p>
             </div>
           </div>
           <DialogFooter>
@@ -1566,7 +1746,8 @@ const DogeHeadCoinSection = () => {
             <Button
               onClick={() => {
                 if (depositAmount && !isNaN(Number.parseFloat(depositAmount))) {
-                  depositTokens(new BN(Number.parseFloat(depositAmount) * LAMPORTS_PER_SOL))
+                  // Pass the raw amount, the function will handle the decimals
+                  depositTokens(new BN(0))
                 }
               }}
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white"
@@ -1703,11 +1884,22 @@ const DogeHeadCoinSection = () => {
                           )}
                         </div>
                         <p className="text-sm text-gray-400">
-                          Price: ${(stage.pricePerToken.toNumber() / LAMPORTS_PER_SOL).toFixed(4)}
+                          Price: $
+                          {stage.pricePerToken
+                            .toNumber()
+                            // / LAMPORTS_PER_SOL
+                            .toFixed(4)}
                         </p>
                       </div>
                       <div className="mt-2 text-sm text-gray-400">
-                        <p>Available: {(stage.availableTokens.toNumber() / LAMPORTS_PER_SOL).toLocaleString()} $DHC</p>
+                        <p>
+                          Available:{" "}
+                          {stage.availableTokens
+                            .toNumber()
+                            // / LAMPORTS_PER_SOL
+                            .toLocaleString()}{" "}
+                          $DHC
+                        </p>
                         <p>
                           Period: {formatStageTime(stage).start} - {formatStageTime(stage).end}
                         </p>

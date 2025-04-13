@@ -146,3 +146,13 @@ Minting 3000000000 tokens
   Recipient: GsVUdSAXCaFbzPYuSRtDNu3aRpvEgVXRLoeHJ45oxUpw
 
 Signature: 4hNGHigjuot8GQ5ehaaRddbC45TLzngipJrXnSkk8m1fXPtgY3TLiiGmK3k34AwRco54EUKtNrj7ZnoqVAzyHfSe
+
+
+
+
+<!-- create spl token from the terminal command line interface -->
+solana config get
+spl-token create-token
+spl-token create-account 9CgvetBL3GYxiGrquTpxEqDm1AmBtLAQE1qKz7rayzMX --owner FKYFEsTodpGigfLowvTk4gSt2yK8fDjJfEWtkKYZcnsz --fee-payer token-authority.json
+spl-token mint 9CgvetBL3GYxiGrquTpxEqDm1AmBtLAQE1qKz7rayzMX 1000000000 E4NrNeqtVDSqgx1dM2LqBdh7S1izoMEYgUD3SKqtVccp --owner token-authority.json
+spl-token balance --address E4NrNeqtVDSqgx1dM2LqBdh7S1izoMEYgUD3SKqtVccp

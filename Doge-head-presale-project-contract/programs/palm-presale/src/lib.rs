@@ -1,13 +1,13 @@
 use anchor_lang::prelude::*;
 
+declare_id!("EsySUN7oV4ayVueVak1QVWSibQSu3ePgqfKSEeCoxyTc");
+
 pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
 
 use instructions::*;
-
-declare_id!("Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd");
 
 #[program]
 pub mod palm_presale {
