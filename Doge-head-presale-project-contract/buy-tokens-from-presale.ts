@@ -87,12 +87,6 @@ async function main(): Promise<void> {
         console.log('- Price per token:', stageData.pricePerToken.toString());
         console.log('- Is active:', stageData.isActive);
 
-        // Check if stage is active
-        if (!stageData.isActive) {
-            console.error('❌ Current stage is not active!');
-            return;
-        }
-
         // Calculate how many tokens the user can buy
         const maxTokensPerAddress = presaleData.maxTokenAmountPerAddress.toNumber();
         const availableTokensInStage = stageData.availableTokens.sub(stageData.tokensSold).toNumber();
