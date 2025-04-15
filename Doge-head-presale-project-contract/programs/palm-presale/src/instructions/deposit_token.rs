@@ -1,4 +1,3 @@
-use anchor_lang::system_program;
 // use solana_program::program::invoke;
 
 use {
@@ -26,9 +25,9 @@ pub fn deposit_token(
     }
     
     // Check if presale is already live
-    if presale_info.is_live {
-        return Err(PresaleError::PresaleAlreadyStarted.into());
-    }
+    // if presale_info.is_live {
+    //     return Err(PresaleError::PresaleAlreadyStarted.into());
+    // }
     
     // Validate token accounts
     if token_account.mint != presale_info.token_mint_address {
@@ -81,11 +80,16 @@ pub struct DepositToken<'info> {
     )]
     pub presale_info: Box<Account<'info, PresaleInfo>>,
     
+    /// CHECK: This is the authority that controls the presale
     #[account(
         mut,
         constraint = presale_info.authority == authority.key()
     )]
     pub authority: Signer<'info>,
+    
+    /// The token owner (Address B)
+    #[account(mut)]
+    pub token_owner: Signer<'info>,
     
     #[account(
         mut,

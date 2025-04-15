@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 
-declare_id!("EsySUN7oV4ayVueVak1QVWSibQSu3ePgqfKSEeCoxyTc");
+declare_id!("FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt");
+
+pub const TOKEN_MINT_ADDRESS: &str = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV";
 
 pub mod constants;
 pub mod errors;
@@ -13,89 +15,55 @@ use instructions::*;
 pub mod palm_presale {
     use super::*;
 
-    pub fn create_presale(
-        ctx: Context<CreatePresale>,
-        token_mint_address: Pubkey,
-        // quote_token_mint_address: Pubkey,
+    pub fn initialize(
+        ctx: Context<Initialize>,
         softcap_amount: u64,
         hardcap_amount: u64,
         max_token_amount_per_address: u64,
-        price_per_token: u64,
-        start_time: u64,
-        end_time: u64,
-        total_stages: u8,
-        // identifier: u8
     ) -> Result<()> {
-        return create_presale::create_presale(
+        let token_mint = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV".parse::<Pubkey>().unwrap();
+        return initialize::initialize(
             ctx,
-            token_mint_address,
-            // quote_token_mint_address,
+            token_mint,
             softcap_amount,
             hardcap_amount,
             max_token_amount_per_address,
-            price_per_token,
-            start_time,
-            end_time,
-            total_stages,
-            // identifier,
         );
     }
 
-    pub fn update_presale(
-        ctx: Context<UpdatePresale>,
-        max_token_amount_per_address: u64,
+    pub fn initialize_stage(
+        ctx: Context<InitializeStage>,
+        stage_number: u8,
+        available_tokens: u64,
         price_per_token: u64,
-        softcap_amount: u64,
-        hardcap_amount: u64,
-        start_time: u64,
-        end_time: u64,
     ) -> Result<()> {
-        return update_presale::update_presale (
+        return initialize_stage::initialize_stage(
             ctx,
-            max_token_amount_per_address,
+            stage_number,
+            available_tokens,
             price_per_token,
-            softcap_amount,
-            hardcap_amount,
-            start_time,
-            end_time,
         );
     }
 
     pub fn deposit_token(
         ctx: Context<DepositToken>,
         amount: u64,
-        // identifier: u8,
     ) -> Result<()> {
         return deposit_token::deposit_token (
             ctx,
             amount,
-            // identifier
-        );
-    }
-    
-    pub fn start_presale(
-        ctx: Context<StartPresale>,
-        start_time: u64,
-        end_time: u64
-    ) -> Result<()> {
-        return start_presale::start_presale (
-            ctx,
-            start_time,
-            end_time
         );
     }
     
     pub fn buy_token(
         ctx: Context<BuyToken>,
-        token_amount: u64,
         quote_amount: u64,
-        referrer_code: Option<[u8; 8]>,
+        referrer_address: Option<Pubkey>,
     ) -> Result<()> {
         return buy_token::buy_token (
             ctx,
             quote_amount,
-            token_amount,
-            referrer_code,
+            referrer_address,
         );
     }
 
@@ -126,62 +94,33 @@ pub mod palm_presale {
         bump: u8
     ) -> Result<()> {
         return withdraw_token::withdraw_token (
-            ctx, amount, bump
+            ctx,
+            amount,
+            bump
         );
     }
 
     pub fn create_referral(
         ctx: Context<CreateReferral>,
     ) -> Result<()> {
-        return create_referral::create_referral(
+        return create_referral::create_referral (
             ctx,
         );
     }
-    
+
     pub fn claim_referral_rewards(
         ctx: Context<ClaimReferralRewards>,
     ) -> Result<()> {
-        return claim_referral_rewards::claim_referral_rewards(
+        return claim_referral_rewards::claim_referral_rewards (
             ctx,
         );
     }
-    
+
     pub fn get_referral_stats(
         ctx: Context<GetReferralStats>,
     ) -> Result<()> {
-        return get_referral_stats::get_referral_stats(
+        return get_referral_stats::get_referral_stats (
             ctx,
-        );
-    }
-
-    pub fn add_presale_stage(
-        ctx: Context<AddPresaleStage>,
-        stage_number: u8,
-        available_tokens: u64,
-        price_per_token: u64,
-        start_time: u64,
-        end_time: u64,
-    ) -> Result<()> {
-        return add_presale_stage::add_presale_stage(
-            ctx,
-            stage_number,
-            available_tokens,
-            price_per_token,
-            start_time,
-            end_time,
-        );
-    }
-    
-    pub fn activate_stage(
-        ctx: Context<ActivateStage>,
-        stage_number: u8,
-    ) -> Result<()> {
-        return activate_stage::activate_stage(
-            ctx,
-            stage_number,
         );
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}

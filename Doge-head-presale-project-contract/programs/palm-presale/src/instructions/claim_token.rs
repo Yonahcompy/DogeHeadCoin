@@ -8,7 +8,7 @@ use {
 
 use crate::errors::PresaleError;
 use crate::state::{PresaleInfo, UserInfo};
-use crate::constants::{PRESALE_SEED, USER_SEED};
+use crate::constants::PRESALE_SEED;
 
 pub fn claim_token(
     ctx: Context<ClaimToken>, 
@@ -17,13 +17,9 @@ pub fn claim_token(
 
     let presale_info = &mut ctx.accounts.presale_info;
 
-    let cur_timestamp = u64::try_from(Clock::get()?.unix_timestamp).unwrap();
-
-    // get time and compare with start and end time
-    if presale_info.end_time > cur_timestamp * 1000 {
-        msg!("current time: {}", cur_timestamp);
-        msg!("presale end time: {}", presale_info.end_time);
-        msg!("Presale not ended yet.");
+    // Check if presale is completed (all stages sold out)
+    if presale_info.current_stage < presale_info.total_stages {
+        msg!("Presale not completed yet. Current stage: {}", presale_info.current_stage);
         return Err(PresaleError::PresaleNotEnded.into());
     }
 
@@ -48,7 +44,8 @@ pub fn claim_token(
     )?;
 
     user_info.buy_token_amount = 0;
-    user_info.claim_time = cur_timestamp;
+    user_info.claim_time = u64::try_from(Clock::get()?.unix_timestamp)
+        .map_err(|_| PresaleError::MathOverflow)?;
     msg!("All claimed presale tokens transferred successfully.");
 
     Ok(())
@@ -77,14 +74,14 @@ pub struct ClaimToken<'info> {
 
     #[account(
         mut,
-        seeds = [USER_SEED],
+        seeds = [b"USER_SEED"],
         bump
     )]
     pub user_info: Box<Account<'info, UserInfo>>,
 
     #[account(
         mut,
-        seeds = [PRESALE_SEED],
+        seeds = [b"PRESALE_SEED"],
         bump
     )]
     pub presale_info: Box<Account<'info, PresaleInfo>>,

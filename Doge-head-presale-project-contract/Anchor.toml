@@ -1,24 +1,40 @@
 [toolchain]
+anchor_version = "0.26.0"
+
 [features]
 seeds = false
 skip-lint = false
 
-[test]
-startup_wait = 10000
+[programs.localnet]
+palm_presale = "FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt"
 
+[programs.devnet]
+palm_presale = "FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt"
 
-[programs.localnet]  
-palm_presale = "EsySUN7oV4ayVueVak1QVWSibQSu3ePgqfKSEeCoxyTc"
-
-[programs.devnet]  
-palm_presale = "EsySUN7oV4ayVueVak1QVWSibQSu3ePgqfKSEeCoxyTc"
+[programs.mainnet]
+palm_presale = "FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
-wallet = "authority.json"
+cluster = "Devnet"
+wallet = "/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/authority.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+# Build output configuration
+[build]
+incremental = true
+out-dir = "target"
+
+# Network-specific configurations
+[test.validator]
+url = "https://api.devnet.solana.com"
+startup_wait = 10000
+
+# RPC configurations
+[rpc]
+devnet = "https://api.devnet.solana.com"
+mainnet = "https://api.mainnet-beta.solana.com"

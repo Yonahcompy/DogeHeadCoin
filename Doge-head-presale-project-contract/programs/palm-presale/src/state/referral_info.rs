@@ -17,7 +17,4 @@ pub struct ReferralInfo {
     
     // Whether rewards have been claimed
     pub rewards_claimed: bool,
-    
-    // Unique referral code (derived from account address)
-    pub referral_code: [u8; 8],
 } 

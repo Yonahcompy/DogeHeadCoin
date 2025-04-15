@@ -6,14 +6,14 @@ This smart contract manages the presale for Doge Head tokens on Solana. It inclu
 
 The presale is designed with 5 stages:
 
-| Stage | Available Tokens | Price Per Token | Total Sale |
+| Stage | Available Tokens | Price Per Token (sol) | Total Sale |
 |-------|-----------------|----------------|------------|
-| 1     | 750,000,000     | 0.0001         | $75,000    |
-| 2     | 600,000,000     | 0.00033        | $198,000   |
-| 3     | 450,000,000     | 0.000957       | $430,650   |
-| 4     | 600,000,000     | 0.00202        | $1,212,000 |
-| 5     | 600,000,000     | 0.00313        | $1,878,000 |
-| TOTAL | 3,000,000,000   |                | $3,793,650 |
+| 1     | 750,000,000     | 0.0001         |            |
+| 2     | 600,000,000     | 0.00033        |            |
+| 3     | 450,000,000     | 0.000957       |            |
+| 4     | 600,000,000     | 0.00202        |            |
+| 5     | 600,000,000     | 0.00313        |            |
+| TOTAL | 3,000,000,000   |                |            |
 
 Note: The presale represents 60% of the total token supply.
 
@@ -134,7 +134,7 @@ Ensure you have the following tools installed:
 
    <!-- upgrade using the buffer -->
 
-   solana program deploy --buffer 7zZVMAvdVa1mpr4YhH3ysbvfSqbBFMPymsGESNbFje5o --program-id Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd --keypair ./id.json
+   solana program deploy --buffer 89QVkPPJtSD2vFtF4y4ypLURPL8wuF3NDpYArkVWiZcW --program-id FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt --keypair ./authority.json
 
 
 

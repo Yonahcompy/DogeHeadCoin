@@ -9,6 +9,6 @@ pub const REFERRAL_SEED: &[u8] = b"REFERRAL_SEED";
 pub const RENT_MINIMUM: u64 = 1_000_000;
 
 // Referral reward percentages (basis points - 100 = 1%)
-pub const REFERRER_REWARD_BPS: u16 = 200; // 2%
-pub const REFEREE_REWARD_BPS: u16 = 200;  // 2%
-pub const BPS_DENOMINATOR: u16 = 10000;   // 100%
+pub const REFERRER_REWARD_BPS: u64 = 500;   // 5%
+pub const REFEREE_REWARD_BPS: u64 = 200;    // 2%
+pub const BPS_DENOMINATOR: u64 = 10000;     // 100%

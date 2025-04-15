@@ -53,9 +53,6 @@ pub enum PresaleError {
     #[msg("Referral already exists")]
     ReferralAlreadyExists,
     
-    #[msg("Referral code generation failed")]
-    ReferralCodeGenerationFailed,
-    
     #[msg("Invalid referral code")]
     InvalidReferralCode,
     

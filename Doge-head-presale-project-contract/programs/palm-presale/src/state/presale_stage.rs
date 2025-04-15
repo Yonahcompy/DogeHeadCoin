@@ -17,10 +17,4 @@ pub struct PresaleStage {
     
     // Whether this stage is active
     pub is_active: bool,
-    
-    // Start time of this stage
-    pub start_time: u64,
-    
-    // End time of this stage
-    pub end_time: u64,
 } 
