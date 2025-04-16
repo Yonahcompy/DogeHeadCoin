@@ -1,8 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::constants::REFERRAL_SEED;
 use crate::state::ReferralInfo;
-use crate::errors::PresaleError;
 
 pub fn create_referral(ctx: Context<CreateReferral>) -> Result<()> {
     let referral_info = &mut ctx.accounts.referral_info;

@@ -10,6 +10,9 @@ pub fn initialize(
     softcap_amount: u64,
     hardcap_amount: u64,
     max_token_amount_per_address: u64,
+    token_price: u64,
+    start_time: i64,
+    end_time: i64,
 ) -> Result<()> {
     let presale_info = &mut ctx.accounts.presale_info;
     let authority = &ctx.accounts.authority;
@@ -21,12 +24,20 @@ pub fn initialize(
     presale_info.deposit_token_amount = 0;
     presale_info.sold_token_amount = 0;
     presale_info.max_token_amount_per_address = max_token_amount_per_address;
+    presale_info.max_token_amount = 3_000_000_000; // Set maximum token amount to 3 billion
     presale_info.is_live = true; // Start presale immediately
     presale_info.authority = authority.key();
     presale_info.is_soft_capped = false;
     presale_info.is_hard_capped = false;
     presale_info.current_stage = 1; // Start with stage 1
     presale_info.total_stages = 5; // Hardcoded to 5 stages
+    presale_info.total_raised = 0;
+    presale_info.min_token_amount = 1_000_000_000; // 1 billion tokens minimum (soft cap)
+    presale_info.token_price = token_price;
+    presale_info.start_time = start_time;
+    presale_info.end_time = end_time;
+    presale_info.is_active = true;
+    presale_info.bump = ctx.bumps.presale_info;
 
     // Initialize Stage 1
     let stage1 = &mut ctx.accounts.stage1;
@@ -45,6 +56,15 @@ pub fn initialize(
 }
 
 #[derive(Accounts)]
+#[instruction(
+    token_mint_address: Pubkey,
+    softcap_amount: u64,
+    hardcap_amount: u64,
+    max_token_amount_per_address: u64,
+    token_price: u64,
+    start_time: i64,
+    end_time: i64,
+)]
 pub struct Initialize<'info> {
     #[account(
         init,

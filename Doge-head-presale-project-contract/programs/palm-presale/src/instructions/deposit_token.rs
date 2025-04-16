@@ -2,14 +2,18 @@
 
 use {
     anchor_lang::prelude::*,
-    anchor_spl::token,
+    anchor_spl::{
+        token::{self
+            // ,Transfer
+            },
+    },
 };
 
 // use solana_program::rent::Rent;
 
-use crate::constants::PRESALE_SEED;
 use crate::state::PresaleInfo;
 use crate::errors::PresaleError;
+use crate::constants::PRESALE_SEED;
 
 pub fn deposit_token(
     ctx: Context<DepositToken>,

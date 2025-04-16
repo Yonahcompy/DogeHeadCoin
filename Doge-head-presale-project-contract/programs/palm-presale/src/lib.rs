@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d");
+declare_id!("2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo");
 
 pub const TOKEN_MINT_ADDRESS: &str = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV";
 
@@ -17,17 +17,23 @@ pub mod palm_presale {
 
     pub fn initialize(
         ctx: Context<Initialize>,
+        token_mint: Pubkey,
         softcap_amount: u64,
         hardcap_amount: u64,
         max_token_amount_per_address: u64,
+        token_price: u64,
+        start_time: i64,
+        end_time: i64,
     ) -> Result<()> {
-        let token_mint = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV".parse::<Pubkey>().unwrap();
         return initialize::initialize(
             ctx,
             token_mint,
             softcap_amount,
             hardcap_amount,
             max_token_amount_per_address,
+            token_price,
+            start_time,
+            end_time,
         );
     }
 
@@ -55,25 +61,12 @@ pub mod palm_presale {
         );
     }
     
-    pub fn buy_token(
-        ctx: Context<BuyToken>,
-        quote_amount: u64,
-        referrer_address: Option<Pubkey>,
-    ) -> Result<()> {
-        return buy_token::buy_token (
-            ctx,
-            quote_amount,
-            referrer_address,
-        );
+    pub fn buy_token(ctx: Context<BuyToken>, amount: u64, referrer_address: Option<Pubkey>) -> Result<()> {
+        return buy_token::buy_token(ctx, amount, referrer_address);
     }
 
-    pub fn claim_token(
-        ctx: Context<ClaimToken>,
-        bump: u8
-    ) -> Result<()> {
-        return claim_token::claim_token (
-            ctx, bump
-        );
+    pub fn claim_token(ctx: Context<ClaimToken>) -> Result<()> {
+        return claim_token::claim_token(ctx);
     }
     
     pub fn withdraw_sol(
@@ -100,12 +93,8 @@ pub mod palm_presale {
         );
     }
 
-    pub fn create_referral(
-        ctx: Context<CreateReferral>,
-    ) -> Result<()> {
-        return create_referral::create_referral (
-            ctx,
-        );
+    pub fn create_referral(ctx: Context<CreateReferral>) -> Result<()> {
+        return create_referral::create_referral(ctx);
     }
 
     pub fn claim_referral_rewards(

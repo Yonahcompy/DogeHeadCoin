@@ -15,6 +15,8 @@ pub struct PresaleInfo {
     pub sold_token_amount: u64,
     // Maximum amount of presale tokens an address can purchase
     pub max_token_amount_per_address: u64,
+    // Maximum total amount of tokens that can be sold (3 billion)
+    pub max_token_amount: u64,
     // Presale is buyable
     pub is_live: bool,
     // Authority of the presale
@@ -29,4 +31,16 @@ pub struct PresaleInfo {
     pub total_stages: u8,
     // Total amount raised in the presale
     pub total_raised: u64,
+    // Minimum tokens that need to be sold (soft cap)
+    pub min_token_amount: u64,
+    // Token price
+    pub token_price: u64,
+    // Start time of the presale
+    pub start_time: i64,
+    // End time of the presale
+    pub end_time: i64,
+    // Status of the presale
+    pub is_active: bool,
+    // Bump for PDA
+    pub bump: u8,
 }

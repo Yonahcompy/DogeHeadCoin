@@ -6,13 +6,13 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-palm_presale = "pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d"
+palm_presale = "2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo"
 
 [programs.devnet]
-palm_presale = "pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d"
+palm_presale = "2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo"
 
 [programs.mainnet]
-palm_presale = "pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d"
+palm_presale = "2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,53 +1,44 @@
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
-        token,
+        token::{self, Transfer},
         associated_token,
     },
 };
 
 use crate::errors::PresaleError;
 use crate::state::{PresaleInfo, UserInfo};
-use crate::constants::PRESALE_SEED;
 
-pub fn claim_token(
-    ctx: Context<ClaimToken>, 
-    bump: u8
-) -> Result<()> {
-
-    let presale_info = &mut ctx.accounts.presale_info;
-
-    // Check if presale is completed (all stages sold out)
-    if presale_info.current_stage < presale_info.total_stages {
-        msg!("Presale not completed yet. Current stage: {}", presale_info.current_stage);
-        return Err(PresaleError::PresaleNotEnded.into());
-    }
-
+pub fn claim_token(ctx: Context<ClaimToken>) -> Result<()> {
+    let presale_info = &ctx.accounts.presale_info;
     let user_info = &mut ctx.accounts.user_info;
-    let claim_amount = user_info.buy_token_amount;
 
-    msg!("Transferring presale tokens to buyer {}...", &ctx.accounts.buyer.key());
-    msg!("Mint: {}", &ctx.accounts.presale_token_mint_account.to_account_info().key());   
-    msg!("From Token Address: {}", &ctx.accounts.presale_presale_token_associated_token_account.key());     
-    msg!("To Token Address: {}", &ctx.accounts.buyer_presale_token_associated_token_account.key());     
-    token::transfer(
-        CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            token::Transfer {
-                from: ctx.accounts.presale_presale_token_associated_token_account.to_account_info(),
-                to: ctx.accounts.buyer_presale_token_associated_token_account.to_account_info(),
-                authority: ctx.accounts.presale_info.to_account_info(),
-            },
-            &[&[PRESALE_SEED, &[bump]][..]],
-        ),
-        claim_amount,
-    )?;
+    // Check if softcap is reached (minimum tokens sold)
+    require!(
+        presale_info.sold_token_amount >= presale_info.min_token_amount,
+        PresaleError::SoftcapNotReached
+    );
 
+    // Check if user has tokens to claim
+    require!(user_info.buy_token_amount > 0, PresaleError::NoTokensToClaim);
+
+    // Transfer tokens from vault to user
+    let transfer_ctx = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        Transfer {
+            from: ctx.accounts.presale_presale_token_associated_token_account.to_account_info(),
+            to: ctx.accounts.buyer_presale_token_associated_token_account.to_account_info(),
+            authority: ctx.accounts.presale_info.to_account_info(),
+        },
+    );
+
+    token::transfer(transfer_ctx, user_info.buy_token_amount)?;
+
+    // Update user info
     user_info.buy_token_amount = 0;
-    user_info.claim_time = u64::try_from(Clock::get()?.unix_timestamp)
-        .map_err(|_| PresaleError::MathOverflow)?;
-    msg!("All claimed presale tokens transferred successfully.");
+    user_info.claimed = true;
 
+    msg!("Claimed {} tokens", user_info.buy_token_amount);
     Ok(())
 }
 

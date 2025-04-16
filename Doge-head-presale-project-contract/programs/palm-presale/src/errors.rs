@@ -88,4 +88,13 @@ pub enum PresaleError {
 
     #[msg("Rewards have already been claimed")]
     RewardsAlreadyClaimed,
+
+    #[msg("Presale has already ended")]
+    PresaleAlreadyEnded,
+
+    #[msg("Softcap not reached")]
+    SoftcapNotReached,
+
+    #[msg("No tokens to claim")]
+    NoTokensToClaim,
 } 

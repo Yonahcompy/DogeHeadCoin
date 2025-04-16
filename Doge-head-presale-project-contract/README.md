@@ -129,18 +129,21 @@ Ensure you have the following tools installed:
 
    solana config set --keypair ./authority.json
 
+   <!-- if you want to change the contract program id -->
+   <!-- solana-keygen new -o ./target/deploy/palm_presale-keypair.json --force -->
 
 
-   if you want to extend instead of redeploying
-   solana program extend Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd 20000 -u devnet -k ./id.json
+
+   <!-- if you want to extend instead of redeploying -->
+   solana program extend 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo 20000 -u devnet -k ./authority.json
 
 
    <!-- create a buffer -->
-   solana program write-buffer target/deploy/palm_presale.so --keypair ./id.json
+   solana program write-buffer target/deploy/palm_presale.so --keypair ./authority.json
 
    <!-- upgrade using the buffer -->
 
-   solana program deploy --buffer 89QVkPPJtSD2vFtF4y4ypLURPL8wuF3NDpYArkVWiZcW --program-id pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d --keypair ./authority.json
+   solana program deploy --buffer HQeBis7Gfg4r6X9TK4UYx812GVVrUSjZDB8xYCHUwCcC --program-id 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo --keypair ./authority.json
 
 
 
@@ -162,3 +165,22 @@ spl-token create-token
 spl-token create-account 9CgvetBL3GYxiGrquTpxEqDm1AmBtLAQE1qKz7rayzMX --owner FKYFEsTodpGigfLowvTk4gSt2yK8fDjJfEWtkKYZcnsz --fee-payer token-authority.json
 spl-token mint 9CgvetBL3GYxiGrquTpxEqDm1AmBtLAQE1qKz7rayzMX 1000000000 E4NrNeqtVDSqgx1dM2LqBdh7S1izoMEYgUD3SKqtVccp --owner token-authority.json
 spl-token balance --address E4NrNeqtVDSqgx1dM2LqBdh7S1izoMEYgUD3SKqtVccp
+
+
+
+
+
+
+
+
+
+
+syntaxloom@ademolas-MacBook-Pro Doge-head-presale-project-contract % solana program show 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo                                            solana program show 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo
+
+Program Id: 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo
+Owner: BPFLoaderUpgradeab1e11111111111111111111111
+ProgramData Address: 39XkCx9TdYzyD36E2A7LWA6FsbMf7RYpxyoWUZkqLKr2
+Authority: AyWCnEbpDdVdsweK6MfnML5FpTLQpXAzSin7b7DJnwq3
+Last Deployed In Slot: 374636223
+Data Length: 421080 (0x66cd8) bytes
+Balance: 2.93192088 SOL
