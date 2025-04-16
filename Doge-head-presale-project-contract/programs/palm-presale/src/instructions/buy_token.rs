@@ -63,7 +63,7 @@ pub fn buy_token(
     }
 
     // limit the presale to hardcap
-    if presale_info.is_hard_capped == true {
+    if presale_info.is_hard_capped {
         return Err(PresaleError::HardCapped.into())
     }
     
@@ -116,6 +116,21 @@ pub fn buy_token(
             referrer_info.to_account_info().key(), referrer_reward);
     }
     
+    // Calculate new total after this purchase
+    let new_total = presale_info.total_raised
+        .checked_add(quote_amount)
+        .ok_or(PresaleError::MathOverflow)?;
+
+    // Check hardcap before processing
+    if new_total > presale_info.hardcap_amount {
+        return Err(PresaleError::HardCapped.into());
+    }
+
+    // Optional: Add softcap validation if you want to stop purchases after softcap
+    if presale_info.is_soft_capped {
+        return Err(PresaleError::PresaleEnded.into());
+    }
+
     // Transfer SOL to presale vault
     let transfer_amount = quote_amount.checked_sub(referee_reward)
         .ok_or(PresaleError::MathOverflow)?;
@@ -146,6 +161,21 @@ pub fn buy_token(
         .ok_or(PresaleError::MathOverflow)?;
     user_info.buy_time = cur_timestamp;
     
+    // Update total raised amount
+    presale_info.total_raised = new_total;
+
+    // Check softcap status
+    if !presale_info.is_soft_capped && presale_info.total_raised >= presale_info.softcap_amount {
+        presale_info.is_soft_capped = true;
+        msg!("Presale is softcapped");
+    }
+
+    // Check hardcap status
+    if !presale_info.is_hard_capped && presale_info.total_raised >= presale_info.hardcap_amount {
+        presale_info.is_hard_capped = true;
+        msg!("Presale is hardcapped");
+    }
+    
     // Check if current stage is sold out
     if presale_stage.tokens_sold >= presale_stage.available_tokens {
         presale_stage.is_active = false;
@@ -161,18 +191,6 @@ pub fn buy_token(
             presale_info.is_live = false;
             msg!("All stages completed. Presale is now finished.");
         }
-    }
-    
-    // Check softcap status
-    if presale_vault.get_lamports() > presale_info.softcap_amount {
-        presale_info.is_soft_capped = true;
-        msg!("Presale is softcapped");
-    }
-    
-    // Check hardcap status
-    if presale_vault.get_lamports() > presale_info.hardcap_amount {
-        presale_info.is_hard_capped = true;
-        msg!("Presale is hardcapped");
     }
 
     Ok(())

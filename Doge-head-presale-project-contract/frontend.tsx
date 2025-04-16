@@ -39,7 +39,7 @@ import type { PalmPresale } from "../palm_presale"
 import idl from "../palm_presale.json"
 
 // Constants
-const programID = new PublicKey("FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt")
+const programID = new PublicKey("pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d")
 const PRESALE_SEED = Buffer.from("PRESALE_SEED")
 const TOKEN_MINT_ADDRESS = new PublicKey("GK9VY5LN7sR4YesmnGitkq2VnYXd4vXE5wCsQ81ySXf2")
 const USER_SEED = Buffer.from("USER_SEED")

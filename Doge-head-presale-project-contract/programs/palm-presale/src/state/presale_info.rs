@@ -27,4 +27,6 @@ pub struct PresaleInfo {
     pub current_stage: u8,
     // Total number of stages in the presale
     pub total_stages: u8,
+    // Total amount raised in the presale
+    pub total_raised: u64,
 }

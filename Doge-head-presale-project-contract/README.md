@@ -125,6 +125,12 @@ Ensure you have the following tools installed:
 
 
 
+   solana-keygen pubkey ./target/deploy/palm_presale-keypair.json
+
+   solana config set --keypair ./authority.json
+
+
+
    if you want to extend instead of redeploying
    solana program extend Bxa17nCo2DYSy9FBVnugR2GeU4kGJ1tPPSxhWWzLBHDd 20000 -u devnet -k ./id.json
 
@@ -134,7 +140,7 @@ Ensure you have the following tools installed:
 
    <!-- upgrade using the buffer -->
 
-   solana program deploy --buffer 89QVkPPJtSD2vFtF4y4ypLURPL8wuF3NDpYArkVWiZcW --program-id FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt --keypair ./authority.json
+   solana program deploy --buffer 89QVkPPJtSD2vFtF4y4ypLURPL8wuF3NDpYArkVWiZcW --program-id pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d --keypair ./authority.json
 
 
 

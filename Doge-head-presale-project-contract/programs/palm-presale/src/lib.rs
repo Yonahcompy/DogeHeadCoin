@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("FLcLf1cpMm2ZVFVe86wUZsp17oeEQnz4mSjf44a8kxNt");
+declare_id!("pwAgoH5KjYmH1N8EbHBDwjovNm99de6YAW7TRoRRs5d");
 
 pub const TOKEN_MINT_ADDRESS: &str = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV";
 
