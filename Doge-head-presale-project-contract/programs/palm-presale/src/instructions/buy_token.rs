@@ -9,11 +9,11 @@ use {
 use solana_program::clock::Clock;
 
 use crate::state::PresaleInfo;
-use crate::state::PresaleStage;
 use crate::state::UserInfo;
 use crate::state::ReferralInfo;
 use crate::constants::{REFERRER_REWARD_BPS, REFEREE_REWARD_BPS, BPS_DENOMINATOR};
 use crate::errors::PresaleError;
+use crate::state::TransactionHistory;
 
 pub fn buy_token(
     ctx: Context<BuyToken>,
@@ -31,42 +31,10 @@ pub fn buy_token(
         return Err(PresaleError::PresaleNotStarted.into());
     }
 
-    // Get the current active stage
-    let stage_number = presale_info.current_stage;
-    if stage_number == 0 {
-        return Err(PresaleError::PresaleNotStarted.into());
-    }
-
-    // Check if the stage is active
-    let presale_stage = &mut ctx.accounts.presale_stage;
-    if !presale_stage.is_active {
-        return Err(PresaleError::StageNotActive.into());
-    }
-
-    // Calculate token amount based on quote amount and stage price
+    // Calculate token amount based on quote amount and price
     let token_amount = quote_amount
-        .checked_div(presale_stage.price_per_token)
+        .checked_div(presale_info.token_price)
         .ok_or(PresaleError::MathOverflow)?;
-
-    // compare the rest tokens in the stage with the token_amount
-    if token_amount > presale_stage.available_tokens - presale_stage.tokens_sold {
-        msg!("token amount: {}", token_amount);
-        msg!("rest token amount in stage: {}", presale_stage.available_tokens - presale_stage.tokens_sold);
-        return Err(PresaleError::InsufficientFund.into())
-    }
-
-    // limit the token_amount per address
-    if presale_info.max_token_amount_per_address < (user_info.buy_token_amount + token_amount) {
-        msg!("max token amount per address: {}", presale_info.max_token_amount_per_address);
-        msg!("token amount to buy: {}", user_info.buy_token_amount + token_amount);
-        return Err(PresaleError::InsufficientFund.into())
-    }
-
-    // Check if the total tokens sold would exceed the maximum token amount
-    if presale_info.sold_token_amount.checked_add(token_amount).unwrap_or(u64::MAX) > presale_info.max_token_amount {
-        msg!("Maximum token amount reached: {}", presale_info.max_token_amount);
-        return Err(PresaleError::HardCapped.into())
-    }
     
     // Handle referral if provided
     let mut referee_reward = 0;
@@ -136,10 +104,6 @@ pub fn buy_token(
         ),
         transfer_amount,
     )?;
-    
-    // Update presale stage
-    presale_stage.tokens_sold = presale_stage.tokens_sold.checked_add(token_amount)
-        .ok_or(PresaleError::MathOverflow)?;
         
     // Update presale info
     presale_info.total_raised = new_total;
@@ -147,35 +111,23 @@ pub fn buy_token(
         .checked_add(token_amount)
         .ok_or(PresaleError::MathOverflow)?;
     
-    // Check if we've reached the hard cap (token-based)
-    if presale_info.sold_token_amount >= presale_info.max_token_amount {
-        presale_info.is_hard_capped = true;
-        msg!("Hard cap reached! No more tokens available for sale.");
-    }
-    
     // Update user info
     user_info.buy_token_amount = user_info.buy_token_amount.checked_add(token_amount)
         .ok_or(PresaleError::MathOverflow)?;
     user_info.buy_quote_amount = user_info.buy_quote_amount.checked_add(quote_amount)
         .ok_or(PresaleError::MathOverflow)?;
     user_info.buy_time = cur_timestamp;
-    
-    // Check if current stage is sold out
-    if presale_stage.tokens_sold >= presale_stage.available_tokens {
-        presale_stage.is_active = false;
-        
-        // If there are more stages, activate the next one
-        if presale_info.current_stage < presale_info.total_stages {
-            presale_info.current_stage = presale_info.current_stage.checked_add(1)
-                .ok_or(PresaleError::MathOverflow)?;
-            msg!("Stage {} sold out. Activating stage {}", 
-                stage_number, presale_info.current_stage);
-        } else {
-            // All stages completed
-            presale_info.is_live = false;
-            msg!("All stages completed. Presale is now finished.");
-        }
-    }
+
+    // Record transaction
+    let transaction = &mut ctx.accounts.transaction_history;
+    transaction.buyer = ctx.accounts.buyer.key();
+    transaction.payer = ctx.accounts.buyer.key();
+    transaction.payment_amount = quote_amount;
+    transaction.token_amount = token_amount;
+    transaction.timestamp = Clock::get()?.unix_timestamp;
+    transaction.referral_code = referrer_address;
+    transaction.pay_with = "SOL".to_string();
+    transaction.used_referral = referrer_address.is_some();
 
     Ok(())
 }
@@ -192,13 +144,6 @@ pub struct BuyToken<'info> {
 
     /// CHECK: This is not dangerous
     pub presale_authority: AccountInfo<'info>,
-    
-    #[account(
-        mut,
-        seeds = [b"STAGE_SEED", &[presale_info.current_stage]],
-        bump
-    )]
-    pub presale_stage: Box<Account<'info, PresaleStage>>,
 
     #[account(
         init_if_needed,
@@ -231,4 +176,13 @@ pub struct BuyToken<'info> {
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,
     pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
+
+    #[account(
+        init,
+        payer = buyer,
+        space = 8 + std::mem::size_of::<TransactionHistory>(),
+        seeds = [b"TRANSACTION", buyer.key().as_ref(), &[Clock::get()?.unix_timestamp as u8]],
+        bump
+    )]
+    pub transaction_history: Account<'info, TransactionHistory>,
 }

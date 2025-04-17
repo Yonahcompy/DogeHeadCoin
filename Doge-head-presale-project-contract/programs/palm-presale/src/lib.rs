@@ -10,6 +10,7 @@ pub mod instructions;
 pub mod state;
 
 use instructions::*;
+use state::TransactionHistory;
 
 #[program]
 pub mod palm_presale {
@@ -111,5 +112,18 @@ pub mod palm_presale {
         return get_referral_stats::get_referral_stats (
             ctx,
         );
+    }
+
+    pub fn get_transaction_history(
+        ctx: Context<GetTransactionHistory>,
+        buyer: Pubkey,
+    ) -> Result<Vec<TransactionHistory>> {
+        return get_transaction_history::get_transaction_history(ctx, buyer);
+    }
+
+    pub fn get_all_transactions(
+        ctx: Context<GetAllTransactions>,
+    ) -> Result<Vec<TransactionHistory>> {
+        return get_all_transactions::get_all_transactions(ctx);
     }
 }

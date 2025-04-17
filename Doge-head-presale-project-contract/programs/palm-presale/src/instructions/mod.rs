@@ -8,6 +8,8 @@ pub mod withdraw_token;
 pub mod create_referral;
 pub mod claim_referral_rewards;
 pub mod get_referral_stats;
+pub mod get_transaction_history;
+pub mod get_all_transactions;
 
 pub use initialize::*;
 pub use initialize_stage::*;
@@ -19,3 +21,5 @@ pub use withdraw_token::*;
 pub use create_referral::*;
 pub use claim_referral_rewards::*;
 pub use get_referral_stats::*;
+pub use get_transaction_history::*;
+pub use get_all_transactions::*;

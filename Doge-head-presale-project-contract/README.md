@@ -184,3 +184,79 @@ Authority: AyWCnEbpDdVdsweK6MfnML5FpTLQpXAzSin7b7DJnwq3
 Last Deployed In Slot: 374636223
 Data Length: 421080 (0x66cd8) bytes
 Balance: 2.93192088 SOL
+
+
+
+
+
+
+User -> Payment (SOL/ETH/MATIC) 
+        -> Payment Verification (Express.js)
+        -> Purchase Record (On-chain + Database)
+        -> Referral Processing
+        -> Token Claim (Solana Contract)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I'm building a cross-chain presale system for my SPL token with the following requirements:
+
+1. Primary Contract (Solana):
+- SPL token distribution
+- Accepts SOL payments
+- Tracks transaction history on-chain
+- Handles token claims
+- Manages referral system
+
+2. Secondary Contracts (EVM - Base & Polygon):
+- Accept ETH and MATIC payments
+- Track transaction history on-chain
+- Integrate with referral system
+- Link payments to Solana addresses
+
+3. Key Features:
+- Users can pay with SOL, ETH, or MATIC
+- All transaction history stored on-chain
+- Cross-chain referral tracking
+- SPL tokens always distributed on Solana
+- Need functions to query transaction history from both chains
+
+4. Technical Requirements:
+- Solana contract in Rust using Anchor
+- EVM contracts in Solidity
+- Cross-chain payment verification
+- Transaction history tracking on both chains
+- Address mapping between chains
+
+Please provide:
+1. Detailed contract structures
+2. Key functions for payment processing
+3. Transaction history tracking implementation
+4. Cross-chain verification mechanism
+5. Referral system integration
+6. Query functions for transaction history
+
+Focus on security, efficiency, and proper cross-chain coordination.
