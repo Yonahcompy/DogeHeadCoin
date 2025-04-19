@@ -6,7 +6,7 @@ This smart contract manages the presale for Doge Head tokens on Solana. It inclu
 
 The presale is designed with 5 stages:
 
-| Stage | Available Tokens | Price Per Token (sol) | Total Sale |
+| Stage | Available Tokens | Price Per Token ($) | Total Sale |
 |-------|-----------------|----------------|------------|
 | 1     | 750,000,000     | 0.0001         |            |
 | 2     | 600,000,000     | 0.00033        |            |
