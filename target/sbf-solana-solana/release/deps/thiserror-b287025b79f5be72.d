@@ -1,0 +1,10 @@
+/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/target/sbf-solana-solana/release/deps/libthiserror-b287025b79f5be72.rmeta: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/target/sbf-solana-solana/release/deps/libthiserror-b287025b79f5be72.rlib: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/target/sbf-solana-solana/release/deps/thiserror-b287025b79f5be72.d: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs:

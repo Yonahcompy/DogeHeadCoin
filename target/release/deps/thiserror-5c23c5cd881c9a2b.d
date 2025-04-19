@@ -1,0 +1,10 @@
+/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/target/release/deps/libthiserror-5c23c5cd881c9a2b.rmeta: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/target/release/deps/libthiserror-5c23c5cd881c9a2b.rlib: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/target/release/deps/thiserror-5c23c5cd881c9a2b.d: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs:
