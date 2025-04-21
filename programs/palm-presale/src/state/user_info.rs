@@ -23,4 +23,7 @@ pub struct UserInfo {
     pub referral_rewards_earned: u64,
     // Total rewards claimed from referring others
     pub referral_rewards_claimed: u64,
+    pub user: Pubkey,
+    pub total_contributed: u64,
+    pub token_amount: u64,
 }

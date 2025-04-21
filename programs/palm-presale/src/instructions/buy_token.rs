@@ -14,6 +14,7 @@ use crate::state::ReferralInfo;
 use crate::constants::{REFERRER_REWARD_BPS, REFEREE_REWARD_BPS, BPS_DENOMINATOR};
 use crate::errors::PresaleError;
 use crate::state::TransactionHistory;
+use crate::price_feed::{validate_price_feed, get_sol_price};
 
 pub fn buy_token(
     ctx: Context<BuyToken>,
@@ -31,10 +32,14 @@ pub fn buy_token(
         return Err(PresaleError::PresaleNotStarted.into());
     }
 
-    // Calculate token amount based on quote amount and price
-    let token_amount = quote_amount
-        .checked_div(presale_info.token_price)
-        .ok_or(PresaleError::MathOverflow)?;
+    // Validate price feed
+    validate_price_feed(&ctx.accounts.price_feed)?;
+
+    // Get current price from price feed
+    let current_price = get_sol_price(&ctx.accounts.price_feed)?;
+
+    // Calculate token amount based on quote amount and current price
+    let token_amount = (quote_amount as f64 / current_price * 1_000_000.0) as u64;
     
     // Handle referral if provided
     let mut referee_reward = 0;
@@ -110,6 +115,9 @@ pub fn buy_token(
     presale_info.sold_token_amount = presale_info.sold_token_amount
         .checked_add(token_amount)
         .ok_or(PresaleError::MathOverflow)?;
+    presale_info.tokens_sold = presale_info.tokens_sold
+        .checked_add(token_amount)
+        .ok_or(PresaleError::MathOverflow)?;
     
     // Update user info
     user_info.buy_token_amount = user_info.buy_token_amount.checked_add(token_amount)
@@ -117,17 +125,20 @@ pub fn buy_token(
     user_info.buy_quote_amount = user_info.buy_quote_amount.checked_add(quote_amount)
         .ok_or(PresaleError::MathOverflow)?;
     user_info.buy_time = cur_timestamp;
+    user_info.total_contributed = user_info.total_contributed.checked_add(quote_amount)
+        .ok_or(PresaleError::MathOverflow)?;
+    user_info.token_amount = user_info.token_amount.checked_add(token_amount)
+        .ok_or(PresaleError::MathOverflow)?;
 
-    // Record transaction
-    let transaction = &mut ctx.accounts.transaction_history;
-    transaction.buyer = ctx.accounts.buyer.key();
-    transaction.payer = ctx.accounts.buyer.key();
-    transaction.payment_amount = quote_amount;
-    transaction.token_amount = token_amount;
-    transaction.timestamp = Clock::get()?.unix_timestamp;
-    transaction.referral_code = referrer_address;
-    transaction.pay_with = "SOL".to_string();
-    transaction.used_referral = referrer_address.is_some();
+    // Record transaction history
+    let transaction_history = &mut ctx.accounts.transaction_history;
+    transaction_history.buyer = ctx.accounts.buyer.key();
+    transaction_history.usd_amount = quote_amount;
+    transaction_history.token_amount = token_amount;
+    transaction_history.timestamp = Clock::get()?.unix_timestamp;
+    transaction_history.chain = "SOL".to_string();
+    transaction_history.native_amount = Some(quote_amount);
+    transaction_history.oracle = None;
 
     Ok(())
 }
@@ -172,6 +183,9 @@ pub struct BuyToken<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
     
+    /// CHECK: This is the price feed account from Pyth
+    pub price_feed: AccountInfo<'info>,
+    
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,
@@ -180,7 +194,7 @@ pub struct BuyToken<'info> {
     #[account(
         init,
         payer = buyer,
-        space = 8 + std::mem::size_of::<TransactionHistory>(),
+        space = TransactionHistory::LEN,
         seeds = [b"TRANSACTION", buyer.key().as_ref(), &[Clock::get()?.unix_timestamp as u8]],
         bump
     )]

@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token::{Token, TokenAccount};
 
-declare_id!("2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo");
+declare_id!("7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU");
 
 pub const TOKEN_MINT_ADDRESS: &str = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV";
 
@@ -8,9 +9,12 @@ pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
+pub mod price_feed;
 
 use instructions::*;
 use state::TransactionHistory;
+use state::PresaleInfo;
+use state::UserInfo;
 
 #[program]
 pub mod palm_presale {
@@ -18,24 +22,20 @@ pub mod palm_presale {
 
     pub fn initialize(
         ctx: Context<Initialize>,
-        token_mint: Pubkey,
+        token_mint_address: Pubkey,
         softcap_amount: u64,
         hardcap_amount: u64,
         max_token_amount_per_address: u64,
         token_price: u64,
-        start_time: i64,
-        end_time: i64,
     ) -> Result<()> {
-        return initialize::initialize(
+        instructions::initialize::initialize(
             ctx,
-            token_mint,
+            token_mint_address,
             softcap_amount,
             hardcap_amount,
             max_token_amount_per_address,
             token_price,
-            start_time,
-            end_time,
-        );
+        )
     }
 
     pub fn initialize_stage(
@@ -121,9 +121,48 @@ pub mod palm_presale {
         return get_transaction_history::get_transaction_history(ctx, buyer);
     }
 
-    pub fn get_all_transactions(
-        ctx: Context<GetAllTransactions>,
-    ) -> Result<Vec<TransactionHistory>> {
-        return get_all_transactions::get_all_transactions(ctx);
+    pub fn get_all_transactions(ctx: Context<GetAllTransactions>) -> Result<Vec<TransactionHistory>> {
+        instructions::get_all_transactions::get_all_transactions(ctx)
     }
+
+    pub fn set_authorized_updater(ctx: Context<SetAuthorizedUpdater>, new_updater: Pubkey) -> Result<()> {
+        instructions::set_authorized_updater::set_authorized_updater(ctx, new_updater)
+    }
+
+    pub fn update_user_allocation(
+        ctx: Context<UpdateUserAllocation>,
+        solana_wallet: Pubkey,
+        usd_amount: u64,
+        referrer: Option<Pubkey>,
+    ) -> Result<()> {
+        instructions::update_user_allocation::update_user_allocation(ctx, solana_wallet, usd_amount, referrer)
+    }
+}
+
+#[derive(Accounts)]
+pub struct InitializePresale<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        init,
+        payer = authority,
+        space = PresaleInfo::LEN
+    )]
+    pub presale_info: Account<'info, PresaleInfo>,
+
+    #[account(
+        init,
+        payer = authority,
+        token::mint = token_mint,
+        token::authority = presale_info,
+    )]
+    pub presale_token_account: Account<'info, TokenAccount>,
+
+    /// CHECK: This is the token mint for the presale
+    pub token_mint: AccountInfo<'info>,
+
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
+    pub rent: Sysvar<'info, Rent>,
 }

@@ -35,12 +35,40 @@ pub struct PresaleInfo {
     pub min_token_amount: u64,
     // Token price
     pub token_price: u64,
-    // Start time of the presale
-    pub start_time: i64,
-    // End time of the presale
-    pub end_time: i64,
     // Status of the presale
     pub is_active: bool,
     // Bump for PDA
     pub bump: u8,
+    // Add this new field
+    pub authorized_updater: Pubkey,
+    // New field
+    pub tokens_sold: u64,
+}
+
+impl PresaleInfo {
+    pub const LEN: usize = 8 + // discriminator
+        32 + // token_mint_address
+        8 + // softcap_amount
+        8 + // hardcap_amount
+        8 + // deposit_token_amount
+        8 + // sold_token_amount
+        8 + // max_token_amount_per_address
+        8 + // max_token_amount
+        1 + // is_live
+        32 + // authority
+        1 + // is_soft_capped
+        1 + // is_hard_capped
+        1 + // current_stage
+        1 + // total_stages
+        8 + // total_raised
+        8 + // min_token_amount
+        8 + // token_price
+        1 + // is_active
+        1 + // bump
+        32 + // authorized_updater
+        8; // tokens_sold
+
+    pub fn is_live(&self) -> bool {
+        self.is_live && self.is_active
+    }
 }

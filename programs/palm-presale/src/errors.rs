@@ -2,6 +2,27 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum PresaleError {
+    #[msg("The presale has not started yet")]
+    PresaleNotStarted,
+    
+    #[msg("The presale has already ended")]
+    PresaleNotEnded,
+    
+    #[msg("The presale is not live")]
+    PresaleNotLive,
+    
+    #[msg("Invalid Solana wallet address")]
+    InvalidSolanaWallet,
+    
+    #[msg("Self referral is not allowed")]
+    SelfReferralNotAllowed,
+    
+    #[msg("Unauthorized updater")]
+    UnauthorizedUpdater,
+    
+    #[msg("Arithmetic overflow")]
+    Overflow,
+    
     #[msg("Invalid authority")]
     InvalidAuthority,
     
@@ -59,14 +80,8 @@ pub enum PresaleError {
     #[msg("Self referral not allowed")]
     SelfReferral,
     
-    #[msg("Presale not started")]
-    PresaleNotStarted,
-    
     #[msg("Presale ended")]
     PresaleEnded,
-    
-    #[msg("Presale not ended")]
-    PresaleNotEnded,
     
     #[msg("Insufficient funds")]
     InsufficientFund,
@@ -97,4 +112,10 @@ pub enum PresaleError {
 
     #[msg("No tokens to claim")]
     NoTokensToClaim,
+
+    #[msg("Invalid referrer")]
+    InvalidReferrer,
+
+    #[msg("Invalid price feed")]
+    InvalidPriceFeed,
 } 

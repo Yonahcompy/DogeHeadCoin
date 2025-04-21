@@ -10,6 +10,8 @@ pub mod claim_referral_rewards;
 pub mod get_referral_stats;
 pub mod get_transaction_history;
 pub mod get_all_transactions;
+pub mod update_user_allocation;
+pub mod set_authorized_updater;
 
 pub use initialize::*;
 pub use initialize_stage::*;
@@ -23,3 +25,5 @@ pub use claim_referral_rewards::*;
 pub use get_referral_stats::*;
 pub use get_transaction_history::*;
 pub use get_all_transactions::*;
+pub use update_user_allocation::*;
+pub use set_authorized_updater::*;

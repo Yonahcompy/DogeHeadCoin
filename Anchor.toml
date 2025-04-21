@@ -6,20 +6,20 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-palm_presale = "2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo"
+palm_presale = "7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU"
 
 [programs.devnet]
-palm_presale = "2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo"
+palm_presale = "7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU"
 
 [programs.mainnet]
-palm_presale = "2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo"
+palm_presale = "7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
-wallet = "/Users/syntaxloom/Desktop/doge-head-contract/Doge-head-presale-project-contract/authority.json"
+cluster = "devnet"
+wallet = "authority.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

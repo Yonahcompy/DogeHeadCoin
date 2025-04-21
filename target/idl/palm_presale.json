@@ -40,7 +40,7 @@
       ],
       "args": [
         {
-          "name": "tokenMint",
+          "name": "tokenMintAddress",
           "type": "publicKey"
         },
         {
@@ -58,14 +58,6 @@
         {
           "name": "tokenPrice",
           "type": "u64"
-        },
-        {
-          "name": "startTime",
-          "type": "i64"
-        },
-        {
-          "name": "endTime",
-          "type": "i64"
         }
       ]
     },
@@ -197,6 +189,11 @@
           "name": "buyer",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "priceFeed",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "rent",
@@ -497,6 +494,106 @@
           "defined": "TransactionHistory"
         }
       }
+    },
+    {
+      "name": "setAuthorizedUpdater",
+      "accounts": [
+        {
+          "name": "presaleInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newUpdater",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateUserAllocation",
+      "accounts": [
+        {
+          "name": "presaleInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "currentStage",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "referrerInfo",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "Referrer info account - optional but required if referrer is provided"
+          ]
+        },
+        {
+          "name": "updater",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "transactionHistory",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "solanaWallet",
+          "type": "publicKey"
+        },
+        {
+          "name": "usdAmount",
+          "type": "u64"
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -570,20 +667,20 @@
             "type": "u64"
           },
           {
-            "name": "startTime",
-            "type": "i64"
-          },
-          {
-            "name": "endTime",
-            "type": "i64"
-          },
-          {
             "name": "isActive",
             "type": "bool"
           },
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "authorizedUpdater",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokensSold",
+            "type": "u64"
           }
         ]
       }
@@ -654,7 +751,7 @@
             "type": "publicKey"
           },
           {
-            "name": "paymentAmount",
+            "name": "usdAmount",
             "type": "u64"
           },
           {
@@ -666,7 +763,17 @@
             "type": "i64"
           },
           {
-            "name": "referralCode",
+            "name": "chain",
+            "type": "string"
+          },
+          {
+            "name": "nativeAmount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "oracle",
             "type": {
               "option": "publicKey"
             }
@@ -722,6 +829,18 @@
           {
             "name": "referralRewardsClaimed",
             "type": "u64"
+          },
+          {
+            "name": "user",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalContributed",
+            "type": "u64"
+          },
+          {
+            "name": "tokenAmount",
+            "type": "u64"
           }
         ]
       }
@@ -741,168 +860,220 @@
           }
         ]
       }
+    },
+    {
+      "name": "ErrorCode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InvalidPriceFeed"
+          },
+          {
+            "name": "StalePriceFeed"
+          }
+        ]
+      }
     }
   ],
   "errors": [
     {
       "code": 6000,
+      "name": "PresaleNotStarted",
+      "msg": "The presale has not started yet"
+    },
+    {
+      "code": 6001,
+      "name": "PresaleNotEnded",
+      "msg": "The presale has already ended"
+    },
+    {
+      "code": 6002,
+      "name": "PresaleNotLive",
+      "msg": "The presale is not live"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidSolanaWallet",
+      "msg": "Invalid Solana wallet address"
+    },
+    {
+      "code": 6004,
+      "name": "SelfReferralNotAllowed",
+      "msg": "Self referral is not allowed"
+    },
+    {
+      "code": 6005,
+      "name": "UnauthorizedUpdater",
+      "msg": "Unauthorized updater"
+    },
+    {
+      "code": 6006,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6007,
       "name": "InvalidAuthority",
       "msg": "Invalid authority"
     },
     {
-      "code": 6001,
+      "code": 6008,
       "name": "InvalidStageNumber",
       "msg": "Invalid stage number"
     },
     {
-      "code": 6002,
+      "code": 6009,
       "name": "StageNotActive",
       "msg": "Stage not active"
     },
     {
-      "code": 6003,
+      "code": 6010,
       "name": "StageAlreadyActive",
       "msg": "Stage already active"
     },
     {
-      "code": 6004,
+      "code": 6011,
       "name": "PreviousStageNotCompleted",
       "msg": "Previous stage not completed"
     },
     {
-      "code": 6005,
+      "code": 6012,
       "name": "PreviousStageNotSoldOut",
       "msg": "Previous stage not sold out"
     },
     {
-      "code": 6006,
+      "code": 6013,
       "name": "PreviousStageRequired",
       "msg": "Previous stage required"
     },
     {
-      "code": 6007,
+      "code": 6014,
       "name": "StageNotStarted",
       "msg": "Stage not started"
     },
     {
-      "code": 6008,
+      "code": 6015,
       "name": "StageEnded",
       "msg": "Stage ended"
     },
     {
-      "code": 6009,
+      "code": 6016,
       "name": "InvalidAmount",
       "msg": "Invalid amount"
     },
     {
-      "code": 6010,
+      "code": 6017,
       "name": "PresaleAlreadyStarted",
       "msg": "Presale already started"
     },
     {
-      "code": 6011,
+      "code": 6018,
       "name": "InvalidTokenMint",
       "msg": "Invalid token mint"
     },
     {
-      "code": 6012,
+      "code": 6019,
       "name": "InvalidPresaleTokenAccount",
       "msg": "Invalid presale token account"
     },
     {
-      "code": 6013,
+      "code": 6020,
       "name": "InvalidTokenAccountOwner",
       "msg": "Invalid token account owner"
     },
     {
-      "code": 6014,
+      "code": 6021,
       "name": "InsufficientTokenBalance",
       "msg": "Insufficient token balance"
     },
     {
-      "code": 6015,
+      "code": 6022,
       "name": "MathOverflow",
       "msg": "Math overflow"
     },
     {
-      "code": 6016,
+      "code": 6023,
       "name": "ReferralAlreadyExists",
       "msg": "Referral already exists"
     },
     {
-      "code": 6017,
+      "code": 6024,
       "name": "InvalidReferralCode",
       "msg": "Invalid referral code"
     },
     {
-      "code": 6018,
+      "code": 6025,
       "name": "SelfReferral",
       "msg": "Self referral not allowed"
     },
     {
-      "code": 6019,
-      "name": "PresaleNotStarted",
-      "msg": "Presale not started"
-    },
-    {
-      "code": 6020,
+      "code": 6026,
       "name": "PresaleEnded",
       "msg": "Presale ended"
     },
     {
-      "code": 6021,
-      "name": "PresaleNotEnded",
-      "msg": "Presale not ended"
-    },
-    {
-      "code": 6022,
+      "code": 6027,
       "name": "InsufficientFund",
       "msg": "Insufficient funds"
     },
     {
-      "code": 6023,
+      "code": 6028,
       "name": "HardCapped",
       "msg": "Hard capped"
     },
     {
-      "code": 6024,
+      "code": 6029,
       "name": "TokenAmountMismatch",
       "msg": "Token amount mismatch"
     },
     {
-      "code": 6025,
+      "code": 6030,
       "name": "InvalidTimeSettings",
       "msg": "Invalid time settings"
     },
     {
-      "code": 6026,
+      "code": 6031,
       "name": "Unauthorized",
       "msg": "Unauthorized access"
     },
     {
-      "code": 6027,
+      "code": 6032,
       "name": "NoReferralRewards",
       "msg": "No referral rewards available"
     },
     {
-      "code": 6028,
+      "code": 6033,
       "name": "RewardsAlreadyClaimed",
       "msg": "Rewards have already been claimed"
     },
     {
-      "code": 6029,
+      "code": 6034,
       "name": "PresaleAlreadyEnded",
       "msg": "Presale has already ended"
     },
     {
-      "code": 6030,
+      "code": 6035,
       "name": "SoftcapNotReached",
       "msg": "Softcap not reached"
     },
     {
-      "code": 6031,
+      "code": 6036,
       "name": "NoTokensToClaim",
       "msg": "No tokens to claim"
+    },
+    {
+      "code": 6037,
+      "name": "InvalidReferrer",
+      "msg": "Invalid referrer"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidPriceFeed",
+      "msg": "Invalid price feed"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU"
+  }
 }

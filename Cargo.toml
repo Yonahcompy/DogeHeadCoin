@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "programs/*"
-]
+, "test-events"]
 
 [profile.release]
 overflow-checks = true

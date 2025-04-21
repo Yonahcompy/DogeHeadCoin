@@ -11,8 +11,6 @@ pub fn initialize(
     hardcap_amount: u64,
     max_token_amount_per_address: u64,
     token_price: u64,
-    start_time: i64,
-    end_time: i64,
 ) -> Result<()> {
     let presale_info = &mut ctx.accounts.presale_info;
     let authority = &ctx.accounts.authority;
@@ -34,8 +32,6 @@ pub fn initialize(
     presale_info.total_raised = 0;
     presale_info.min_token_amount = 1_000_000_000; // 1 billion tokens minimum (soft cap)
     presale_info.token_price = token_price;
-    presale_info.start_time = start_time;
-    presale_info.end_time = end_time;
     presale_info.is_active = true;
     presale_info.bump = ctx.bumps.presale_info;
 
@@ -62,8 +58,6 @@ pub fn initialize(
     hardcap_amount: u64,
     max_token_amount_per_address: u64,
     token_price: u64,
-    start_time: i64,
-    end_time: i64,
 )]
 pub struct Initialize<'info> {
     #[account(
