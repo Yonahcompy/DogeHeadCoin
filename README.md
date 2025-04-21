@@ -93,78 +93,94 @@ Happy deploying! 🚀
 
 # DogeHead Payment Bridge
 
-This project implements a payment bridge for the DogeHead presale on BSC (Binance Smart Chain). It allows users to purchase tokens using BNB, with the tokens being distributed to a Solana wallet address.
+A smart contract for handling BNB payments for DogeHead presale and recording Solana wallet addresses.
 
 ## Features
 
-- Staged presale system with different token prices and available amounts
-- BNB to USD conversion using Chainlink price feeds
-- Referral system with rewards
-- Transaction tracking by Solana wallet address
-- Automatic stage progression when tokens are sold out
+- Accept BNB payments for token presale
+- Record Solana wallet addresses for token distribution
+- Real-time BNB/USD price conversion using Chainlink price feeds
+- Admin controls for treasury wallet and price feed updates
+- Transaction history tracking per Solana wallet
 
-## Prerequisites
-
-- Node.js (v16 or later recommended)
-- npm or yarn
-- BSC wallet with BNB for deployment and testing
-- BSCScan API key for contract verification
-
-## Installation
+## Setup
 
 1. Clone the repository
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
-3. Create a `.env` file with the following variables:
+3. Copy `.env.example` to `.env` and fill in your values:
+   ```bash
+   cp .env.example .env
    ```
-   PRIVATE_KEY=your_private_key
-   BSC_TESTNET_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545/
-   BSC_TESTNET_CHAIN_ID=97
-   BSCSCAN_API_KEY=your_bscscan_api_key
-   ```
+4. Edit `.env` with your:
+   - Private key for deployment
+   - BSCScan API key for contract verification
+   - BSC RPC URLs (if using different ones)
 
 ## Deployment
 
-To deploy the contract to BSC Testnet:
+To deploy to BSC Testnet:
 
-```
+```bash
 npx hardhat run scripts/deploy.js --network bscTestnet
 ```
 
-This will deploy the contract and verify it on BSCScan. The script will output the contract address, which you'll need for interacting with the contract.
+After deployment:
+1. Save the contract address
+2. Add it to your `.env` file as `CONTRACT_ADDRESS`
+3. Verify the contract on BSCScan (automatic if BSCScan API key is set)
 
-## Buying Tokens
+## Usage
 
-To buy tokens from the contract:
+### Making a Purchase
 
-```
+To test buying tokens:
+
+```bash
 npx hardhat run scripts/buy-tokens.js --network bscTestnet
 ```
 
-You can also specify the contract address as an argument:
+Before running, edit `scripts/buy-tokens.js` to set:
+- Your Solana wallet address
+- Desired purchase amount in USD
 
+### Contract Functions
+
+#### For Users
+- `purchaseWithUSDAmount(uint256 dollarAmount, string solanaWallet)`: Buy tokens with a specified USD amount
+- `getQuote(uint256 dollarAmount)`: Get required BNB amount for a USD purchase
+- `getTransactionsBySolanaWallet(string solanaWallet)`: View all transactions for a Solana wallet
+
+#### For Admin
+- `changeAdmin(address newAdmin)`: Change the admin address
+- `changeTreasuryWallet(address newTreasuryWallet)`: Update treasury wallet
+- `updatePriceFeed(address newPriceFeed)`: Update BNB/USD price feed address
+- `emergencyWithdraw(address to)`: Emergency withdrawal of funds (owner only)
+
+## Testing
+
+Run tests:
+```bash
+npx hardhat test
 ```
-npx hardhat run scripts/buy-tokens.js --network bscTestnet 0xYourContractAddress
-```
 
-## Contract Structure
+## Security
 
-The contract is structured as follows:
-
-- `DogeHeadPaymentBridge.sol`: Main contract that handles payments and token distribution
-- `interfaces/AggregatorV3Interface.sol`: Interface for Chainlink price feeds
-
-## Contract Functions
-
-- `purchaseWithUSDAmount`: Buy tokens with a specified USD amount
-- `getQuote`: Get a quote for a purchase (BNB amount and token amount)
-- `getCurrentStage`: Get information about the current stage
-- `getStage`: Get information about a specific stage
-- `getTransactionsBySolanaWallet`: Get all transactions for a Solana wallet
-- `claimReferralRewards`: Claim referral rewards
+- Contract inherits from OpenZeppelin's `Ownable`
+- Uses Chainlink price feeds for reliable BNB/USD conversion
+- Admin functions protected with access control
+- Emergency withdrawal function for contract recovery
+- No direct token minting/distribution (handled on Solana side)
 
 ## License
 
 MIT
+
+
+
+
+
+
+npx hardhat run scripts/deploy.js --network bscTestnet

@@ -10,21 +10,16 @@ async function main() {
   // BSC Testnet BNB/USD price feed address
   const bnbUsdPriceFeed = "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526";
   
-  // Referral reward: 5% (500 basis points)
-  const referralRewardBps = 500;
-  
   // Use deployer's address as treasury wallet for testing
   const [deployer] = await hre.ethers.getSigners();
   const treasuryWallet = deployer.address;
   
   console.log("Deploying with the following parameters:");
-  console.log(`- Referral Reward: ${referralRewardBps / 100}%`);
   console.log(`- Treasury Wallet: ${treasuryWallet}`);
   console.log(`- Price Feed: ${bnbUsdPriceFeed}`);
   
   // Deploy the contract
   const contract = await DogeHeadPaymentBridge.deploy(
-    referralRewardBps,
     treasuryWallet,
     bnbUsdPriceFeed
   );
@@ -50,7 +45,6 @@ async function main() {
     await hre.run("verify:verify", {
       address: address,
       constructorArguments: [
-        referralRewardBps,
         treasuryWallet,
         bnbUsdPriceFeed
       ],

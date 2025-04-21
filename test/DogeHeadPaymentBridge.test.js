@@ -3,155 +3,177 @@ const { ethers } = require("hardhat");
 
 describe("DogeHeadPaymentBridge", function () {
   let DogeHeadPaymentBridge;
-  let dogeHeadBridge;
+  let contract;
   let owner;
   let admin;
   let treasury;
   let buyer;
-  let referrer;
-  let addr1;
-  let addr2;
+  let mockPriceFeed;
+
+  const PRICE_FEED_DECIMALS = 8;
+  const BNB_PRICE = 300n * BigInt(10 ** PRICE_FEED_DECIMALS); // $300 per BNB
 
   beforeEach(async function () {
     // Get signers
-    [owner, admin, treasury, buyer, referrer, addr1, addr2] = await ethers.getSigners();
+    [owner, admin, treasury, buyer] = await ethers.getSigners();
 
-    // Deploy contract
+    // Deploy mock price feed
+    const MockV3Aggregator = await ethers.getContractFactory("MockV3Aggregator");
+    mockPriceFeed = await MockV3Aggregator.deploy(PRICE_FEED_DECIMALS, BNB_PRICE);
+
+    // Deploy payment bridge
     DogeHeadPaymentBridge = await ethers.getContractFactory("DogeHeadPaymentBridge");
-    dogeHeadBridge = await DogeHeadPaymentBridge.deploy(500, treasury.address); // 5% referral reward
-    await dogeHeadBridge.waitForDeployment();
+    contract = await DogeHeadPaymentBridge.deploy(
+      treasury.address,
+      await mockPriceFeed.getAddress()
+    );
   });
 
   describe("Deployment", function () {
-    it("Should set the right admin", async function () {
-      expect(await dogeHeadBridge.admin()).to.equal(owner.address);
+    it("Should set the right owner", async function () {
+      expect(await contract.owner()).to.equal(owner.address);
     });
 
     it("Should set the right treasury wallet", async function () {
-      expect(await dogeHeadBridge.treasuryWallet()).to.equal(treasury.address);
+      expect(await contract.treasuryWallet()).to.equal(treasury.address);
     });
 
-    it("Should set the right referral reward percentage", async function () {
-      expect(await dogeHeadBridge.referralRewardBps()).to.equal(500);
+    it("Should set the right price feed", async function () {
+      expect(await contract.bnbUsdPriceFeed()).to.equal(await mockPriceFeed.getAddress());
+    });
+
+    it("Should set the right admin", async function () {
+      expect(await contract.admin()).to.equal(owner.address);
     });
   });
 
-  describe("Admin Functions", function () {
-    it("Should allow admin to change admin", async function () {
-      await dogeHeadBridge.changeAdmin(admin.address);
-      expect(await dogeHeadBridge.admin()).to.equal(admin.address);
-    });
-
+  describe("Admin functions", function () {
     it("Should allow admin to change treasury wallet", async function () {
-      await dogeHeadBridge.changeTreasuryWallet(addr1.address);
-      expect(await dogeHeadBridge.treasuryWallet()).to.equal(addr1.address);
+      await contract.changeTreasuryWallet(buyer.address);
+      expect(await contract.treasuryWallet()).to.equal(buyer.address);
     });
 
-    it("Should not allow non-admin to change admin", async function () {
-      await expect(
-        dogeHeadBridge.connect(buyer).changeAdmin(admin.address)
-      ).to.be.revertedWith("Caller is not the admin");
+    it("Should allow admin to change price feed", async function () {
+      const newMockPriceFeed = await (await ethers.getContractFactory("MockV3Aggregator")).deploy(PRICE_FEED_DECIMALS, BNB_PRICE);
+      await contract.updatePriceFeed(await newMockPriceFeed.getAddress());
+      expect(await contract.bnbUsdPriceFeed()).to.equal(await newMockPriceFeed.getAddress());
+    });
+
+    it("Should allow admin to change admin", async function () {
+      await contract.changeAdmin(admin.address);
+      expect(await contract.admin()).to.equal(admin.address);
     });
 
     it("Should not allow non-admin to change treasury wallet", async function () {
       await expect(
-        dogeHeadBridge.connect(buyer).changeTreasuryWallet(addr1.address)
+        contract.connect(buyer).changeTreasuryWallet(buyer.address)
       ).to.be.revertedWith("Caller is not the admin");
     });
   });
 
-  describe("Payments", function () {
-    it("Should accept payments and update total raised", async function () {
-      const paymentAmount = ethers.parseEther("1.0");
-      await dogeHeadBridge.connect(buyer).processPayment("", { value: paymentAmount });
-      expect(await dogeHeadBridge.totalRaised()).to.equal(paymentAmount);
+  describe("Price calculations", function () {
+    it("Should correctly convert dollar amount to internal format", async function () {
+      const dollarAmount = 100n;
+      const expected = dollarAmount * BigInt(10 ** PRICE_FEED_DECIMALS);
+      expect(await contract.convertDollarToInternal(dollarAmount)).to.equal(expected);
     });
 
-    it("Should store transaction details", async function () {
-      const paymentAmount = ethers.parseEther("1.0");
-      await dogeHeadBridge.connect(buyer).processPayment("", { value: paymentAmount });
-      const transactions = await dogeHeadBridge.getBuyerTransactions(buyer.address);
-      expect(transactions[0].buyer).to.equal(buyer.address);
-      expect(transactions[0].paymentAmount).to.equal(paymentAmount);
-    });
-  });
-
-  describe("Referral System", function () {
-    it("Should allow users to register referral codes", async function () {
-      await dogeHeadBridge.connect(referrer).registerReferralCode("REF123");
-      expect(await dogeHeadBridge.referralOwners("REF123")).to.equal(referrer.address);
+    it("Should correctly calculate BNB amount for USD", async function () {
+      const dollarAmount = 300n;
+      const usdAmount = dollarAmount * BigInt(10 ** PRICE_FEED_DECIMALS);
+      const expectedBNB = ethers.parseEther("1"); // At $300/BNB, $300 = 1 BNB
+      expect(await contract.calculateBNBAmount(usdAmount)).to.equal(expectedBNB);
     });
 
-    it("Should not allow duplicate referral codes", async function () {
-      await dogeHeadBridge.connect(referrer).registerReferralCode("REF123");
-      await expect(
-        dogeHeadBridge.connect(addr1).registerReferralCode("REF123")
-      ).to.be.revertedWith("Referral code already exists");
-    });
-
-    it("Should process referral rewards correctly", async function () {
-      // Register referral code
-      await dogeHeadBridge.connect(referrer).registerReferralCode("REF123");
-      
-      // Make a payment with referral
-      const paymentAmount = ethers.parseEther("1.0");
-      await dogeHeadBridge.connect(buyer).processPayment("REF123", { value: paymentAmount });
-      
-      // Check referral rewards (5% of payment)
-      const expectedReward = paymentAmount * BigInt(500) / BigInt(10000);
-      expect(await dogeHeadBridge.referralRewards("REF123")).to.equal(expectedReward);
-    });
-
-    it("Should allow claiming referral rewards", async function () {
-      // Register referral code and make payment
-      await dogeHeadBridge.connect(referrer).registerReferralCode("REF123");
-      const paymentAmount = ethers.parseEther("1.0");
-      await dogeHeadBridge.connect(buyer).processPayment("REF123", { value: paymentAmount });
-      
-      // Get initial balance
-      const initialBalance = await ethers.provider.getBalance(referrer.address);
-
-      console.log("-----initialBalance",initialBalance)
-      
-      // Claim rewards
-      const tx = await dogeHeadBridge.connect(referrer).claimReferralRewards("REF123");
-      const receipt = await tx.wait();
-      const gasCost = receipt.gasUsed * receipt.gasPrice;
-      
-      // Check final balance and rewards
-      const expectedReward = paymentAmount * BigInt(500) / BigInt(10000);
-      const finalBalance = await ethers.provider.getBalance(referrer.address);
-      expect(finalBalance + gasCost - initialBalance).to.equal(expectedReward);
-      expect(await dogeHeadBridge.referralRewards("REF123")).to.equal(0);
+    it("Should get latest BNB price", async function () {
+      expect(await contract.getLatestBNBPrice()).to.equal(BNB_PRICE);
     });
   });
 
-  describe("Withdrawal", function () {
-    it("Should allow admin to withdraw funds to treasury", async function () {
-      // Make a payment
-      const paymentAmount = ethers.parseEther("1.0");
-      await dogeHeadBridge.connect(buyer).processPayment("", { value: paymentAmount });
+  describe("Purchases", function () {
+    const solanaWallet = "DH1LJYbRBhvpzqRKs1zAVQUxgcwZtXxtRF9YsZnKuZoX";
+    const dollarAmount = 100n;
+
+    it("Should process purchase correctly", async function () {
+      const requiredBNB = await contract.getQuote(dollarAmount);
       
-      // Get initial treasury balance
-      const initialTreasuryBalance = await ethers.provider.getBalance(treasury.address);
-      
-      // Withdraw funds
-      await dogeHeadBridge.withdraw();
-      
-      // Check final treasury balance
-      const finalTreasuryBalance = await ethers.provider.getBalance(treasury.address);
-      expect(finalTreasuryBalance - initialTreasuryBalance).to.equal(paymentAmount);
+      await expect(
+        contract.connect(buyer).purchaseWithUSDAmount(dollarAmount, solanaWallet, {
+          value: requiredBNB
+        })
+      ).to.emit(contract, "PaymentReceived")
+        .withArgs(
+          solanaWallet,
+          buyer.address,
+          requiredBNB,
+          dollarAmount * BigInt(10 ** PRICE_FEED_DECIMALS),
+          await ethers.provider.getBlock("latest").then(b => b.timestamp)
+        );
+
+      // Check treasury received the BNB
+      const treasuryBalanceBefore = await ethers.provider.getBalance(treasury.address);
+      expect(treasuryBalanceBefore).to.equal(requiredBNB);
     });
 
-    it("Should not allow non-admin to withdraw funds", async function () {
-      // Make a payment
-      const paymentAmount = ethers.parseEther("1.0");
-      await dogeHeadBridge.connect(buyer).processPayment("", { value: paymentAmount });
+    it("Should fail if insufficient BNB sent", async function () {
+      const requiredBNB = await contract.getQuote(dollarAmount);
+      const insufficientBNB = requiredBNB - 1n;
       
-      // Try to withdraw as non-admin
       await expect(
-        dogeHeadBridge.connect(buyer).withdraw()
-      ).to.be.revertedWith("Caller is not the admin");
+        contract.connect(buyer).purchaseWithUSDAmount(dollarAmount, solanaWallet, {
+          value: insufficientBNB
+        })
+      ).to.be.revertedWith("Insufficient BNB sent");
+    });
+
+    it("Should fail if invalid Solana wallet", async function () {
+      const requiredBNB = await contract.getQuote(dollarAmount);
+      
+      await expect(
+        contract.connect(buyer).purchaseWithUSDAmount(dollarAmount, "", {
+          value: requiredBNB
+        })
+      ).to.be.revertedWith("Invalid Solana wallet");
+    });
+
+    it("Should record transaction history", async function () {
+      const requiredBNB = await contract.getQuote(dollarAmount);
+      
+      await contract.connect(buyer).purchaseWithUSDAmount(dollarAmount, solanaWallet, {
+        value: requiredBNB
+      });
+
+      const transactions = await contract.getTransactionsBySolanaWallet(solanaWallet);
+      expect(transactions.length).to.equal(1);
+      expect(transactions[0].solanaWallet).to.equal(solanaWallet);
+      expect(transactions[0].payer).to.equal(buyer.address);
+      expect(transactions[0].paymentAmount).to.equal(requiredBNB);
+    });
+  });
+
+  describe("Emergency functions", function () {
+    it("Should allow owner to withdraw funds", async function () {
+      // First make a purchase to get funds in the contract
+      const dollarAmount = 100n;
+      const solanaWallet = "DH1LJYbRBhvpzqRKs1zAVQUxgcwZtXxtRF9YsZnKuZoX";
+      const requiredBNB = await contract.getQuote(dollarAmount);
+      
+      await contract.connect(buyer).purchaseWithUSDAmount(dollarAmount, solanaWallet, {
+        value: requiredBNB
+      });
+
+      // Now try emergency withdrawal
+      const recipientBalanceBefore = await ethers.provider.getBalance(admin.address);
+      await contract.emergencyWithdraw(admin.address);
+      const recipientBalanceAfter = await ethers.provider.getBalance(admin.address);
+
+      expect(recipientBalanceAfter - recipientBalanceBefore).to.equal(requiredBNB);
+    });
+
+    it("Should not allow non-owner to withdraw funds", async function () {
+      await expect(
+        contract.connect(buyer).emergencyWithdraw(buyer.address)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
   });
 }); 
