@@ -184,3 +184,9 @@ MIT
 
 
 npx hardhat run scripts/deploy.js --network bscTestnet
+npx hardhat run scripts/deploy-base-sepolia.js --network baseSepolia
+
+
+
+
+https://sepolia.basescan.org/address/0xb8407F5693a013e8377146cBDF356AD7B9A1458D#readContract
