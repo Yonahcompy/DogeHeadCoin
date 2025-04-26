@@ -135,7 +135,7 @@ Ensure you have the following tools installed:
 
 
    <!-- if you want to extend instead of redeploying -->
-   solana program extend 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo 20000 -u devnet -k ./authority.json
+   solana program extend 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG 20000 -u devnet -k ./authority.json
 
 
    <!-- create a buffer -->
@@ -143,7 +143,7 @@ Ensure you have the following tools installed:
 
    <!-- upgrade using the buffer -->
 
-   solana program deploy --buffer HQeBis7Gfg4r6X9TK4UYx812GVVrUSjZDB8xYCHUwCcC --program-id 2PBB1EkqtWVqiQUjMPjdNReQeQcYrveLYQHBzaybwjwo --keypair ./authority.json
+   solana program deploy --buffer GQukBkE9wYd7F1NbM9nxCfDqTYAzfZKX52GhGcpUpDHh --program-id 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG --keypair ./authority.json
 
 
 

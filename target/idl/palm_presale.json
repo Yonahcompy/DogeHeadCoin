@@ -223,7 +223,7 @@
       ],
       "args": [
         {
-          "name": "amount",
+          "name": "quoteAmount",
           "type": "u64"
         },
         {
@@ -1072,8 +1072,5 @@
       "name": "InvalidPriceFeed",
       "msg": "Invalid price feed"
     }
-  ],
-  "metadata": {
-    "address": "7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU"
-  }
+  ]
 }

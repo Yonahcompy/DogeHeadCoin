@@ -26,7 +26,7 @@ pub fn update_user_allocation(
     let presale_info = &mut ctx.accounts.presale_info;
     let user_info = &mut ctx.accounts.user_info;
     let current_stage = &mut ctx.accounts.current_stage;
-    let cur_timestamp = u64::try_from(Clock::get()?.unix_timestamp).unwrap();
+    let cur_timestamp = Clock::get()?.unix_timestamp;
 
     // Check if presale is live
     if !presale_info.is_live {
@@ -49,7 +49,7 @@ pub fn update_user_allocation(
         user_info.owner = solana_wallet;
         user_info.buy_token_amount = token_amount;
         user_info.buy_quote_amount = usd_amount;
-        user_info.buy_time = cur_timestamp;
+        user_info.buy_time = cur_timestamp as u64;
         user_info.claimed = false;
         user_info.was_referred = referrer.is_some();
         user_info.referrer = referrer.unwrap_or(Pubkey::default());
@@ -61,7 +61,7 @@ pub fn update_user_allocation(
     } else {
         // Verify the user account matches the provided solana wallet
         require!(
-            user_info.to_account_info().key() == solana_wallet,
+            user_info.owner == solana_wallet,
             PresaleError::InvalidSolanaWallet
         );
         
@@ -70,7 +70,7 @@ pub fn update_user_allocation(
             .ok_or(PresaleError::MathOverflow)?;
         user_info.buy_quote_amount = user_info.buy_quote_amount.checked_add(usd_amount)
             .ok_or(PresaleError::MathOverflow)?;
-        user_info.buy_time = cur_timestamp;
+        user_info.buy_time = cur_timestamp as u64;
         user_info.total_contributed = user_info.total_contributed.checked_add(usd_amount)
             .ok_or(PresaleError::MathOverflow)?;
         user_info.token_amount = user_info.token_amount.checked_add(token_amount)
@@ -82,12 +82,12 @@ pub fn update_user_allocation(
         let referrer_info = &mut ctx.accounts.referrer_info;
         
         // Prevent self-referrals
-        if referrer_info.to_account_info().key() == solana_wallet {
+        if referrer_info.key() == solana_wallet {
             return Err(PresaleError::SelfReferral.into());
         }
         
         // Verify referrer
-        if referrer_info.to_account_info().key() != referrer_pubkey {
+        if referrer_info.key() != referrer_pubkey {
             return Err(PresaleError::InvalidReferralCode.into());
         }
         
@@ -116,13 +116,13 @@ pub fn update_user_allocation(
         
         // Update user info
         user_info.was_referred = true;
-        user_info.referrer = referrer_info.to_account_info().key();
+        user_info.referrer = referrer_info.key();
         user_info.referral_rewards_earned = user_info.referral_rewards_earned
             .checked_add(referee_reward)
             .ok_or(PresaleError::MathOverflow)?;
         
         msg!("Referral processed. Referrer: {}, Reward: {}", 
-            referrer_info.to_account_info().key(), referrer_reward);
+            referrer_info.key(), referrer_reward);
     }
 
     // Record transaction history
@@ -130,7 +130,7 @@ pub fn update_user_allocation(
     transaction_history.buyer = solana_wallet;
     transaction_history.usd_amount = usd_amount;
     transaction_history.token_amount = token_amount;
-    transaction_history.timestamp = Clock::get()?.unix_timestamp;
+    transaction_history.timestamp = cur_timestamp;
     transaction_history.chain = "SOL".to_string();
     transaction_history.native_amount = Some(usd_amount);
     transaction_history.oracle = Some(ctx.accounts.updater.key());
@@ -170,7 +170,7 @@ pub struct UpdateUserAllocation<'info> {
     /// Referrer info account - optional but required if referrer is provided
     #[account(
         mut,
-        constraint = referrer.is_none() || (referrer_info.to_account_info().key() == referrer.unwrap()) @ PresaleError::InvalidReferralCode
+        constraint = referrer.is_none() || (referrer_info.key() == referrer.unwrap()) @ PresaleError::InvalidReferralCode
     )]
     pub referrer_info: Box<Account<'info, ReferralInfo>>,
     
@@ -189,7 +189,7 @@ pub struct UpdateUserAllocation<'info> {
         init,
         payer = updater,
         space = TransactionHistory::LEN,
-        seeds = [b"TRANSACTION", solana_wallet.as_ref(), &[Clock::get()?.unix_timestamp as u8]],
+        seeds = [b"TRANSACTION", solana_wallet.as_ref(), &Clock::get()?.unix_timestamp.to_le_bytes()],
         bump
     )]
     pub transaction_history: Account<'info, TransactionHistory>,

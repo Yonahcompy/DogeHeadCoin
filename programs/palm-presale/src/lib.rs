@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Token, TokenAccount};
 
-declare_id!("7R1ZXDsJxDetkjap3VzsAZ23WMg3pMxcfxSnzcxLa7LU");
+declare_id!("4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG");
 
 pub const TOKEN_MINT_ADDRESS: &str = "mntPPX7vem9xnqVAwpyt1VmdqEDTmmzhZeCDxSUHgBV";
 
@@ -62,8 +62,8 @@ pub mod palm_presale {
         );
     }
     
-    pub fn buy_token(ctx: Context<BuyToken>, amount: u64, referrer_address: Option<Pubkey>) -> Result<()> {
-        return buy_token::buy_token(ctx, amount, referrer_address);
+    pub fn buy_token(ctx: Context<BuyToken>, quote_amount: u64, referrer_address: Option<Pubkey>) -> Result<()> {
+        return buy_token::buy_token(ctx, quote_amount, referrer_address);
     }
 
     pub fn claim_token(ctx: Context<ClaimToken>) -> Result<()> {

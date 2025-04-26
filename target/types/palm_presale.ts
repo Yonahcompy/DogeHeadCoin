@@ -223,7 +223,7 @@ export type PalmPresale = {
       ],
       "args": [
         {
-          "name": "amount",
+          "name": "quoteAmount",
           "type": "u64"
         },
         {
@@ -1300,7 +1300,7 @@ export const IDL: PalmPresale = {
       ],
       "args": [
         {
-          "name": "amount",
+          "name": "quoteAmount",
           "type": "u64"
         },
         {

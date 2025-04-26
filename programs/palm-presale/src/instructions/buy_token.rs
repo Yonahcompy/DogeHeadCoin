@@ -195,7 +195,7 @@ pub struct BuyToken<'info> {
         init,
         payer = buyer,
         space = TransactionHistory::LEN,
-        seeds = [b"TRANSACTION", buyer.key().as_ref(), &[Clock::get()?.unix_timestamp as u8]],
+        seeds = [b"TRANSACTION", buyer.key().as_ref(), &Clock::get()?.unix_timestamp.to_le_bytes()],
         bump
     )]
     pub transaction_history: Account<'info, TransactionHistory>,

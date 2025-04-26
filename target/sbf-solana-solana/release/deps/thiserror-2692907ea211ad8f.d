@@ -1,0 +1,10 @@
+/Users/syntaxloom/Desktop/solana-token-presale/svm/target/sbf-solana-solana/release/deps/libthiserror-2692907ea211ad8f.rmeta: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/Desktop/solana-token-presale/svm/target/sbf-solana-solana/release/deps/libthiserror-2692907ea211ad8f.rlib: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/Desktop/solana-token-presale/svm/target/sbf-solana-solana/release/deps/thiserror-2692907ea211ad8f.d: /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs /Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs
+
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/lib.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/aserror.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/display.rs:
+/Users/syntaxloom/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-1.0.61/src/provide.rs:
