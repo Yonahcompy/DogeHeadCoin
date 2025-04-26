@@ -11,7 +11,7 @@ pub struct PresaleState {
     pub start_time: i64,
     pub end_time: i64,
     pub current_stage: u8,
-    pub token_prices: [u64; STAGE_COUNT as usize],
+    pub token_prices: [f64; STAGE_COUNT as usize],
     pub token_amounts: [u64; STAGE_COUNT as usize],
     pub sold_tokens: u64,
     pub is_finalized: bool,
@@ -81,6 +81,9 @@ pub struct Buy<'info> {
     
     #[account(mut)]
     pub presale_token_account: Account<'info, TokenAccount>,
+    
+    /// CHECK: This is the Pyth price feed account for SOL/USD
+    pub sol_price_feed: AccountInfo<'info>,
     
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,

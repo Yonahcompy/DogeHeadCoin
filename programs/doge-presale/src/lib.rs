@@ -1,9 +1,9 @@
 use anchor_lang::prelude::*;
 
+pub mod state;
+pub mod instructions;
 pub mod constants;
 pub mod errors;
-pub mod instructions;
-pub mod state;
 
 use state::*;
 
@@ -24,11 +24,11 @@ pub mod doge_presale {
     pub fn deposit_tokens(ctx: Context<DepositTokens>, amount: u64) -> Result<()> {
         instructions::deposit_tokens(ctx, amount)
     }
-    
-    pub fn buy(ctx: Context<Buy>, amount: u64) -> Result<()> {
-        instructions::buy(ctx, amount)
+
+    pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
+        instructions::buy(ctx, usd_amount)
     }
-    
+
     pub fn finalize(ctx: Context<Finalize>) -> Result<()> {
         instructions::finalize(ctx)
     }

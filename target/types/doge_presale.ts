@@ -117,6 +117,11 @@ export type DogePresale = {
           "isSigner": false
         },
         {
+          "name": "solPriceFeed",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -129,8 +134,8 @@ export type DogePresale = {
       ],
       "args": [
         {
-          "name": "amount",
-          "type": "u64"
+          "name": "usdAmount",
+          "type": "f64"
         }
       ]
     },
@@ -185,7 +190,7 @@ export type DogePresale = {
             "name": "tokenPrices",
             "type": {
               "array": [
-                "u64",
+                "f64",
                 5
               ]
             }
@@ -459,6 +464,11 @@ export const IDL: DogePresale = {
           "isSigner": false
         },
         {
+          "name": "solPriceFeed",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -471,8 +481,8 @@ export const IDL: DogePresale = {
       ],
       "args": [
         {
-          "name": "amount",
-          "type": "u64"
+          "name": "usdAmount",
+          "type": "f64"
         }
       ]
     },
@@ -527,7 +537,7 @@ export const IDL: DogePresale = {
             "name": "tokenPrices",
             "type": {
               "array": [
-                "u64",
+                "f64",
                 5
               ]
             }

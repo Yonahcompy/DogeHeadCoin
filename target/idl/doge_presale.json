@@ -117,6 +117,11 @@
           "isSigner": false
         },
         {
+          "name": "solPriceFeed",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -129,8 +134,8 @@
       ],
       "args": [
         {
-          "name": "amount",
-          "type": "u64"
+          "name": "usdAmount",
+          "type": "f64"
         }
       ]
     },
@@ -185,7 +190,7 @@
             "name": "tokenPrices",
             "type": {
               "array": [
-                "u64",
+                "f64",
                 5
               ]
             }

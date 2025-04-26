@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Token, TokenAccount, Transfer};
+use anchor_spl::token::Transfer;
+use pyth_sdk_solana::load_price_feed_from_account_info;
 
 use crate::{constants::*, errors::PresaleError, state::*};
 
@@ -18,7 +19,7 @@ pub fn initialize(
     presale_state.end_time = end_time;
     presale_state.current_stage = 0;
     
-    // Set token prices for each stage (in lamports)
+    // Set token prices for each stage (in USD)
     presale_state.token_prices = STAGE_PRICES;
     
     // Set token amounts for each stage
@@ -46,8 +47,9 @@ pub fn deposit_tokens(ctx: Context<DepositTokens>, amount: u64) -> Result<()> {
     Ok(())
 }
 
-pub fn buy(ctx: Context<Buy>, amount: u64) -> Result<()> {
+pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
     let current_time = Clock::get()?.unix_timestamp;
+    let current_slot = Clock::get()?.slot;
     
     // Check if presale is active
     require!(
@@ -61,17 +63,26 @@ pub fn buy(ctx: Context<Buy>, amount: u64) -> Result<()> {
     // Check if current stage is valid
     require!(ctx.accounts.presale_state.current_stage < STAGE_COUNT, PresaleError::InvalidStage);
     
-    // Validate purchase amount
-    require!(amount >= MIN_PURCHASE_AMOUNT, PresaleError::BelowMinimumBuy);
-    require!(amount <= MAX_PURCHASE_AMOUNT, PresaleError::AboveMaximumBuy);
+    // Validate purchase amount in USD
+    require!(usd_amount >= MIN_PURCHASE_USD, PresaleError::BelowMinimumBuy);
+    require!(usd_amount <= MAX_PURCHASE_USD, PresaleError::AboveMaximumBuy);
+    
+    // Get SOL price from Pyth price feed
+    let price_feed = load_price_feed_from_account_info(&ctx.accounts.sol_price_feed)
+        .map_err(|_| error!(PresaleError::InvalidPriceFeed))?;
+    
+    let price_data = price_feed.get_price_no_older_than(60, current_slot)
+        .ok_or(error!(PresaleError::InvalidPriceFeed))?;
+    
+    // Convert SOL price to a float (price is in price * 10^expo format)
+    let sol_price_float = price_data.price as f64 / 10f64.powi(price_data.expo);
+    
+    // Convert USD amount to SOL (in lamports)
+    let sol_amount = (usd_amount / sol_price_float * 1e9) as u64;
     
     // Calculate token amount based on current stage price
     let token_price = ctx.accounts.presale_state.token_prices[ctx.accounts.presale_state.current_stage as usize];
-    let token_amount = (amount as u128)
-        .checked_mul(10u128.pow(TOKEN_DECIMALS as u32))
-        .ok_or(PresaleError::MathOverflow)?
-        .checked_div(token_price as u128)
-        .ok_or(PresaleError::MathOverflow)? as u64;
+    let token_amount = (usd_amount / token_price) as u64;
     
     // Check if enough tokens are available in the current stage
     let stage_tokens = ctx.accounts.presale_state.token_amounts[ctx.accounts.presale_state.current_stage as usize];
@@ -85,7 +96,7 @@ pub fn buy(ctx: Context<Buy>, amount: u64) -> Result<()> {
     let transfer_ix = anchor_lang::solana_program::system_instruction::transfer(
         &ctx.accounts.buyer.key(),
         &ctx.accounts.authority.key(),
-        amount,
+        sol_amount,
     );
     
     anchor_lang::solana_program::program::invoke(
@@ -130,6 +141,14 @@ pub fn finalize(ctx: Context<Finalize>) -> Result<()> {
     
     // Check if presale is already finalized
     require!(!presale_state.is_finalized, PresaleError::PresaleAlreadyFinalized);
+    
+    // Calculate total USD raised
+    let current_stage = presale_state.current_stage as usize;
+    let token_price = presale_state.token_prices[current_stage];
+    let total_usd = presale_state.sold_tokens as f64 * token_price;
+    
+    // Check if soft cap was reached
+    require!(total_usd >= SOFT_CAP_USD, PresaleError::SoftCapNotReached);
     
     // Mark presale as finalized
     presale_state.is_finalized = true;

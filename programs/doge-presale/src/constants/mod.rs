@@ -3,13 +3,13 @@
 // Token decimals (standard for SPL tokens)
 pub const TOKEN_DECIMALS: u8 = 9;
 
-// Minimum and maximum purchase amounts (in lamports)
-pub const MIN_PURCHASE_AMOUNT: u64 = 100_000_000; // 0.1 SOL
-pub const MAX_PURCHASE_AMOUNT: u64 = 10_000_000_000; // 10 SOL
+// Minimum and maximum purchase amounts (in USD)
+pub const MIN_PURCHASE_USD: f64 = 10.0; // 10 USD
+pub const MAX_PURCHASE_USD: f64 = 10000.0; // 10,000 USD
 
-// Soft cap and hard cap (in lamports)
-pub const SOFT_CAP: u64 = 100_000_000_000; // 100 SOL
-pub const HARD_CAP: u64 = 1_000_000_000_000; // 1000 SOL
+// Soft cap and hard cap (in USD)
+pub const SOFT_CAP_USD: f64 = 100_000.0; // 100,000 USD
+pub const HARD_CAP_USD: f64 = 1_000_000.0; // 1,000,000 USD
 
 // Default presale duration (in seconds)
 pub const DEFAULT_PRESALE_DURATION: i64 = 7 * 24 * 60 * 60; // 7 days
@@ -17,20 +17,23 @@ pub const DEFAULT_PRESALE_DURATION: i64 = 7 * 24 * 60 * 60; // 7 days
 // Stage information
 pub const STAGE_COUNT: u8 = 5;
 
-// Token prices for each stage (in lamports)
-pub const STAGE_PRICES: [u64; STAGE_COUNT as usize] = [
-    100_000, // Stage 1: 0.0001 SOL
-    150_000, // Stage 2: 0.00015 SOL
-    200_000, // Stage 3: 0.0002 SOL
-    250_000, // Stage 4: 0.00025 SOL
-    300_000, // Stage 5: 0.0003 SOL
+// Token prices for each stage (in USD)
+pub const STAGE_PRICES: [f64; STAGE_COUNT as usize] = [
+    0.0001,  // Stage 1: 0.0001 USD
+    0.00033, // Stage 2: 0.00033 USD
+    0.000957, // Stage 3: 0.000957 USD
+    0.00202, // Stage 4: 0.00202 USD
+    0.00313, // Stage 5: 0.00313 USD
 ];
 
 // Token amounts for each stage
 pub const STAGE_TOKEN_AMOUNTS: [u64; STAGE_COUNT as usize] = [
-    1_000_000_000, // Stage 1: 1 billion tokens
-    1_000_000_000, // Stage 2: 1 billion tokens
-    1_000_000_000, // Stage 3: 1 billion tokens
-    1_000_000_000, // Stage 4: 1 billion tokens
-    1_000_000_000, // Stage 5: 1 billion tokens
-]; 
+    750_000_000, // Stage 1: 750 million tokens
+    600_000_000, // Stage 2: 600 million tokens
+    450_000_000, // Stage 3: 450 million tokens
+    600_000_000, // Stage 4: 600 million tokens
+    600_000_000, // Stage 5: 600 million tokens
+];
+
+// Total tokens available for presale
+pub const TOTAL_TOKENS: u64 = 3_000_000_000; // 3 billion tokens 
