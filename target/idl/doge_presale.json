@@ -23,7 +23,7 @@
         {
           "name": "tokenAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -32,6 +32,11 @@
         },
         {
           "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -342,5 +347,8 @@
       "name": "PresaleStillActive",
       "msg": "Presale still active"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG"
+  }
 }

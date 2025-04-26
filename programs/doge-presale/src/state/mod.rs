@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
+use anchor_spl::associated_token::AssociatedToken;
 
 use crate::constants::*;
 
@@ -34,13 +35,14 @@ pub struct Initialize<'info> {
     #[account(
         init,
         payer = authority,
-        token::mint = token_mint,
-        token::authority = presale_state,
+        associated_token::mint = token_mint,
+        associated_token::authority = presale_state,
     )]
     pub token_account: Account<'info, TokenAccount>,
     
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
     pub rent: Sysvar<'info, Rent>,
 }
 

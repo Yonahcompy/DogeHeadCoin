@@ -18,7 +18,7 @@ doge_presale = "4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "authority.json"
 
 [scripts]
@@ -31,7 +31,7 @@ out-dir = "target"
 
 # Network-specific configurations
 [test.validator]
-url = "https://api.devnet.solana.com"
+url = "http://127.0.0.1:8899"
 startup_wait = 10000
 
 # RPC configurations
