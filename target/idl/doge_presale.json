@@ -1,0 +1,341 @@
+{
+  "version": "0.1.0",
+  "name": "doge_presale",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "presaleState",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "startTime",
+          "type": "i64"
+        },
+        {
+          "name": "endTime",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "depositTokens",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "presaleState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authorityTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buy",
+      "accounts": [
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "presaleState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "finalize",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "presaleState",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "PresaleState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenAccount",
+            "type": "publicKey"
+          },
+          {
+            "name": "startTime",
+            "type": "i64"
+          },
+          {
+            "name": "endTime",
+            "type": "i64"
+          },
+          {
+            "name": "currentStage",
+            "type": "u8"
+          },
+          {
+            "name": "tokenPrices",
+            "type": {
+              "array": [
+                "u64",
+                5
+              ]
+            }
+          },
+          {
+            "name": "tokenAmounts",
+            "type": {
+              "array": [
+                "u64",
+                5
+              ]
+            }
+          },
+          {
+            "name": "soldTokens",
+            "type": "u64"
+          },
+          {
+            "name": "isFinalized",
+            "type": "bool"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "PresaleNotStarted",
+      "msg": "Presale has not started yet"
+    },
+    {
+      "code": 6001,
+      "name": "PresaleEnded",
+      "msg": "Presale has ended"
+    },
+    {
+      "code": 6002,
+      "name": "PresaleAlreadyFinalized",
+      "msg": "Presale is already finalized"
+    },
+    {
+      "code": 6003,
+      "name": "BelowMinimumBuy",
+      "msg": "Purchase amount is below minimum"
+    },
+    {
+      "code": 6004,
+      "name": "AboveMaximumBuy",
+      "msg": "Purchase amount is above maximum"
+    },
+    {
+      "code": 6005,
+      "name": "HardCapExceeded",
+      "msg": "Hard cap would be exceeded"
+    },
+    {
+      "code": 6006,
+      "name": "SoftCapNotReached",
+      "msg": "Soft cap not reached"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidTokenAccount",
+      "msg": "Invalid token account"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidTokenMint",
+      "msg": "Invalid token mint"
+    },
+    {
+      "code": 6009,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 6010,
+      "name": "MathOverflow",
+      "msg": "Math operation overflow"
+    },
+    {
+      "code": 6011,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidStage",
+      "msg": "Invalid stage number"
+    },
+    {
+      "code": 6013,
+      "name": "NoTokensAvailable",
+      "msg": "No tokens available in this stage"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidPriceFeed",
+      "msg": "Invalid price feed"
+    },
+    {
+      "code": 6015,
+      "name": "StalePriceFeed",
+      "msg": "Price feed is stale"
+    },
+    {
+      "code": 6016,
+      "name": "UserNotFound",
+      "msg": "User account not found"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidTokenAmount",
+      "msg": "Invalid token amount"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidUsdAmount",
+      "msg": "Invalid USD amount"
+    },
+    {
+      "code": 6019,
+      "name": "PresaleNotActive",
+      "msg": "Presale is not active"
+    },
+    {
+      "code": 6020,
+      "name": "PresaleFinalized",
+      "msg": "Presale is finalized"
+    },
+    {
+      "code": 6021,
+      "name": "AllStagesCompleted",
+      "msg": "All stages completed"
+    },
+    {
+      "code": 6022,
+      "name": "InsufficientTokens",
+      "msg": "Insufficient tokens available"
+    },
+    {
+      "code": 6023,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6024,
+      "name": "PresaleStillActive",
+      "msg": "Presale still active"
+    }
+  ]
+}

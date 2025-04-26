@@ -847,6 +847,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "doge-presale"
+version = "0.1.0"
+dependencies = [
+ "ahash 0.8.6",
+ "anchor-lang",
+ "anchor-spl",
+ "mpl-token-metadata",
+ "pyth-sdk-solana",
+ "solana-program",
+ "toml_datetime",
+]
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1401,19 +1414,6 @@ name = "opaque-debug"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
-
-[[package]]
-name = "palm-presale"
-version = "0.1.0"
-dependencies = [
- "ahash 0.8.6",
- "anchor-lang",
- "anchor-spl",
- "mpl-token-metadata",
- "pyth-sdk-solana",
- "solana-program",
- "toml_datetime",
-]
 
 [[package]]
 name = "parking_lot"
