@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::Transfer;
-use solana_program::native_token::LAMPORTS_PER_SOL;
+    use solana_program::native_token::LAMPORTS_PER_SOL;
 
 use crate::{constants::*, errors::PresaleError, state::*};
 
