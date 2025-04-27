@@ -7,7 +7,7 @@ pub mod errors;
 
 use state::*;
 
-declare_id!("4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG");
+declare_id!("8AEWVWrjcX34atXJeYcBS41ZMiPVbVXv6yE53V6XLJGy");
 
 #[program]
 pub mod doge_presale {

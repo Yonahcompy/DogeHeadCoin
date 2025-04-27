@@ -6,19 +6,19 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-doge_presale = "4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG"
+doge_presale = "8AEWVWrjcX34atXJeYcBS41ZMiPVbVXv6yE53V6XLJGy"
 
 [programs.devnet]
-doge_presale = "4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG"
+doge_presale = "8AEWVWrjcX34atXJeYcBS41ZMiPVbVXv6yE53V6XLJGy"
 
 [programs.mainnet]
-doge_presale = "4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG"
+doge_presale = "8AEWVWrjcX34atXJeYcBS41ZMiPVbVXv6yE53V6XLJGy"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "authority.json"
 
 [scripts]
