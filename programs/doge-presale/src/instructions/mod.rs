@@ -59,25 +59,48 @@ pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
     // Check if presale is finalized
     require!(!ctx.accounts.presale_state.is_finalized, PresaleError::PresaleFinalized);
 
-    // Validate purchase amount
+    // Validate purchase amount with proper precision (6 decimals for better micro-transaction handling)
+    let usd_amount_precise = (usd_amount * 1_000_000.0).round() / 1_000_000.0;
     require!(
-        usd_amount >= MIN_PURCHASE_USD && usd_amount <= MAX_PURCHASE_USD,
+        usd_amount_precise >= MIN_PURCHASE_USD && 
+        usd_amount_precise <= MAX_PURCHASE_USD,
         PresaleError::InvalidUsdAmount
     );
 
-    // Convert USD to SOL using fallback price
-    let sol_amount = (usd_amount / FALLBACK_SOL_USD_PRICE) * LAMPORTS_PER_SOL as f64;
+    // Convert USD to SOL using fallback price with proper precision
+    let sol_amount = ((usd_amount_precise * LAMPORTS_PER_SOL as f64) / FALLBACK_SOL_USD_PRICE).round();
     let sol_amount_lamports = sol_amount as u64;
 
     // Get current stage
     let current_stage = ctx.accounts.presale_state.current_stage;
     let token_price = STAGE_PRICES[current_stage as usize];
-    let token_amount = (usd_amount / token_price) * 10f64.powi(TOKEN_DECIMALS as i32);
-    let token_amount_raw = token_amount as u64;
+    
+    // Calculate token amount with proper precision handling for micro-transactions
+    // For very small amounts, we need to ensure we get at least 1 token
+    let token_amount_with_decimals = if usd_amount_precise < token_price {
+        // If USD amount is less than token price, give exactly 1 token
+        10u64.pow(TOKEN_DECIMALS as u32)
+    } else {
+        // For larger amounts, calculate normally
+        // Scale to 12 decimals for intermediate calculations
+        let usd_amount_scaled = (usd_amount_precise * 1_000_000_000_000.0).round() as u128;
+        let token_price_scaled = (token_price * 1_000_000_000_000.0).round() as u128;
+        
+        // Calculate base tokens (before decimals) with full precision
+        let base_token_amount = usd_amount_scaled
+            .checked_div(token_price_scaled)
+            .ok_or(error!(PresaleError::ArithmeticOverflow))? as u64;
+
+        // Apply token decimals
+        base_token_amount
+            .checked_mul(10u64.pow(TOKEN_DECIMALS as u32))
+            .ok_or(error!(PresaleError::ArithmeticOverflow))?
+    };
 
     // Check if enough tokens are available
     require!(
-        ctx.accounts.presale_state.sold_tokens + token_amount_raw <= ctx.accounts.presale_state.token_amounts[current_stage as usize],
+        ctx.accounts.presale_state.sold_tokens.checked_add(token_amount_with_decimals)
+            .map_or(false, |sum| sum <= ctx.accounts.presale_state.token_amounts[current_stage as usize]),
         PresaleError::InsufficientTokens
     );
 
@@ -118,16 +141,20 @@ pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
     }
 
     // Update buyer state with purchased tokens
-    ctx.accounts.buyer_state.total_purchased = ctx.accounts.buyer_state.total_purchased.checked_add(token_amount_raw).unwrap();
+    ctx.accounts.buyer_state.total_purchased = ctx.accounts.buyer_state.total_purchased
+        .checked_add(token_amount_with_decimals)
+        .ok_or(error!(PresaleError::ArithmeticOverflow))?;
 
     // Update presale state
-    ctx.accounts.presale_state.sold_tokens = ctx.accounts.presale_state.sold_tokens.checked_add(token_amount_raw).unwrap();
+    ctx.accounts.presale_state.sold_tokens = ctx.accounts.presale_state.sold_tokens
+        .checked_add(token_amount_with_decimals)
+        .ok_or(error!(PresaleError::ArithmeticOverflow))?;
 
-    // Record transaction
+    // Record transaction with 6 decimal precision for USD amount
     let transaction = Transaction {
         timestamp: current_time,
-        usd_amount,
-        token_amount: token_amount_raw,
+        usd_amount: usd_amount_precise,
+        token_amount: token_amount_with_decimals,
         stage: current_stage,
     };
 
@@ -151,10 +178,16 @@ pub fn finalize(ctx: Context<Finalize>) -> Result<()> {
     // Check if presale is already finalized
     require!(!presale_state.is_finalized, PresaleError::PresaleAlreadyFinalized);
     
-    // Calculate total USD raised
+    // Calculate total USD raised with proper precision handling
     let current_stage = presale_state.current_stage as usize;
     let token_price = presale_state.token_prices[current_stage];
-    let total_usd = presale_state.sold_tokens as f64 * token_price;
+    
+    // Convert sold tokens back to raw amount (without decimals) for USD calculation
+    let sold_tokens_raw = presale_state.sold_tokens.checked_div(10u64.pow(TOKEN_DECIMALS as u32))
+        .ok_or(error!(PresaleError::ArithmeticOverflow))?;
+    
+    // Calculate total USD raised
+    let total_usd = (sold_tokens_raw as f64) * token_price;
     
     // Check if soft cap was reached
     require!(total_usd >= SOFT_CAP_USD, PresaleError::SoftCapNotReached);
@@ -185,14 +218,24 @@ pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
     // Check if vesting has started
     require!(current_time >= buyer_state.vesting_start_time, PresaleError::VestingNotStarted);
     
-    // Calculate claimable tokens based on vesting schedule
-    let mut claimable_amount = 0;
+    // Calculate claimable tokens based on vesting schedule with proper precision
+    let mut claimable_amount: u64 = 0;
     let total_purchased = buyer_state.total_purchased;
     
     for tier in &mut buyer_state.vesting_tiers {
         if !tier.claimed && current_time >= tier.release_time {
-            let tier_amount = (total_purchased as f64 * tier.percentage as f64 / 100.0) as u64;
-            claimable_amount += tier_amount;
+            // Calculate tier amount with proper precision handling
+            // Convert percentage to a precise decimal representation
+            let tier_amount = (total_purchased as u128)
+                .checked_mul(tier.percentage as u128)
+                .ok_or(error!(PresaleError::ArithmeticOverflow))?
+                .checked_div(100)
+                .ok_or(error!(PresaleError::ArithmeticOverflow))? as u64;
+                
+            claimable_amount = claimable_amount
+                .checked_add(tier_amount)
+                .ok_or(error!(PresaleError::ArithmeticOverflow))?;
+                
             tier.claimed = true;
         }
     }
@@ -214,7 +257,9 @@ pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
     )?;
     
     // Update claimed tokens
-    buyer_state.claimed_tokens = buyer_state.claimed_tokens.checked_add(claimable_amount).unwrap();
+    buyer_state.claimed_tokens = buyer_state.claimed_tokens
+        .checked_add(claimable_amount)
+        .ok_or(error!(PresaleError::ArithmeticOverflow))?;
     
     Ok(())
 }

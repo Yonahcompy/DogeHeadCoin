@@ -74,6 +74,9 @@ pub enum PresaleError {
     #[msg("Arithmetic overflow")]
     Overflow,
     
+    #[msg("Arithmetic operation overflow")]
+    ArithmeticOverflow,
+    
     #[msg("Presale still active")]
     PresaleStillActive,
     

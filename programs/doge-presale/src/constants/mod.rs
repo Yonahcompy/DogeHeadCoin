@@ -7,11 +7,11 @@ pub const TOKEN_DECIMALS: u8 = 9;
 pub const FALLBACK_SOL_USD_PRICE: f64 = 149.42;
 
 // Minimum and maximum purchase amounts (in USD)
-pub const MIN_PURCHASE_USD: f64 = 10.0; // 10 USD
+pub const MIN_PURCHASE_USD: f64 = 0.0001; // 0.0001 USD
 pub const MAX_PURCHASE_USD: f64 = 10000.0; // 10,000 USD
 
 // Soft cap and hard cap (in USD)
-pub const SOFT_CAP_USD: f64 = 100_000.0; // 100,000 USD
+pub const SOFT_CAP_USD: f64 = 100.0; // 100 USD
 pub const HARD_CAP_USD: f64 = 1_000_000.0; // 1,000,000 USD
 
 // Default presale duration (in seconds)

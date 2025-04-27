@@ -517,21 +517,26 @@ export type DogePresale = {
     },
     {
       "code": 6024,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic operation overflow"
+    },
+    {
+      "code": 6025,
       "name": "PresaleStillActive",
       "msg": "Presale still active"
     },
     {
-      "code": 6025,
+      "code": 6026,
       "name": "NoTokensToClaim",
       "msg": "No tokens to claim"
     },
     {
-      "code": 6026,
+      "code": 6027,
       "name": "PresaleNotFinalized",
       "msg": "Presale not finalized"
     },
     {
-      "code": 6027,
+      "code": 6028,
       "name": "VestingNotStarted",
       "msg": "Vesting has not started yet"
     }
@@ -1057,21 +1062,26 @@ export const IDL: DogePresale = {
     },
     {
       "code": 6024,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic operation overflow"
+    },
+    {
+      "code": 6025,
       "name": "PresaleStillActive",
       "msg": "Presale still active"
     },
     {
-      "code": 6025,
+      "code": 6026,
       "name": "NoTokensToClaim",
       "msg": "No tokens to claim"
     },
     {
-      "code": 6026,
+      "code": 6027,
       "name": "PresaleNotFinalized",
       "msg": "Presale not finalized"
     },
     {
-      "code": 6027,
+      "code": 6028,
       "name": "VestingNotStarted",
       "msg": "Vesting has not started yet"
     }
