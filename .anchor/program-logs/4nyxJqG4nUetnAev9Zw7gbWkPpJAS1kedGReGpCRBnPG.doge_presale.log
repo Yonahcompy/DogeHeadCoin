@@ -1,6 +1,6 @@
 Streaming transaction logs mentioning 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG. Confirmed commitment
-Transaction executed in slot 5:
-  Signature: 3AKDdhbCC9JjNoSV6Uj6k9ZYtjWSccNiF5eaUi6riFgNiU4meEjGPAax5QuiVuLd5nimrfc6p9FfEpGyF8FgJGrs
+Transaction executed in slot 6:
+  Signature: 3UdeLEbGJqLbfbNx6MoNJyvCN2rT6xaJ9RgsntwyzK9HgnoF73S1dquB5TvxFiNR9m6ms8uA3kRZK63YpstFECpB
   Status: Ok
   Log Messages:
     Program 11111111111111111111111111111111 invoke [1]
@@ -36,20 +36,8 @@ Transaction executed in slot 5:
     Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 47461 of 596883 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 7:
-  Signature: 4fvic3cQkRo56P2DUUTxKYadGVBXTq2swQUhEtGJooHrTCuh1WxSoxa1oefe83rW5uVzf1gR4f4bKUpBoEZTj64t
-  Status: Ok
-  Log Messages:
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
-    Program log: Instruction: DepositTokens
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
-    Program log: Instruction: Transfer
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191128 compute units
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
 Transaction executed in slot 8:
-  Signature: 4fvic3cQkRo56P2DUUTxKYadGVBXTq2swQUhEtGJooHrTCuh1WxSoxa1oefe83rW5uVzf1gR4f4bKUpBoEZTj64t
+  Signature: 3xjG6XmfXmGDKX6LPHftVGc3XpUXJ8b5MKVvd3YcKDqGPdxUheRx5STWiRm7922iWRAAx6XLCJR5jMR3Ekapue4r
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -60,3 +48,27 @@ Transaction executed in slot 8:
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 9:
+  Signature: 3xjG6XmfXmGDKX6LPHftVGc3XpUXJ8b5MKVvd3YcKDqGPdxUheRx5STWiRm7922iWRAAx6XLCJR5jMR3Ekapue4r
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: Transfer
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191128 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 11:
+  Signature: 2rfmjuC3jigbjiueYTwkh1ziMxpGCtWyvDYymUqQaiQkjmCfdbmTAWUqRCaYGXAUsogxBa2PtQ6PWjCTXjxEf8Le
+  Status: Error processing Instruction 0: Cross-program invocation with unauthorized signer or writable account
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: Buy
+    Program log: Using fallback SOL/USD price: 149.42
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    61NpbFhs6JHQdYa6H2ZRNEm4ba3uadQsEUw1Fos6Q3y9's signer privilege escalated
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14231 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG failed: Cross-program invocation with unauthorized signer or writable account

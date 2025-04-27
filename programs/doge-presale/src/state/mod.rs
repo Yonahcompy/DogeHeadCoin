@@ -84,7 +84,7 @@ pub struct Buy<'info> {
     #[account(mut)]
     pub presale_token_account: Account<'info, TokenAccount>,
     
-    /// CHECK: This is the Pyth price feed account for SOL/USD
+    /// CHECK: This is no longer used as we always use the fallback price
     pub sol_price_feed: AccountInfo<'info>,
     
     pub token_program: Program<'info, Token>,

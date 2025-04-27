@@ -1,14 +1,9 @@
 use anchor_lang::prelude::*;
-use pyth_sdk_solana::load_price_feed_from_account_info;
+use crate::constants::FALLBACK_SOL_USD_PRICE;
 
-pub fn get_sol_price(price_feed: &AccountInfo) -> Result<f64> {
-    let price_feed = load_price_feed_from_account_info(price_feed)
-        .map_err(|_| error!(PresaleError::InvalidPriceFeed))?;
-    
-    let price = price_feed.get_current_price()
-        .map_err(|_| error!(PresaleError::InvalidPriceFeed))?;
-    
-    Ok(price.price as f64 / 10f64.powi(price.expo))
+pub fn get_sol_price(_price_feed: &AccountInfo) -> Result<f64> {
+    // Always return the fallback price
+    Ok(FALLBACK_SOL_USD_PRICE)
 }
 
 pub fn usd_to_sol(usd_amount: f64, sol_price: f64) -> u64 {

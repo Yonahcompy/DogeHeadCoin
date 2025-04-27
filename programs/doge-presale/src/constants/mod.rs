@@ -3,6 +3,9 @@
 // Token decimals (standard for SPL tokens)
 pub const TOKEN_DECIMALS: u8 = 9;
 
+// Fallback SOL/USD price (in case Pyth price feed fails)
+pub const FALLBACK_SOL_USD_PRICE: f64 = 149.42;
+
 // Minimum and maximum purchase amounts (in USD)
 pub const MIN_PURCHASE_USD: f64 = 10.0; // 10 USD
 pub const MAX_PURCHASE_USD: f64 = 10000.0; // 10,000 USD

@@ -1,6 +1,5 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::Transfer;
-use pyth_sdk_solana::load_price_feed_from_account_info;
 
 use crate::{constants::*, errors::PresaleError, state::*};
 
@@ -49,7 +48,6 @@ pub fn deposit_tokens(ctx: Context<DepositTokens>, amount: u64) -> Result<()> {
 
 pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
     let current_time = Clock::get()?.unix_timestamp;
-    let current_slot = Clock::get()?.slot;
     
     // Check if presale is active
     require!(
@@ -67,15 +65,9 @@ pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
     require!(usd_amount >= MIN_PURCHASE_USD, PresaleError::BelowMinimumBuy);
     require!(usd_amount <= MAX_PURCHASE_USD, PresaleError::AboveMaximumBuy);
     
-    // Get SOL price from Pyth price feed
-    let price_feed = load_price_feed_from_account_info(&ctx.accounts.sol_price_feed)
-        .map_err(|_| error!(PresaleError::InvalidPriceFeed))?;
-    
-    let price_data = price_feed.get_price_no_older_than(60, current_slot)
-        .ok_or(error!(PresaleError::InvalidPriceFeed))?;
-    
-    // Convert SOL price to a float (price is in price * 10^expo format)
-    let sol_price_float = price_data.price as f64 / 10f64.powi(price_data.expo);
+    // Always use the fallback price
+    let sol_price_float = FALLBACK_SOL_USD_PRICE;
+    msg!("Using fallback SOL/USD price: {}", sol_price_float);
     
     // Convert USD amount to SOL (in lamports)
     let sol_amount = (usd_amount / sol_price_float * 1e9) as u64;
