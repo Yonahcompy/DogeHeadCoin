@@ -1,6 +1,6 @@
 Streaming transaction logs mentioning 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG. Confirmed commitment
-Transaction executed in slot 4:
-  Signature: 9kHQsjzWmqaY6L3xffw8sxvLH9spfTF1nNjemjU2R2Ri5DTuiVHmL31RHoupYPPMCSwm2gpgRC2HPsFC3TUJX6V
+Transaction executed in slot 6:
+  Signature: mCUQU8Q4WMo7MaQTVofF69CxPV6HbERRme5rCpEdmfpyYVzJES6KB8xFCCghff9LKk4Y8jX4QorNTti9mUrnYjq
   Status: Ok
   Log Messages:
     Program 11111111111111111111111111111111 invoke [1]
@@ -17,7 +17,7 @@ Transaction executed in slot 4:
     Program log: Create
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [3]
     Program log: Instruction: GetAccountDataSize
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 1622 of 577302 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 1622 of 574302 compute units
     Program return: TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA pQAAAAAAAAA=
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program 11111111111111111111111111111111 invoke [3]
@@ -26,18 +26,18 @@ Transaction executed in slot 4:
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [3]
     Program log: Instruction: InitializeImmutableOwner
     Program log: Please upgrade to SPL Token 2022 for immutable owner support
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 1405 of 570662 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 1405 of 567662 compute units
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [3]
     Program log: Instruction: InitializeAccount3
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4241 of 566778 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4241 of 563778 compute units
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
-    Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 20544 of 582777 compute units
+    Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 22044 of 581277 compute units
     Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 38468 of 596883 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 41468 of 596883 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 6:
-  Signature: GKwjF2Cc8R2fAyjXZN5MZrtpovmdKuVRCtF6ZwPbSzAwi5GaLSQmUg4HHXajj3gTQfj2i5JTSi9avBHa22oBwH3
+Transaction executed in slot 8:
+  Signature: 3pS2oDxXeSjfyFEodzBxF4v8sDKux2qrhZaRgMqGAJoWyRLtGpRWdLPBziEuy2oHWZBu8syWAZuJot9Tw3pnyyD3
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -48,8 +48,8 @@ Transaction executed in slot 6:
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15051 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 7:
-  Signature: GKwjF2Cc8R2fAyjXZN5MZrtpovmdKuVRCtF6ZwPbSzAwi5GaLSQmUg4HHXajj3gTQfj2i5JTSi9avBHa22oBwH3
+Transaction executed in slot 9:
+  Signature: 3pS2oDxXeSjfyFEodzBxF4v8sDKux2qrhZaRgMqGAJoWyRLtGpRWdLPBziEuy2oHWZBu8syWAZuJot9Tw3pnyyD3
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -60,8 +60,8 @@ Transaction executed in slot 7:
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15051 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 12:
-  Signature: 4QAyaG2Qdc88ZSVnFzKaZMxy4pMsBDbFTVg4j3w8ubCNrWotQXd93dANYCRPE5U9uiJfG1NcWZYxsHfxxfYt1NVh
+Transaction executed in slot 14:
+  Signature: 4kQmh85vgu56QAuHo1UtpnKqNEJJhpAZjCkGWwZ2XU26Mecfr5dNTFxsiNEviP7NLYjnVVAFMfg7UCksvGs6K1G6
   Status: Error processing Instruction 0: custom program error: 0x7d3
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -69,8 +69,8 @@ Transaction executed in slot 12:
     Program log: AnchorError caused by account: presale_state. Error Code: ConstraintRaw. Error Number: 2003. Error Message: A raw constraint was violated.
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 8258 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG failed: custom program error: 0x7d3
-Transaction executed in slot 14:
-  Signature: 3RGX4ihpBixDmNotKxR9cFYkYEGWPonp4JfHWmbczMnCgRTBi6JCcr2nBHpUXXUQJoMpZjwgPgNXndGYEAPhuf3M
+Transaction executed in slot 16:
+  Signature: 5yVjmdK9YCcmhbj79zxGetwALtDvKBgLGvutAnBsN8S4WWDevT2ZN1hVYFvNw9o17ECFt1VThcgjGwnLs9Pt3BY
   Status: Ok
   Log Messages:
     Program 11111111111111111111111111111111 invoke [1]
@@ -106,44 +106,32 @@ Transaction executed in slot 14:
     Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 38468 of 596883 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 16:
-  Signature: 4Mz7cAssFoDLRdmj6JbxcvmUMzY1jRiu9RNoWnZfdcZtqQ626F97zaVYj8WJARM2A13eDz3KgEhNTvBa8r5pokok
-  Status: Ok
-  Log Messages:
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
-    Program log: Instruction: DepositTokens
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
-    Program log: Instruction: Transfer
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191127 compute units
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15051 of 200000 compute units
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 17:
-  Signature: 4Mz7cAssFoDLRdmj6JbxcvmUMzY1jRiu9RNoWnZfdcZtqQ626F97zaVYj8WJARM2A13eDz3KgEhNTvBa8r5pokok
-  Status: Ok
-  Log Messages:
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
-    Program log: Instruction: DepositTokens
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
-    Program log: Instruction: Transfer
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191127 compute units
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15051 of 200000 compute units
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
 Transaction executed in slot 18:
-  Signature: 3HS5wLz9FhZTuQNJQCUgtqyN2tPWhd3XrtwLX5sQKB71twBVkqFKfoNri5t3tXf3krHybfgjNyFjtioZfChXy2j4
+  Signature: 4iJTpcwq2S4NDTscVGrCa8U9Y8LXycW4hw1k53dYqbd7m1PYP7SjcbeEaPC1kFBPy3FFAmHFXXfeLmvfQWWkSxuK
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
     Program log: Instruction: DepositTokens
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
     Program log: Instruction: Transfer
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4645 of 191127 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191127 compute units
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14956 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15051 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
 Transaction executed in slot 19:
-  Signature: 3HS5wLz9FhZTuQNJQCUgtqyN2tPWhd3XrtwLX5sQKB71twBVkqFKfoNri5t3tXf3krHybfgjNyFjtioZfChXy2j4
+  Signature: 4iJTpcwq2S4NDTscVGrCa8U9Y8LXycW4hw1k53dYqbd7m1PYP7SjcbeEaPC1kFBPy3FFAmHFXXfeLmvfQWWkSxuK
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: Transfer
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191127 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15051 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 20:
+  Signature: 3S6vit2LSrQfatE5KpKqDxHxSyWtNmqKNjMy7pymXQRWUcPMD6ctMW5MkSqfWSCweXHVC9xW8uBfobR4faXnJ9Qx
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -154,25 +142,48 @@ Transaction executed in slot 19:
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14956 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 23:
-  Signature: 4rSd7yS6HzTrMSqLrUrn7ypxreSojYquucxF7Wt6TfwW6qbmVyZtRBUogtFthZrCjGViZQeqnfHtAKXcCTfiCFmN
+Transaction executed in slot 21:
+  Signature: 3S6vit2LSrQfatE5KpKqDxHxSyWtNmqKNjMy7pymXQRWUcPMD6ctMW5MkSqfWSCweXHVC9xW8uBfobR4faXnJ9Qx
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: Transfer
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4645 of 191127 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14956 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 25:
+  Signature: 5qJJi1jRx9FdnABLZQvTCDPmBFfL6Ldtwby7kdm9yPcpKG4L4cPhxBHhYSsKii3uuDQFHeb71MZ3NQkPruuXf6so
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
     Program log: Instruction: GetTransactionHistory
     Program 11111111111111111111111111111111 invoke [2]
     Program 11111111111111111111111111111111 success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14487 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 8487 of 200000 compute units
     Program return: 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG AAAAAA==
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 24:
-  Signature: 4rSd7yS6HzTrMSqLrUrn7ypxreSojYquucxF7Wt6TfwW6qbmVyZtRBUogtFthZrCjGViZQeqnfHtAKXcCTfiCFmN
+Transaction executed in slot 26:
+  Signature: 5qJJi1jRx9FdnABLZQvTCDPmBFfL6Ldtwby7kdm9yPcpKG4L4cPhxBHhYSsKii3uuDQFHeb71MZ3NQkPruuXf6so
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
     Program log: Instruction: GetTransactionHistory
     Program 11111111111111111111111111111111 invoke [2]
     Program 11111111111111111111111111111111 success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14487 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 8487 of 200000 compute units
+    Program return: 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG AAAAAA==
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 28:
+  Signature: 2W4XwoidB7KhuMitYD35xDa1oz45bYdDSQtFSjiDVfLSn8J4nxDTHgXFEovXoZgdWvdECYJG7es8px6iXohp1Ek1
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: GetTransactionHistory
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 8487 of 200000 compute units
     Program return: 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG AAAAAA==
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
