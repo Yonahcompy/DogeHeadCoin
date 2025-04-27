@@ -1,6 +1,6 @@
 Streaming transaction logs mentioning 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG. Confirmed commitment
-Transaction executed in slot 6:
-  Signature: 3UdeLEbGJqLbfbNx6MoNJyvCN2rT6xaJ9RgsntwyzK9HgnoF73S1dquB5TvxFiNR9m6ms8uA3kRZK63YpstFECpB
+Transaction executed in slot 7:
+  Signature: 3WSq1NDrxRaWbUxXW3WRfRpULjiCBh88CxFqCf5uRCzEZ5jSBVBFcjucaZgEDesvQaEDittEeD1cybUBj1iEQ8qg
   Status: Ok
   Log Messages:
     Program 11111111111111111111111111111111 invoke [1]
@@ -36,20 +36,8 @@ Transaction executed in slot 6:
     Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 47461 of 596883 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 8:
-  Signature: 3xjG6XmfXmGDKX6LPHftVGc3XpUXJ8b5MKVvd3YcKDqGPdxUheRx5STWiRm7922iWRAAx6XLCJR5jMR3Ekapue4r
-  Status: Ok
-  Log Messages:
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
-    Program log: Instruction: DepositTokens
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
-    Program log: Instruction: Transfer
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191128 compute units
-    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
-    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
 Transaction executed in slot 9:
-  Signature: 3xjG6XmfXmGDKX6LPHftVGc3XpUXJ8b5MKVvd3YcKDqGPdxUheRx5STWiRm7922iWRAAx6XLCJR5jMR3Ekapue4r
+  Signature: 5QUEY9B778mdDEsdyDzm8MoFVfCMH37NJyhMFY9WoxDfX2CPAepQKvyVr5bRrw4aMuwcS4vbTm4qY6DcqhHnoymn
   Status: Ok
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -60,8 +48,20 @@ Transaction executed in slot 9:
     Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
-Transaction executed in slot 11:
-  Signature: 2rfmjuC3jigbjiueYTwkh1ziMxpGCtWyvDYymUqQaiQkjmCfdbmTAWUqRCaYGXAUsogxBa2PtQ6PWjCTXjxEf8Le
+Transaction executed in slot 10:
+  Signature: 5QUEY9B778mdDEsdyDzm8MoFVfCMH37NJyhMFY9WoxDfX2CPAepQKvyVr5bRrw4aMuwcS4vbTm4qY6DcqhHnoymn
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: Transfer
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191128 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 12:
+  Signature: w4xae7mkvEnNidR5KjchJda91upozs8ai2NmJEySqCM1bicu6cZ7BL6Q1V3xswfqpduRYyqmXkDiWPtFWuv3Zmw
   Status: Error processing Instruction 0: Cross-program invocation with unauthorized signer or writable account
   Log Messages:
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
@@ -69,6 +69,76 @@ Transaction executed in slot 11:
     Program log: Using fallback SOL/USD price: 149.42
     Program 11111111111111111111111111111111 invoke [2]
     Program 11111111111111111111111111111111 success
-    61NpbFhs6JHQdYa6H2ZRNEm4ba3uadQsEUw1Fos6Q3y9's signer privilege escalated
+    HpqPzWThLHBvtiMjx74K4LPCZyxLgrr7rzPVhhns1BKK's signer privilege escalated
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 14231 of 200000 compute units
     Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG failed: Cross-program invocation with unauthorized signer or writable account
+Transaction executed in slot 15:
+  Signature: 2JQBnAn8z1hgco46vXaNuSiqKjTjSJpK5jYrnNZyjv6N5bQwHYNVWmQwpq4BR41rdcvyauLN5ghXX3dE1WCWgbUU
+  Status: Error processing Instruction 0: custom program error: 0x7d3
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program log: AnchorError caused by account: presale_state. Error Code: ConstraintRaw. Error Number: 2003. Error Message: A raw constraint was violated.
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 8257 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG failed: custom program error: 0x7d3
+Transaction executed in slot 17:
+  Signature: 4JwL6k25TfZLkWq94FVdZBBkZvww2f3h4BUV7SgSc2ssRY9CQhnaHr5hSxpd8k6v4qkFk5EqzBCkeBEa8JrBgPE
+  Status: Ok
+  Log Messages:
+    Program 11111111111111111111111111111111 invoke [1]
+    Program 11111111111111111111111111111111 success
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [1]
+    Program log: Instruction: InitializeMint
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 2967 of 599850 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: Initialize
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL invoke [2]
+    Program log: Create
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [3]
+    Program log: Instruction: GetAccountDataSize
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 1622 of 571309 compute units
+    Program return: TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA pQAAAAAAAAA=
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 11111111111111111111111111111111 invoke [3]
+    Program 11111111111111111111111111111111 success
+    Program log: Initialize the associated token account
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [3]
+    Program log: Instruction: InitializeImmutableOwner
+    Program log: Please upgrade to SPL Token 2022 for immutable owner support
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 1405 of 564669 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [3]
+    Program log: Instruction: InitializeAccount3
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4241 of 560785 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 23544 of 579784 compute units
+    Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 44461 of 596883 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 19:
+  Signature: 2LFPgaAhmtLj6E6myApDvWDkNJ2S7o9cYH7p42hahYhBdqx4gEYPA8mpVgL3FdnQTkwgTzLPDGrh3MARZEzFkuw6
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: Transfer
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191128 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success
+Transaction executed in slot 20:
+  Signature: 2LFPgaAhmtLj6E6myApDvWDkNJ2S7o9cYH7p42hahYhBdqx4gEYPA8mpVgL3FdnQTkwgTzLPDGrh3MARZEzFkuw6
+  Status: Ok
+  Log Messages:
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG invoke [1]
+    Program log: Instruction: DepositTokens
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: Transfer
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4740 of 191128 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG consumed 15050 of 200000 compute units
+    Program 4nyxJqG4nUetnAev9Zw7gbWkPpJAS1kedGReGpCRBnPG success

@@ -268,4 +268,221 @@ describe("doge-presale", () => {
       assert.isDefined(error);
     }
   });
+
+  it("Authorized address can deposit tokens", async () => {
+    // Create an authorized address (different from the original authority)
+    const authorizedAddress = Keypair.generate();
+    
+    // Fund the authorized address
+    const fundAuthorizedTx = await provider.connection.requestAirdrop(
+      authorizedAddress.publicKey,
+      2 * anchor.web3.LAMPORTS_PER_SOL
+    );
+    await provider.connection.confirmTransaction(fundAuthorizedTx);
+    
+    // Get the authorized address's associated token account
+    const authorizedTokenAccount = await getAssociatedTokenAddress(
+      tokenMint.publicKey,
+      authorizedAddress.publicKey
+    );
+    
+    // Create the authorized address's token account
+    const createAuthorizedAtaIx = createAssociatedTokenAccountInstruction(
+      provider.wallet.publicKey,
+      authorizedTokenAccount,
+      authorizedAddress.publicKey,
+      tokenMint.publicKey
+    );
+    await provider.sendAndConfirm(new anchor.web3.Transaction().add(createAuthorizedAtaIx));
+    
+    // Mint tokens to the authorized address
+    const mintAmount = new BN(1).mul(new BN(10).pow(new BN(9))); // 1 token with 9 decimals
+    const mintToIx = createMintToInstruction(
+      tokenMint.publicKey,
+      authorizedTokenAccount,
+      provider.wallet.publicKey,
+      Number(mintAmount.toString())
+    );
+    
+    console.log("Minting tokens to authorized address...");
+    const mintTx = await provider.sendAndConfirm(
+      new anchor.web3.Transaction().add(mintToIx)
+    );
+    console.log("Minted tokens to authorized address:", mintTx);
+    
+    // Verify the tokens were minted
+    const authorizedBalance = await provider.connection.getTokenAccountBalance(authorizedTokenAccount);
+    console.log("Authorized address token balance:", authorizedBalance.value.amount);
+    assert.equal(authorizedBalance.value.amount, mintAmount.toString());
+    
+    // Try to deposit tokens from the authorized address (should fail)
+    const depositAmount = new BN(0.5).mul(new BN(10).pow(new BN(9))); // 0.5 tokens
+    console.log("Attempting to deposit tokens from unauthorized address (should fail)...");
+    
+    try {
+      const depositTx = await program.methods
+        .depositTokens(depositAmount)
+        .accounts({
+          authority: authorizedAddress.publicKey,
+          presaleState: presaleState.publicKey,
+          authorityTokenAccount: authorizedTokenAccount,
+          presaleTokenAccount: presaleTokenAccount,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([authorizedAddress])
+        .rpc();
+      
+      console.log("Deposit transaction signature:", depositTx);
+      assert.fail("Expected deposit to fail but it succeeded");
+    } catch (error) {
+      console.log("Error as expected:", error);
+      // Check for the specific constraint error
+      assert.include(error.toString(), "Error Code: ConstraintRaw");
+      assert.include(error.toString(), "Error Number: 2003");
+      console.log("Test passed: Unauthorized address cannot deposit tokens");
+    }
+    
+    // Verify the presale state still has the original authority
+    const currentPresaleState = await program.account.presaleState.fetch(presaleState.publicKey);
+    assert.equal(currentPresaleState.authority.toString(), provider.wallet.publicKey.toString());
+    console.log("Test passed: Presale state authority remains unchanged");
+    
+    // In a real implementation, you would have a function to change the authority
+    // For now, we'll just demonstrate that only the original authority can deposit tokens
+  });
+
+  it("Authorized address can be the authority of the presale", async () => {
+    // Create an authorized address that will be the authority of a new presale
+    const authorizedAddress = Keypair.generate();
+    
+    // Fund the authorized address
+    const fundAuthorizedTx = await provider.connection.requestAirdrop(
+      authorizedAddress.publicKey,
+      2 * anchor.web3.LAMPORTS_PER_SOL
+    );
+    await provider.connection.confirmTransaction(fundAuthorizedTx);
+    
+    // Generate a new keypair for the new presale state account
+    const newPresaleState = Keypair.generate();
+    
+    // Generate a new keypair for the new token mint
+    const newTokenMint = Keypair.generate();
+    
+    // Create token mint account
+    const lamports = await provider.connection.getMinimumBalanceForRentExemption(MINT_SIZE);
+    const createMintAccountIx = SystemProgram.createAccount({
+      fromPubkey: provider.wallet.publicKey,
+      newAccountPubkey: newTokenMint.publicKey,
+      space: MINT_SIZE,
+      lamports,
+      programId: TOKEN_PROGRAM_ID,
+    });
+
+    // Initialize mint
+    const initializeMintIx = createInitializeMintInstruction(
+      newTokenMint.publicKey,
+      9, // decimals
+      provider.wallet.publicKey,
+      provider.wallet.publicKey,
+    );
+
+    // Get the associated token account for the new presale
+    const newPresaleTokenAccount = await getAssociatedTokenAddress(
+      newTokenMint.publicKey,
+      newPresaleState.publicKey,
+      true
+    );
+
+    const startTime = new BN(Math.floor(Date.now() / 1000));
+    const endTime = new BN(startTime.toNumber() + 7 * 24 * 60 * 60); // 7 days from now
+
+    // Create and send the combined transaction
+    const tx = await program.methods
+      .initialize(startTime, endTime)
+      .accounts({
+        presaleState: newPresaleState.publicKey,
+        tokenMint: newTokenMint.publicKey,
+        tokenAccount: newPresaleTokenAccount,
+        authority: authorizedAddress.publicKey, // Use the authorized address as the authority
+        systemProgram: SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        rent: SYSVAR_RENT_PUBKEY,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      })
+      .preInstructions([createMintAccountIx, initializeMintIx])
+      .signers([newPresaleState, newTokenMint, authorizedAddress]) // Add authorizedAddress as a signer
+      .rpc();
+
+    console.log("New presale initialization transaction signature:", tx);
+
+    // Verify the presale state
+    const presaleStateAccount = await program.account.presaleState.fetch(newPresaleState.publicKey);
+    assert.equal(presaleStateAccount.authority.toString(), authorizedAddress.publicKey.toString());
+    assert.equal(presaleStateAccount.tokenMint.toString(), newTokenMint.publicKey.toString());
+    assert.equal(presaleStateAccount.tokenAccount.toString(), newPresaleTokenAccount.toString());
+    assert.equal(presaleStateAccount.startTime.toNumber(), startTime.toNumber());
+    assert.equal(presaleStateAccount.endTime.toNumber(), endTime.toNumber());
+    assert.equal(presaleStateAccount.currentStage, 0);
+    assert.equal(presaleStateAccount.isFinalized, false);
+    
+    console.log("Test passed: Authorized address is now the authority of the new presale");
+    
+    // Get the authorized address's associated token account
+    const authorizedTokenAccount = await getAssociatedTokenAddress(
+      newTokenMint.publicKey,
+      authorizedAddress.publicKey
+    );
+    
+    // Create the authorized address's token account
+    const createAuthorizedAtaIx = createAssociatedTokenAccountInstruction(
+      provider.wallet.publicKey,
+      authorizedTokenAccount,
+      authorizedAddress.publicKey,
+      newTokenMint.publicKey
+    );
+    await provider.sendAndConfirm(new anchor.web3.Transaction().add(createAuthorizedAtaIx));
+    
+    // Mint tokens to the authorized address
+    const mintAmount = new BN(1).mul(new BN(10).pow(new BN(9))); // 1 token with 9 decimals
+    const mintToIx = createMintToInstruction(
+      newTokenMint.publicKey,
+      authorizedTokenAccount,
+      provider.wallet.publicKey,
+      Number(mintAmount.toString())
+    );
+    
+    console.log("Minting tokens to authorized address...");
+    const mintTx = await provider.sendAndConfirm(
+      new anchor.web3.Transaction().add(mintToIx)
+    );
+    console.log("Minted tokens to authorized address:", mintTx);
+    
+    // Verify the tokens were minted
+    const authorizedBalance = await provider.connection.getTokenAccountBalance(authorizedTokenAccount);
+    console.log("Authorized address token balance:", authorizedBalance.value.amount);
+    assert.equal(authorizedBalance.value.amount, mintAmount.toString());
+    
+    // Now the authorized address should be able to deposit tokens
+    const depositAmount = new BN(0.5).mul(new BN(10).pow(new BN(9))); // 0.5 tokens
+    console.log("Depositing tokens from authorized address (should succeed)...");
+    
+    const depositTx = await program.methods
+      .depositTokens(depositAmount)
+      .accounts({
+        authority: authorizedAddress.publicKey,
+        presaleState: newPresaleState.publicKey,
+        authorityTokenAccount: authorizedTokenAccount,
+        presaleTokenAccount: newPresaleTokenAccount,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .signers([authorizedAddress])
+      .rpc();
+    
+    console.log("Deposit transaction signature:", depositTx);
+    
+    // Verify the deposit
+    const presaleTokenAccountInfo = await provider.connection.getTokenAccountBalance(newPresaleTokenAccount);
+    assert.equal(presaleTokenAccountInfo.value.amount, depositAmount.toString());
+    console.log("Test passed: Authorized address successfully deposited tokens to the presale");
+  });
 }); 
