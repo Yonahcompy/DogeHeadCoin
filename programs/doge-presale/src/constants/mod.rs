@@ -40,3 +40,28 @@ pub const STAGE_TOKEN_AMOUNTS: [u64; STAGE_COUNT as usize] = [
 
 // Total tokens available for presale
 pub const TOTAL_TOKENS: u64 = 3_000_000_000; // 3 billion tokens 
+
+// Vesting configuration
+pub const VESTING_CLIFF_DURATION: i64 = 30 * 24 * 60 * 60; // 30 days cliff
+pub const VESTING_TOTAL_DURATION: i64 = 365 * 24 * 60 * 60; // 365 days total vesting
+
+// Number of vesting tiers
+pub const VESTING_TIER_COUNT: u8 = 5;
+
+// Vesting tier percentages (must sum to 100)
+pub const VESTING_TIER_PERCENTAGES: [u8; VESTING_TIER_COUNT as usize] = [
+    0,    // Tier 1: 0% (cliff period)
+    20,   // Tier 2: 20% after cliff
+    30,   // Tier 3: 30% after 3 months
+    25,   // Tier 4: 25% after 6 months
+    25,   // Tier 5: 25% after 12 months
+];
+
+// Vesting tier durations (in seconds from presale end)
+pub const VESTING_TIER_DURATIONS: [i64; VESTING_TIER_COUNT as usize] = [
+    0,                          // Tier 1: 0 seconds (cliff)
+    30 * 24 * 60 * 60,         // Tier 2: 30 days
+    90 * 24 * 60 * 60,         // Tier 3: 90 days
+    180 * 24 * 60 * 60,        // Tier 4: 180 days
+    365 * 24 * 60 * 60,        // Tier 5: 365 days
+]; 

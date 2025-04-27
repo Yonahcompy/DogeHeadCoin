@@ -112,12 +112,7 @@ export type DogePresale = {
           "isSigner": false
         },
         {
-          "name": "buyerTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
+          "name": "buyerState",
           "isMut": true,
           "isSigner": false
         },
@@ -195,6 +190,42 @@ export type DogePresale = {
           "defined": "Transaction"
         }
       }
+    },
+    {
+      "name": "claimTokens",
+      "accounts": [
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "presaleState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -216,6 +247,42 @@ export type DogePresale = {
             "type": {
               "vec": {
                 "defined": "Transaction"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "buyerState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyer",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPurchased",
+            "type": "u64"
+          },
+          {
+            "name": "claimedTokens",
+            "type": "u64"
+          },
+          {
+            "name": "vestingStartTime",
+            "type": "i64"
+          },
+          {
+            "name": "vestingEndTime",
+            "type": "i64"
+          },
+          {
+            "name": "vestingTiers",
+            "type": {
+              "vec": {
+                "defined": "VestingTier"
               }
             }
           }
@@ -302,6 +369,26 @@ export type DogePresale = {
           {
             "name": "stage",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VestingTier",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "percentage",
+            "type": "u8"
+          },
+          {
+            "name": "releaseTime",
+            "type": "i64"
+          },
+          {
+            "name": "claimed",
+            "type": "bool"
           }
         ]
       }
@@ -432,6 +519,21 @@ export type DogePresale = {
       "code": 6024,
       "name": "PresaleStillActive",
       "msg": "Presale still active"
+    },
+    {
+      "code": 6025,
+      "name": "NoTokensToClaim",
+      "msg": "No tokens to claim"
+    },
+    {
+      "code": 6026,
+      "name": "PresaleNotFinalized",
+      "msg": "Presale not finalized"
+    },
+    {
+      "code": 6027,
+      "name": "VestingNotStarted",
+      "msg": "Vesting has not started yet"
     }
   ]
 };
@@ -550,12 +652,7 @@ export const IDL: DogePresale = {
           "isSigner": false
         },
         {
-          "name": "buyerTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
+          "name": "buyerState",
           "isMut": true,
           "isSigner": false
         },
@@ -633,6 +730,42 @@ export const IDL: DogePresale = {
           "defined": "Transaction"
         }
       }
+    },
+    {
+      "name": "claimTokens",
+      "accounts": [
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "presaleState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -654,6 +787,42 @@ export const IDL: DogePresale = {
             "type": {
               "vec": {
                 "defined": "Transaction"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "buyerState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyer",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPurchased",
+            "type": "u64"
+          },
+          {
+            "name": "claimedTokens",
+            "type": "u64"
+          },
+          {
+            "name": "vestingStartTime",
+            "type": "i64"
+          },
+          {
+            "name": "vestingEndTime",
+            "type": "i64"
+          },
+          {
+            "name": "vestingTiers",
+            "type": {
+              "vec": {
+                "defined": "VestingTier"
               }
             }
           }
@@ -740,6 +909,26 @@ export const IDL: DogePresale = {
           {
             "name": "stage",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VestingTier",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "percentage",
+            "type": "u8"
+          },
+          {
+            "name": "releaseTime",
+            "type": "i64"
+          },
+          {
+            "name": "claimed",
+            "type": "bool"
           }
         ]
       }
@@ -870,6 +1059,21 @@ export const IDL: DogePresale = {
       "code": 6024,
       "name": "PresaleStillActive",
       "msg": "Presale still active"
+    },
+    {
+      "code": 6025,
+      "name": "NoTokensToClaim",
+      "msg": "No tokens to claim"
+    },
+    {
+      "code": 6026,
+      "name": "PresaleNotFinalized",
+      "msg": "Presale not finalized"
+    },
+    {
+      "code": 6027,
+      "name": "VestingNotStarted",
+      "msg": "Vesting has not started yet"
     }
   ]
 };

@@ -36,4 +36,8 @@ pub mod doge_presale {
     pub fn get_transaction_history(ctx: Context<GetTransactionHistory>) -> Result<Vec<Transaction>> {
         instructions::get_transaction_history(ctx)
     }
+
+    pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
+        instructions::claim_tokens(ctx)
+    }
 }

@@ -76,4 +76,13 @@ pub enum PresaleError {
     
     #[msg("Presale still active")]
     PresaleStillActive,
+    
+    #[msg("No tokens to claim")]
+    NoTokensToClaim,
+    
+    #[msg("Presale not finalized")]
+    PresaleNotFinalized,
+    
+    #[msg("Vesting has not started yet")]
+    VestingNotStarted,
 }

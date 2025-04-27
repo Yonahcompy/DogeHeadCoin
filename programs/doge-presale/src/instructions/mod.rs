@@ -97,18 +97,28 @@ pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
         ],
     )?;
 
-    // Transfer tokens from presale to buyer
-    anchor_spl::token::transfer(
-        CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            anchor_spl::token::Transfer {
-                from: ctx.accounts.presale_token_account.to_account_info(),
-                to: ctx.accounts.buyer_token_account.to_account_info(),
-                authority: ctx.accounts.presale_state.to_account_info(),
-            },
-        ),
-        token_amount_raw,
-    )?;
+    // Initialize buyer state if it's new
+    if ctx.accounts.buyer_state.buyer == Pubkey::default() {
+        ctx.accounts.buyer_state.buyer = ctx.accounts.buyer.key();
+        ctx.accounts.buyer_state.total_purchased = 0;
+        ctx.accounts.buyer_state.claimed_tokens = 0;
+        ctx.accounts.buyer_state.vesting_start_time = ctx.accounts.presale_state.end_time;
+        ctx.accounts.buyer_state.vesting_end_time = ctx.accounts.presale_state.end_time + VESTING_TOTAL_DURATION;
+        ctx.accounts.buyer_state.vesting_tiers = Vec::new();
+        
+        // Initialize vesting tiers
+        for i in 0..VESTING_TIER_COUNT as usize {
+            let release_time = ctx.accounts.presale_state.end_time + VESTING_TIER_DURATIONS[i];
+            ctx.accounts.buyer_state.vesting_tiers.push(VestingTier {
+                percentage: VESTING_TIER_PERCENTAGES[i],
+                release_time,
+                claimed: false,
+            });
+        }
+    }
+
+    // Update buyer state with purchased tokens
+    ctx.accounts.buyer_state.total_purchased = ctx.accounts.buyer_state.total_purchased.checked_add(token_amount_raw).unwrap();
 
     // Update presale state
     ctx.accounts.presale_state.sold_tokens = ctx.accounts.presale_state.sold_tokens.checked_add(token_amount_raw).unwrap();
@@ -121,22 +131,12 @@ pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
         stage: current_stage,
     };
 
-    // Initialize transaction history if needed
-    if ctx.accounts.transaction_history.transaction_count == 0 {
-        ctx.accounts.transaction_history.user = ctx.accounts.buyer.key();
-        ctx.accounts.transaction_history.transactions = Vec::new();
-    }
-
     // Add transaction to history
-    if ctx.accounts.transaction_history.transactions.len() < MAX_TRANSACTIONS {
-        ctx.accounts.transaction_history.transactions.push(transaction);
-    } else {
-        // Remove oldest transaction and add new one
-        ctx.accounts.transaction_history.transactions.remove(0);
-        ctx.accounts.transaction_history.transactions.push(transaction);
+    let transaction_history = &mut ctx.accounts.transaction_history;
+    if transaction_history.transaction_count < MAX_TRANSACTIONS as u8 {
+        transaction_history.transactions.push(transaction);
+        transaction_history.transaction_count = transaction_history.transaction_count.checked_add(1).unwrap();
     }
-
-    ctx.accounts.transaction_history.transaction_count = ctx.accounts.transaction_history.transaction_count.checked_add(1).unwrap();
 
     Ok(())
 }
@@ -173,4 +173,48 @@ pub fn get_transaction_history(ctx: Context<GetTransactionHistory>) -> Result<Ve
     }
     
     Ok(ctx.accounts.transaction_history.transactions.clone())
+}
+
+pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
+    // Check if presale is finalized
+    require!(ctx.accounts.presale_state.is_finalized, PresaleError::PresaleNotFinalized);
+    
+    let current_time = Clock::get()?.unix_timestamp;
+    let buyer_state = &mut ctx.accounts.buyer_state;
+    
+    // Check if vesting has started
+    require!(current_time >= buyer_state.vesting_start_time, PresaleError::VestingNotStarted);
+    
+    // Calculate claimable tokens based on vesting schedule
+    let mut claimable_amount = 0;
+    let total_purchased = buyer_state.total_purchased;
+    
+    for tier in &mut buyer_state.vesting_tiers {
+        if !tier.claimed && current_time >= tier.release_time {
+            let tier_amount = (total_purchased as f64 * tier.percentage as f64 / 100.0) as u64;
+            claimable_amount += tier_amount;
+            tier.claimed = true;
+        }
+    }
+    
+    // Check if there are tokens to claim
+    require!(claimable_amount > 0, PresaleError::NoTokensToClaim);
+    
+    // Transfer tokens from presale to buyer
+    anchor_spl::token::transfer(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            anchor_spl::token::Transfer {
+                from: ctx.accounts.presale_token_account.to_account_info(),
+                to: ctx.accounts.buyer_token_account.to_account_info(),
+                authority: ctx.accounts.presale_state.to_account_info(),
+            },
+        ),
+        claimable_amount,
+    )?;
+    
+    // Update claimed tokens
+    buyer_state.claimed_tokens = buyer_state.claimed_tokens.checked_add(claimable_amount).unwrap();
+    
+    Ok(())
 }

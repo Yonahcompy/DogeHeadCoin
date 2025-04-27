@@ -22,6 +22,23 @@ pub struct Transaction {
     pub stage: u8,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct VestingTier {
+    pub percentage: u8,
+    pub release_time: i64,
+    pub claimed: bool,
+}
+
+#[account]
+pub struct BuyerState {
+    pub buyer: Pubkey,
+    pub total_purchased: u64,
+    pub claimed_tokens: u64,
+    pub vesting_start_time: i64,
+    pub vesting_end_time: i64,
+    pub vesting_tiers: Vec<VestingTier>,
+}
+
 #[account]
 pub struct PresaleState {
     pub authority: Pubkey,
@@ -96,11 +113,14 @@ pub struct Buy<'info> {
     #[account(mut)]
     pub authority: AccountInfo<'info>,
     
-    #[account(mut)]
-    pub buyer_token_account: Account<'info, TokenAccount>,
-    
-    #[account(mut)]
-    pub presale_token_account: Account<'info, TokenAccount>,
+    #[account(
+        init_if_needed,
+        payer = buyer,
+        space = 8 + 32 + 8 + 8 + 8 + 8 + (4 + (VESTING_TIER_COUNT as usize * (1 + 8 + 1))),
+        seeds = [b"buyer_state", buyer.key().as_ref()],
+        bump
+    )]
+    pub buyer_state: Account<'info, BuyerState>,
     
     /// CHECK: This is no longer used as we always use the fallback price
     pub sol_price_feed: AccountInfo<'info>,
@@ -146,4 +166,27 @@ pub struct GetTransactionHistory<'info> {
     pub transaction_history: Account<'info, TransactionHistory>,
     
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct ClaimTokens<'info> {
+    #[account(mut)]
+    pub buyer: Signer<'info>,
+    
+    #[account(mut)]
+    pub presale_state: Account<'info, PresaleState>,
+    
+    #[account(
+        mut,
+        constraint = buyer_state.buyer == buyer.key()
+    )]
+    pub buyer_state: Account<'info, BuyerState>,
+    
+    #[account(mut)]
+    pub buyer_token_account: Account<'info, TokenAccount>,
+    
+    #[account(mut)]
+    pub presale_token_account: Account<'info, TokenAccount>,
+    
+    pub token_program: Program<'info, Token>,
 } 
