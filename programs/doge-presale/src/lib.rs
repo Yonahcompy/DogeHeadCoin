@@ -32,4 +32,8 @@ pub mod doge_presale {
     pub fn finalize(ctx: Context<Finalize>) -> Result<()> {
         instructions::finalize(ctx)
     }
+
+    pub fn get_transaction_history(ctx: Context<GetTransactionHistory>) -> Result<Vec<Transaction>> {
+        instructions::get_transaction_history(ctx)
+    }
 }

@@ -127,12 +127,22 @@
           "isSigner": false
         },
         {
+          "name": "transactionHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
         },
         {
           "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -159,9 +169,59 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "getTransactionHistory",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": {
+        "vec": {
+          "defined": "Transaction"
+        }
+      }
     }
   ],
   "accounts": [
+    {
+      "name": "TransactionHistory",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "publicKey"
+          },
+          {
+            "name": "transactionCount",
+            "type": "u8"
+          },
+          {
+            "name": "transactions",
+            "type": {
+              "vec": {
+                "defined": "Transaction"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "PresaleState",
       "type": {
@@ -216,6 +276,32 @@
           {
             "name": "isFinalized",
             "type": "bool"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "Transaction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "usdAmount",
+            "type": "f64"
+          },
+          {
+            "name": "tokenAmount",
+            "type": "u64"
+          },
+          {
+            "name": "stage",
+            "type": "u8"
           }
         ]
       }

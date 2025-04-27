@@ -4,6 +4,24 @@ use anchor_spl::associated_token::AssociatedToken;
 
 use crate::constants::*;
 
+// Maximum number of transactions to store per user
+pub const MAX_TRANSACTIONS: usize = 50;
+
+#[account]
+pub struct TransactionHistory {
+    pub user: Pubkey,
+    pub transaction_count: u8,
+    pub transactions: Vec<Transaction>,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct Transaction {
+    pub timestamp: i64,
+    pub usd_amount: f64,
+    pub token_amount: u64,
+    pub stage: u8,
+}
+
 #[account]
 pub struct PresaleState {
     pub authority: Pubkey,
@@ -87,8 +105,18 @@ pub struct Buy<'info> {
     /// CHECK: This is no longer used as we always use the fallback price
     pub sol_price_feed: AccountInfo<'info>,
     
+    #[account(
+        init_if_needed,
+        payer = buyer,
+        space = 8 + 32 + 1 + (4 + (MAX_TRANSACTIONS * (8 + 8 + 8 + 1))),
+        seeds = [b"transaction_history", buyer.key().as_ref()],
+        bump
+    )]
+    pub transaction_history: Account<'info, TransactionHistory>,
+    
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
 }
 
 #[derive(Accounts)]
@@ -101,4 +129,21 @@ pub struct Finalize<'info> {
         constraint = authority.key() == presale_state.authority
     )]
     pub presale_state: Account<'info, PresaleState>,
+}
+
+#[derive(Accounts)]
+pub struct GetTransactionHistory<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+    
+    #[account(
+        init_if_needed,
+        payer = user,
+        space = 8 + 32 + 1 + (4 + (MAX_TRANSACTIONS * (8 + 8 + 8 + 1))),
+        seeds = [b"transaction_history", user.key().as_ref()],
+        bump
+    )]
+    pub transaction_history: Account<'info, TransactionHistory>,
+    
+    pub system_program: Program<'info, System>,
 } 
