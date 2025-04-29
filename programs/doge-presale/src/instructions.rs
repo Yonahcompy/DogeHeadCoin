@@ -58,10 +58,15 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
         timestamp: Clock::get()?.unix_timestamp,
     };
 
+    // Update totals
+    record.total_usd_sold += usd_amount;
+    record.total_tokens_sold += token_amount;
     record.transactions.push(transaction);
     record.transaction_count += 1;
 
     msg!("Transaction recorded successfully. New count: {}", record.transaction_count);
+    msg!("Total USD sold: {}", record.total_usd_sold);
+    msg!("Total tokens sold: {}", record.total_tokens_sold);
 
     Ok(())
 } 

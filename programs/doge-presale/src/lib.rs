@@ -8,7 +8,7 @@ mod instructions;
 use state::*;
 use errors::PresaleError;
 
-declare_id!("KbExbCupd7grExTAN7YG842kbutL3ERPvQWtrEg5DJ5");
+declare_id!("5miZUTH2rUeorzLRvzbd94zws3N2Y9eSsyQt9tpMkRZA");
 
 #[program]
 pub mod doge_presale {
@@ -19,12 +19,16 @@ pub mod doge_presale {
         transaction_record.authority = ctx.accounts.authority.key();
         transaction_record.current_stage = 0;
         transaction_record.transaction_count = 0;
+        transaction_record.total_usd_sold = 0.0;
+        transaction_record.total_tokens_sold = 0;
         transaction_record.transactions = Vec::new();
         
         // Log initialization for debugging
         msg!("Transaction record initialized with authority: {}", ctx.accounts.authority.key());
         msg!("Current stage: {}", transaction_record.current_stage);
         msg!("Transaction count: {}", transaction_record.transaction_count);
+        msg!("Total USD sold: {}", transaction_record.total_usd_sold);
+        msg!("Total tokens sold: {}", transaction_record.total_tokens_sold);
         
         Ok(())
     }
@@ -55,6 +59,8 @@ pub struct Initialize<'info> {
                 32 + // authority pubkey
                 1 + // current_stage (u8)
                 8 + // transaction_count (u64)
+                8 + // total_usd_sold (f64)
+                8 + // total_tokens_sold (u64)
                 4 + // Vec length prefix
                 (32 + 8 + 8 + 8 + 1 + 8) * 100, // Space for 100 transactions (matching frontend)
         seeds = [b"transaction_record"],

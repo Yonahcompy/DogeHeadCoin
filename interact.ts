@@ -25,7 +25,7 @@ interface PresaleAccounts {
 }
 
 // Program ID of the deployed contract
-const PROGRAM_ID = new PublicKey('KbExbCupd7grExTAN7YG842kbutL3ERPvQWtrEg5DJ5');
+const PROGRAM_ID = new PublicKey('5miZUTH2rUeorzLRvzbd94zws3N2Y9eSsyQt9tpMkRZA');
 
 // Connect to Devnet
 const connection = new Connection('https://api.devnet.solana.com', 'confirmed');

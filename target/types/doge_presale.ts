@@ -95,6 +95,14 @@ export type DogePresale = {
             "type": "u64"
           },
           {
+            "name": "totalUsdSold",
+            "type": "f64"
+          },
+          {
+            "name": "totalTokensSold",
+            "type": "u64"
+          },
+          {
             "name": "transactions",
             "type": {
               "vec": {
@@ -263,6 +271,14 @@ export const IDL: DogePresale = {
           },
           {
             "name": "transactionCount",
+            "type": "u64"
+          },
+          {
+            "name": "totalUsdSold",
+            "type": "f64"
+          },
+          {
+            "name": "totalTokensSold",
             "type": "u64"
           },
           {

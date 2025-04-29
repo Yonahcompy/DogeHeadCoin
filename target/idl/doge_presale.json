@@ -95,6 +95,14 @@
             "type": "u64"
           },
           {
+            "name": "totalUsdSold",
+            "type": "f64"
+          },
+          {
+            "name": "totalTokensSold",
+            "type": "u64"
+          },
+          {
             "name": "transactions",
             "type": {
               "vec": {
@@ -166,5 +174,8 @@
       "name": "Unauthorized",
       "msg": "Unauthorized"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "5miZUTH2rUeorzLRvzbd94zws3N2Y9eSsyQt9tpMkRZA"
+  }
 }
