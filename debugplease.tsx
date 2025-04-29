@@ -1,3 +1,54 @@
+import { PublicKey, SystemProgram } from '@solana/web3.js';
+import { BN } from '@project-serum/anchor';
+
+const handleSolanaBuy = async (amount: number) => {
+  try {
+    const provider = getProvider();
+    if (!provider) {
+      throw new Error('Provider not initialized');
+    }
+    
+    const program = getProgram();
+    if (!program || !solanaPublicKey) {
+      throw new Error('Program or wallet not initialized');
+    }
+
+    // Get the transaction record PDA
+    const [transactionRecord] = PublicKey.findProgramAddressSync(
+      [Buffer.from("transaction_record")],
+      program.programId
+    );
+
+    // Get the treasury PDA
+    const [treasury] = PublicKey.findProgramAddressSync(
+      [Buffer.from("treasury")],
+      program.programId
+    );
+
+    // Check if the transaction record account exists
+    const transactionRecordInfo = await connection.getAccountInfo(transactionRecord);
+    if (!transactionRecordInfo) {
+      throw new Error('Transaction record account not found. Contract may not be initialized.');
+    }
+
+    // Call the buy instruction
+    const tx = await program.methods
+      .buy(new BN(amount))
+      .accounts({
+        buyer: solanaPublicKey,
+        treasury: treasury,
+        transactionRecord: transactionRecord,
+        systemProgram: SystemProgram.programId,
+      })
+      .rpc();
+
+    return tx;
+  } catch (error) {
+    console.error('Solana buy error:', error);
+    throw error;
+  }
+};
+
 const handleBuyTokens = async () => {
   if (!solanaConnected) {
     toast.error('Please connect your Solana wallet first', {
@@ -80,69 +131,13 @@ const handleBuyTokens = async () => {
 
   try {
     if (selectedPaymentChain === 'solana') {
-      // Ensure provider is set up
-      const provider = getProvider();
-      if (!provider) {
-        throw new Error('Provider not initialized');
-      }
-      
-      const program = getProgram();
-      if (!program || !solanaPublicKey) {
-        throw new Error('Program or wallet not initialized');
-      }
-
-      // Get the transaction record PDA
-      const [transactionRecord] = PublicKey.findProgramAddressSync(
-        [Buffer.from("transaction_record")],
-        program.programId
-      );
-
-      // Get the treasury PDA
-      const [treasury] = PublicKey.findProgramAddressSync(
-        [Buffer.from("treasury")],
-        program.programId
-      );
-
-      // Check if the transaction record account exists
-      const transactionRecordInfo = await connection.getAccountInfo(transactionRecord);
-      if (!transactionRecordInfo) {
-        throw new Error('Transaction record account not found. Contract may not be initialized.');
-      }
-
-      // Check if the treasury account exists
-      const treasuryInfo = await connection.getAccountInfo(treasury);
-      if (!treasuryInfo) {
-        // If the treasury account doesn't exist, we need to create it
-        // This is a simplified approach - in a real implementation, you might want to
-        // create the treasury account with a specific instruction
-        toast.error('Treasury account not found. Please contact the admin.', {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          ...toastStyles,
-        });
-        return;
-      }
-
       // Convert amount to a number and ensure it's valid
       const amountNum = Number(amount);
       if (isNaN(amountNum) || amountNum <= 0) {
         throw new Error('Invalid amount');
       }
 
-      // Call the buy instruction with BN for amount
-      const tx = await program.methods
-        .buy(new BN(amountNum))
-        .accounts({
-          buyer: solanaPublicKey,
-          treasury: treasury,
-          transactionRecord: transactionRecord,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+      const tx = await handleSolanaBuy(amountNum);
 
       toast.success(`Transaction submitted! Hash: ${tx}`, {
         position: "bottom-right",

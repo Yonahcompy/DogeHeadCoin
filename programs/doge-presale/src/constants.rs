@@ -1,6 +1,6 @@
 // Constants for the presale program
 pub const SOL_USD_PRICE: f64 = 0.0066;    // 1 USD = 0.0066 SOL
-pub const MAX_TRANSACTIONS: usize = 1000; // Maximum number of transactions to store
+pub const MAX_TRANSACTIONS: usize = 100; // Maximum number of transactions to store (matching account space)
 
 // Stage prices in USD
 pub const STAGE_PRICES: [f64; 4] = [

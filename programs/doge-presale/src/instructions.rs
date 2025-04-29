@@ -25,6 +25,13 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
     // Calculate token amount
     let token_amount = (usd_amount / token_price * 1_000_000_000.0).round() as u64;
 
+    // Log the transaction details for debugging
+    msg!("Buying tokens with USD amount: {}", usd_amount);
+    msg!("SOL amount: {}", sol_amount);
+    msg!("Token amount: {}", token_amount);
+    msg!("Current stage: {}", current_stage);
+    msg!("Token price: {}", token_price);
+
     // Transfer SOL from buyer to treasury
     let transfer_instruction = system_instruction::transfer(
         &ctx.accounts.buyer.key(),
@@ -53,6 +60,8 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
 
     record.transactions.push(transaction);
     record.transaction_count += 1;
+
+    msg!("Transaction recorded successfully. New count: {}", record.transaction_count);
 
     Ok(())
 } 
