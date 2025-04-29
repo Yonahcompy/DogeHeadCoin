@@ -1,35 +1,27 @@
 {
-    "name": "doge-presale",
+    "name": "solana-token-presale-interaction",
     "version": "1.0.0",
-    "description": "Doge presale program",
-    "main": "index.js",
+    "description": "Interaction script for Solana token presale contract",
+    "main": "interact.ts",
     "scripts": {
-        "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-        "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-        "test": "anchor test"
+        "start": "ts-node interact.ts",
+        "build": "tsc",
+        "lint": "eslint . --ext .ts",
+        "format": "prettier --write \"**/*.ts\"",
+        "postbuild": "node scripts/update-idl.js"
     },
     "dependencies": {
-        "@coral-xyz/anchor": "^0.29.0",
         "@project-serum/anchor": "^0.26.0",
-        "@solana/spl-token": "^0.4.13",
-        "@solana/web3.js": "^1.98.2",
-        "base58": "^2.0.1",
-        "bn.js": "^5.2.1",
-        "bs58": "^6.0.0",
-        "ts-node": "^10.9.2",
-        "yarn": "^1.22.22"
+        "@solana/spl-token": "^0.3.8",
+        "@solana/web3.js": "^1.78.0"
     },
     "devDependencies": {
-        "@types/bn.js": "^5.1.0",
-        "@types/chai": "^4.3.0",
-        "@types/mocha": "^10.0.10",
-        "@types/node": "^22.14.1",
-        "@types/react": "^19.1.1",
-        "chai": "^4.3.0",
-        "mocha": "^11.1.0",
-        "prettier": "^2.6.2",
-        "ts-mocha": "^11.1.0",
-        "typescript": "^5.8.3"
-    },
-    "license": "MIT"
+        "@types/node": "^20.11.24",
+        "@typescript-eslint/eslint-plugin": "^7.1.0",
+        "@typescript-eslint/parser": "^7.1.0",
+        "eslint": "^8.57.0",
+        "prettier": "^3.2.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    }
 }

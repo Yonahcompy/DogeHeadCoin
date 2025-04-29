@@ -11,17 +11,7 @@ export type DogePresale = {
           "isSigner": true
         },
         {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "tokenMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
+          "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
         },
@@ -29,69 +19,9 @@ export type DogePresale = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "startTime",
-          "type": "i64"
-        },
-        {
-          "name": "endTime",
-          "type": "i64"
-        }
-      ]
-    },
-    {
-      "name": "depositTokens",
-      "accounts": [
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "authorityTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
       "name": "buy",
@@ -102,42 +32,17 @@ export type DogePresale = {
           "isSigner": true
         },
         {
-          "name": "presaleState",
+          "name": "treasury",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "authority",
+          "name": "transactionRecord",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "buyerState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "solPriceFeed",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "transactionHistory",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
           "isSigner": false
         },
         {
           "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -150,7 +55,7 @@ export type DogePresale = {
       ]
     },
     {
-      "name": "finalize",
+      "name": "resize",
       "accounts": [
         {
           "name": "authority",
@@ -158,23 +63,7 @@ export type DogePresale = {
           "isSigner": true
         },
         {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getTransactionHistory",
-      "accounts": [
-        {
-          "name": "user",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "transactionHistory",
+          "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
         },
@@ -184,113 +73,12 @@ export type DogePresale = {
           "isSigner": false
         }
       ],
-      "args": [],
-      "returns": {
-        "vec": {
-          "defined": "Transaction"
-        }
-      }
-    },
-    {
-      "name": "claimTokens",
-      "accounts": [
-        {
-          "name": "buyer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "buyerState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "buyerTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
       "args": []
     }
   ],
   "accounts": [
     {
-      "name": "transactionHistory",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "user",
-            "type": "publicKey"
-          },
-          {
-            "name": "transactionCount",
-            "type": "u8"
-          },
-          {
-            "name": "transactions",
-            "type": {
-              "vec": {
-                "defined": "Transaction"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "buyerState",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "buyer",
-            "type": "publicKey"
-          },
-          {
-            "name": "totalPurchased",
-            "type": "u64"
-          },
-          {
-            "name": "claimedTokens",
-            "type": "u64"
-          },
-          {
-            "name": "vestingStartTime",
-            "type": "i64"
-          },
-          {
-            "name": "vestingEndTime",
-            "type": "i64"
-          },
-          {
-            "name": "vestingTiers",
-            "type": {
-              "vec": {
-                "defined": "VestingTier"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "presaleState",
+      "name": "transactionRecord",
       "type": {
         "kind": "struct",
         "fields": [
@@ -299,50 +87,20 @@ export type DogePresale = {
             "type": "publicKey"
           },
           {
-            "name": "tokenMint",
-            "type": "publicKey"
-          },
-          {
-            "name": "tokenAccount",
-            "type": "publicKey"
-          },
-          {
-            "name": "startTime",
-            "type": "i64"
-          },
-          {
-            "name": "endTime",
-            "type": "i64"
-          },
-          {
             "name": "currentStage",
             "type": "u8"
           },
           {
-            "name": "tokenPrices",
-            "type": {
-              "array": [
-                "f64",
-                5
-              ]
-            }
-          },
-          {
-            "name": "tokenAmounts",
-            "type": {
-              "array": [
-                "u64",
-                5
-              ]
-            }
-          },
-          {
-            "name": "soldTokens",
+            "name": "transactionCount",
             "type": "u64"
           },
           {
-            "name": "isFinalized",
-            "type": "bool"
+            "name": "transactions",
+            "type": {
+              "vec": {
+                "defined": "Transaction"
+              }
+            }
           }
         ]
       }
@@ -355,12 +113,16 @@ export type DogePresale = {
         "kind": "struct",
         "fields": [
           {
-            "name": "timestamp",
-            "type": "i64"
+            "name": "buyer",
+            "type": "publicKey"
           },
           {
             "name": "usdAmount",
             "type": "f64"
+          },
+          {
+            "name": "solAmount",
+            "type": "u64"
           },
           {
             "name": "tokenAmount",
@@ -369,26 +131,10 @@ export type DogePresale = {
           {
             "name": "stage",
             "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "VestingTier",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "percentage",
-            "type": "u8"
           },
           {
-            "name": "releaseTime",
+            "name": "timestamp",
             "type": "i64"
-          },
-          {
-            "name": "claimed",
-            "type": "bool"
           }
         ]
       }
@@ -397,148 +143,28 @@ export type DogePresale = {
   "errors": [
     {
       "code": 6000,
-      "name": "PresaleNotStarted",
-      "msg": "Presale has not started yet"
+      "name": "InvalidAmount",
+      "msg": "Invalid amount"
     },
     {
       "code": 6001,
-      "name": "PresaleEnded",
-      "msg": "Presale has ended"
+      "name": "TransactionLimitReached",
+      "msg": "Transaction limit reached"
     },
     {
       "code": 6002,
-      "name": "PresaleAlreadyFinalized",
-      "msg": "Presale is already finalized"
-    },
-    {
-      "code": 6003,
-      "name": "BelowMinimumBuy",
-      "msg": "Purchase amount is below minimum"
-    },
-    {
-      "code": 6004,
-      "name": "AboveMaximumBuy",
-      "msg": "Purchase amount is above maximum"
-    },
-    {
-      "code": 6005,
-      "name": "HardCapExceeded",
-      "msg": "Hard cap would be exceeded"
-    },
-    {
-      "code": 6006,
-      "name": "SoftCapNotReached",
-      "msg": "Soft cap not reached"
-    },
-    {
-      "code": 6007,
-      "name": "InvalidTokenAccount",
-      "msg": "Invalid token account"
-    },
-    {
-      "code": 6008,
-      "name": "InvalidTokenMint",
-      "msg": "Invalid token mint"
-    },
-    {
-      "code": 6009,
-      "name": "Unauthorized",
-      "msg": "Unauthorized access"
-    },
-    {
-      "code": 6010,
-      "name": "MathOverflow",
-      "msg": "Math operation overflow"
-    },
-    {
-      "code": 6011,
-      "name": "InsufficientFunds",
-      "msg": "Insufficient funds"
-    },
-    {
-      "code": 6012,
-      "name": "InvalidStage",
-      "msg": "Invalid stage number"
-    },
-    {
-      "code": 6013,
-      "name": "NoTokensAvailable",
-      "msg": "No tokens available in this stage"
-    },
-    {
-      "code": 6014,
-      "name": "InvalidPriceFeed",
-      "msg": "Invalid price feed"
-    },
-    {
-      "code": 6015,
-      "name": "StalePriceFeed",
-      "msg": "Price feed is stale"
-    },
-    {
-      "code": 6016,
-      "name": "UserNotFound",
-      "msg": "User account not found"
-    },
-    {
-      "code": 6017,
-      "name": "InvalidTokenAmount",
-      "msg": "Invalid token amount"
-    },
-    {
-      "code": 6018,
-      "name": "InvalidUsdAmount",
-      "msg": "Invalid USD amount"
-    },
-    {
-      "code": 6019,
-      "name": "PresaleNotActive",
-      "msg": "Presale is not active"
-    },
-    {
-      "code": 6020,
-      "name": "PresaleFinalized",
-      "msg": "Presale is finalized"
-    },
-    {
-      "code": 6021,
-      "name": "AllStagesCompleted",
-      "msg": "All stages completed"
-    },
-    {
-      "code": 6022,
-      "name": "InsufficientTokens",
-      "msg": "Insufficient tokens available"
-    },
-    {
-      "code": 6023,
-      "name": "Overflow",
+      "name": "ArithmeticOverflow",
       "msg": "Arithmetic overflow"
     },
     {
-      "code": 6024,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic operation overflow"
+      "code": 6003,
+      "name": "InvalidStage",
+      "msg": "Invalid stage"
     },
     {
-      "code": 6025,
-      "name": "PresaleStillActive",
-      "msg": "Presale still active"
-    },
-    {
-      "code": 6026,
-      "name": "NoTokensToClaim",
-      "msg": "No tokens to claim"
-    },
-    {
-      "code": 6027,
-      "name": "PresaleNotFinalized",
-      "msg": "Presale not finalized"
-    },
-    {
-      "code": 6028,
-      "name": "VestingNotStarted",
-      "msg": "Vesting has not started yet"
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
     }
   ]
 };
@@ -556,17 +182,7 @@ export const IDL: DogePresale = {
           "isSigner": true
         },
         {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "tokenMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
+          "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
         },
@@ -574,69 +190,9 @@ export const IDL: DogePresale = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "startTime",
-          "type": "i64"
-        },
-        {
-          "name": "endTime",
-          "type": "i64"
-        }
-      ]
-    },
-    {
-      "name": "depositTokens",
-      "accounts": [
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "authorityTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
       "name": "buy",
@@ -647,42 +203,17 @@ export const IDL: DogePresale = {
           "isSigner": true
         },
         {
-          "name": "presaleState",
+          "name": "treasury",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "authority",
+          "name": "transactionRecord",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "buyerState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "solPriceFeed",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "transactionHistory",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
           "isSigner": false
         },
         {
           "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -695,7 +226,7 @@ export const IDL: DogePresale = {
       ]
     },
     {
-      "name": "finalize",
+      "name": "resize",
       "accounts": [
         {
           "name": "authority",
@@ -703,23 +234,7 @@ export const IDL: DogePresale = {
           "isSigner": true
         },
         {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getTransactionHistory",
-      "accounts": [
-        {
-          "name": "user",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "transactionHistory",
+          "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
         },
@@ -729,113 +244,12 @@ export const IDL: DogePresale = {
           "isSigner": false
         }
       ],
-      "args": [],
-      "returns": {
-        "vec": {
-          "defined": "Transaction"
-        }
-      }
-    },
-    {
-      "name": "claimTokens",
-      "accounts": [
-        {
-          "name": "buyer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "presaleState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "buyerState",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "buyerTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
       "args": []
     }
   ],
   "accounts": [
     {
-      "name": "transactionHistory",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "user",
-            "type": "publicKey"
-          },
-          {
-            "name": "transactionCount",
-            "type": "u8"
-          },
-          {
-            "name": "transactions",
-            "type": {
-              "vec": {
-                "defined": "Transaction"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "buyerState",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "buyer",
-            "type": "publicKey"
-          },
-          {
-            "name": "totalPurchased",
-            "type": "u64"
-          },
-          {
-            "name": "claimedTokens",
-            "type": "u64"
-          },
-          {
-            "name": "vestingStartTime",
-            "type": "i64"
-          },
-          {
-            "name": "vestingEndTime",
-            "type": "i64"
-          },
-          {
-            "name": "vestingTiers",
-            "type": {
-              "vec": {
-                "defined": "VestingTier"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "presaleState",
+      "name": "transactionRecord",
       "type": {
         "kind": "struct",
         "fields": [
@@ -844,50 +258,20 @@ export const IDL: DogePresale = {
             "type": "publicKey"
           },
           {
-            "name": "tokenMint",
-            "type": "publicKey"
-          },
-          {
-            "name": "tokenAccount",
-            "type": "publicKey"
-          },
-          {
-            "name": "startTime",
-            "type": "i64"
-          },
-          {
-            "name": "endTime",
-            "type": "i64"
-          },
-          {
             "name": "currentStage",
             "type": "u8"
           },
           {
-            "name": "tokenPrices",
-            "type": {
-              "array": [
-                "f64",
-                5
-              ]
-            }
-          },
-          {
-            "name": "tokenAmounts",
-            "type": {
-              "array": [
-                "u64",
-                5
-              ]
-            }
-          },
-          {
-            "name": "soldTokens",
+            "name": "transactionCount",
             "type": "u64"
           },
           {
-            "name": "isFinalized",
-            "type": "bool"
+            "name": "transactions",
+            "type": {
+              "vec": {
+                "defined": "Transaction"
+              }
+            }
           }
         ]
       }
@@ -900,12 +284,16 @@ export const IDL: DogePresale = {
         "kind": "struct",
         "fields": [
           {
-            "name": "timestamp",
-            "type": "i64"
+            "name": "buyer",
+            "type": "publicKey"
           },
           {
             "name": "usdAmount",
             "type": "f64"
+          },
+          {
+            "name": "solAmount",
+            "type": "u64"
           },
           {
             "name": "tokenAmount",
@@ -914,26 +302,10 @@ export const IDL: DogePresale = {
           {
             "name": "stage",
             "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "VestingTier",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "percentage",
-            "type": "u8"
           },
           {
-            "name": "releaseTime",
+            "name": "timestamp",
             "type": "i64"
-          },
-          {
-            "name": "claimed",
-            "type": "bool"
           }
         ]
       }
@@ -942,148 +314,28 @@ export const IDL: DogePresale = {
   "errors": [
     {
       "code": 6000,
-      "name": "PresaleNotStarted",
-      "msg": "Presale has not started yet"
+      "name": "InvalidAmount",
+      "msg": "Invalid amount"
     },
     {
       "code": 6001,
-      "name": "PresaleEnded",
-      "msg": "Presale has ended"
+      "name": "TransactionLimitReached",
+      "msg": "Transaction limit reached"
     },
     {
       "code": 6002,
-      "name": "PresaleAlreadyFinalized",
-      "msg": "Presale is already finalized"
-    },
-    {
-      "code": 6003,
-      "name": "BelowMinimumBuy",
-      "msg": "Purchase amount is below minimum"
-    },
-    {
-      "code": 6004,
-      "name": "AboveMaximumBuy",
-      "msg": "Purchase amount is above maximum"
-    },
-    {
-      "code": 6005,
-      "name": "HardCapExceeded",
-      "msg": "Hard cap would be exceeded"
-    },
-    {
-      "code": 6006,
-      "name": "SoftCapNotReached",
-      "msg": "Soft cap not reached"
-    },
-    {
-      "code": 6007,
-      "name": "InvalidTokenAccount",
-      "msg": "Invalid token account"
-    },
-    {
-      "code": 6008,
-      "name": "InvalidTokenMint",
-      "msg": "Invalid token mint"
-    },
-    {
-      "code": 6009,
-      "name": "Unauthorized",
-      "msg": "Unauthorized access"
-    },
-    {
-      "code": 6010,
-      "name": "MathOverflow",
-      "msg": "Math operation overflow"
-    },
-    {
-      "code": 6011,
-      "name": "InsufficientFunds",
-      "msg": "Insufficient funds"
-    },
-    {
-      "code": 6012,
-      "name": "InvalidStage",
-      "msg": "Invalid stage number"
-    },
-    {
-      "code": 6013,
-      "name": "NoTokensAvailable",
-      "msg": "No tokens available in this stage"
-    },
-    {
-      "code": 6014,
-      "name": "InvalidPriceFeed",
-      "msg": "Invalid price feed"
-    },
-    {
-      "code": 6015,
-      "name": "StalePriceFeed",
-      "msg": "Price feed is stale"
-    },
-    {
-      "code": 6016,
-      "name": "UserNotFound",
-      "msg": "User account not found"
-    },
-    {
-      "code": 6017,
-      "name": "InvalidTokenAmount",
-      "msg": "Invalid token amount"
-    },
-    {
-      "code": 6018,
-      "name": "InvalidUsdAmount",
-      "msg": "Invalid USD amount"
-    },
-    {
-      "code": 6019,
-      "name": "PresaleNotActive",
-      "msg": "Presale is not active"
-    },
-    {
-      "code": 6020,
-      "name": "PresaleFinalized",
-      "msg": "Presale is finalized"
-    },
-    {
-      "code": 6021,
-      "name": "AllStagesCompleted",
-      "msg": "All stages completed"
-    },
-    {
-      "code": 6022,
-      "name": "InsufficientTokens",
-      "msg": "Insufficient tokens available"
-    },
-    {
-      "code": 6023,
-      "name": "Overflow",
+      "name": "ArithmeticOverflow",
       "msg": "Arithmetic overflow"
     },
     {
-      "code": 6024,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic operation overflow"
+      "code": 6003,
+      "name": "InvalidStage",
+      "msg": "Invalid stage"
     },
     {
-      "code": 6025,
-      "name": "PresaleStillActive",
-      "msg": "Presale still active"
-    },
-    {
-      "code": 6026,
-      "name": "NoTokensToClaim",
-      "msg": "No tokens to claim"
-    },
-    {
-      "code": 6027,
-      "name": "PresaleNotFinalized",
-      "msg": "Presale not finalized"
-    },
-    {
-      "code": 6028,
-      "name": "VestingNotStarted",
-      "msg": "Vesting has not started yet"
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
     }
   ]
 };
