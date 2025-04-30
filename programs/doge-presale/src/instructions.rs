@@ -42,7 +42,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     msg!("Current stage: {}", current_stage);
     msg!("Token price: {}", token_price);
 
-    // Check if buyer already exists
+    // Check if buyer already exists.
     let buyer_key = ctx.accounts.buyer.key();
     let existing_buyer = record.buyers.iter().find(|info| info.buyer_address == buyer_key);
     
