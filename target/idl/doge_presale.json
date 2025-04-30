@@ -229,9 +229,11 @@
       "code": 6004,
       "name": "Unauthorized",
       "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "BuyerInfoNotFound",
+      "msg": "Buyer info not found"
     }
-  ],
-  "metadata": {
-    "address": "2c86DsQz3BZo7b5ceB85VBxfYgavGQ7cXzBnDoTJhZ21"
-  }
+  ]
 }

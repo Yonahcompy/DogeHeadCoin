@@ -12,4 +12,6 @@ pub enum PresaleError {
     InvalidStage,
     #[msg("Unauthorized")]
     Unauthorized,
+    #[msg("Buyer info not found")]
+    BuyerInfoNotFound,
 } 

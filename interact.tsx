@@ -15,6 +15,7 @@ import { DogePresaleIDL } from '../contracts/old_solanaIdl';
 import { PublicKey, SystemProgram, Keypair, Transaction } from '@solana/web3.js';
 import { Program, AnchorProvider, BN, setProvider, web3 } from "@coral-xyz/anchor";
 import { DogePresale, IDL } from '../contracts/solanaIdl';
+import React from 'react';
 
 // Chain IDs
 const CHAIN_IDS = {
@@ -98,7 +99,7 @@ export const MultiChainPresale: FC = () => {
   const [amount, setAmount] = useState<string>('');
   const [tokensToReceive, setTokensToReceive] = useState<string>('0');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [currentStage, setCurrentStage] = useState<number>(1); // Default to stage 1
+  const [currentStage, setCurrentStage] = useState<number>(0); // Default to stage 1
   const stageData = presaleStages.find(s => s.stage === currentStage);
   
 
@@ -217,7 +218,7 @@ export const MultiChainPresale: FC = () => {
     if (!provider) return null;
 
     // Create a proper PublicKey object for the program ID
-    const programId = new PublicKey("2c86DsQz3BZo7b5ceB85VBxfYgavGQ7cXzBnDoTJhZ21");
+    const programId = new PublicKey("3W2PH2XgGok4weSRpXEjhZ5d8cpcSz6g941yU9bkgZvF");
 
     // Pass the programId as the second parameter
     return new Program<DogePresale>(IDL, programId, provider);
@@ -931,6 +932,103 @@ export const MultiChainPresale: FC = () => {
     }
   }, [solanaConnected, solanaPublicKey, fetchPresaleData]);
 
+  const [userProfile, setUserProfile] = useState<{
+    totalPaidUsd: number;
+    totalPaidSol: number;
+    totalTokensBought: number;
+    totalTokensClaimed: number;
+    lastClaimTimestamp: number;
+    transactions: Array<{
+      usdAmount: number;
+      solAmount: number;
+      tokenAmount: number;
+      stage: number;
+      timestamp: number;
+    }>;
+  } | null>(null);
+
+  // Add loading state for user profile
+  const [isProfileLoading, setIsProfileLoading] = useState<boolean>(false);
+
+  // Add function to fetch user profile
+  const fetchUserProfile = useCallback(async () => {
+    if (!solanaConnected || !solanaPublicKey) {
+      setUserProfile(null);
+      return;
+    }
+
+    setIsProfileLoading(true);
+    try {
+      const program = getProgram();
+      if (!program) {
+        throw new Error('Program not initialized');
+      }
+
+      // Get the transaction record PDA
+      const [transactionRecord] = PublicKey.findProgramAddressSync(
+        [Buffer.from("transaction_record")],
+        program.programId
+      );
+
+      // Fetch the transaction record account
+      const account = await program.account.transactionRecord.fetch(transactionRecord);
+      
+      // Find the user's buyer info
+      const buyerInfo = account.buyers.find(b => b.buyerAddress.equals(solanaPublicKey));
+      
+      if (!buyerInfo) {
+        setUserProfile(null);
+        return;
+      }
+
+      // Get user's transactions
+      const userTransactions = account.transactions
+        .filter(tx => tx.buyer.equals(solanaPublicKey))
+        .map(tx => ({
+          usdAmount: tx.usdAmount,
+          solAmount: tx.solAmount,
+          tokenAmount: tx.tokenAmount,
+          stage: tx.stage,
+          timestamp: tx.timestamp,
+        }));
+
+      setUserProfile({
+        totalPaidUsd: buyerInfo.totalPaidUsd,
+        totalPaidSol: buyerInfo.totalPaidSol,
+        totalTokensBought: buyerInfo.totalTokensBought,
+        totalTokensClaimed: buyerInfo.totalTokensClaimed,
+        lastClaimTimestamp: buyerInfo.lastClaimTimestamp,
+        transactions: userTransactions,
+      });
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      toast.error('Failed to fetch user profile. Please try again.', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        ...toastStyles,
+      });
+      setUserProfile(null);
+    } finally {
+      setIsProfileLoading(false);
+    }
+  }, [solanaConnected, solanaPublicKey, getProgram]);
+
+  // Add useEffect to fetch user profile when wallet connects or after successful transaction
+  useEffect(() => {
+    if (solanaConnected && solanaPublicKey) {
+      fetchUserProfile();
+    }
+  }, [solanaConnected, solanaPublicKey, fetchUserProfile]);
+
+  // Add format functions for display
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleString();
+  };
+
   return (
     <div className={styles.presaleContainer}>
       <ToastContainer
@@ -1032,7 +1130,7 @@ export const MultiChainPresale: FC = () => {
           </div>
 
           {/* Admin controls */}
-          {solanaConnected && isAdmin && (
+          {solanaConnected && (
             <div className={styles.adminControls}>
               <h3>Admin Controls</h3>
               {!isInitialized ? (
@@ -1043,7 +1141,7 @@ export const MultiChainPresale: FC = () => {
                 >
                   {isProcessing ? 'Processing...' : 'Initialize Contract'}
                 </button>
-              ) : (
+              ) : isAdmin ? (
                 <div className={styles.initializedStatus}>
                   <span className={styles.initializedText}>Contract Initialized</span>
                   <span className={styles.adminBadge}>You are the admin</span>
@@ -1054,6 +1152,11 @@ export const MultiChainPresale: FC = () => {
                   >
                     {isProcessing ? 'Processing...' : 'Next Stage'}
                   </button>
+                </div>
+              ) : (
+                <div className={styles.initializedStatus}>
+                  <span className={styles.initializedText}>Contract Initialized</span>
+                  <span className={styles.adminBadge}>Waiting for admin...</span>
                 </div>
               )}
             </div>
@@ -1249,6 +1352,89 @@ export const MultiChainPresale: FC = () => {
                   <path d="M12 5L19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* User Profile Section */}
+      {solanaConnected && (
+        <div className={styles.userProfileSection}>
+          <h2>Your Profile</h2>
+          
+          {isProfileLoading ? (
+            <div className={styles.loadingContainer}>
+              <div className={styles.loadingSpinner} />
+              <span>Loading profile...</span>
+            </div>
+          ) : userProfile ? (
+            <React.Fragment>
+              <div className={styles.profileStats}>
+                <div className={styles.statCard}>
+                  <h3>Total Investment</h3>
+                  <div className={styles.statValue}>
+                    <span>${userProfile.totalPaidUsd.toFixed(2)}</span>
+                    <span>{formatSolAmount(userProfile.totalPaidSol)} SOL</span>
+                  </div>
+                </div>
+                
+                <div className={styles.statCard}>
+                  <h3>Tokens</h3>
+                  <div className={styles.statValue}>
+                    <span>Bought: {formatTokenAmount(userProfile.totalTokensBought)}</span>
+                    <span>Claimed: {formatTokenAmount(userProfile.totalTokensClaimed)}</span>
+                    <span>Pending: {formatTokenAmount(userProfile.totalTokensBought - userProfile.totalTokensClaimed)}</span>
+                  </div>
+                </div>
+                
+                <div className={styles.statCard}>
+                  <h3>Last Claim</h3>
+                  <div className={styles.statValue}>
+                    {userProfile.lastClaimTimestamp > 0 ? (
+                      <span>{formatDate(userProfile.lastClaimTimestamp)}</span>
+                    ) : (
+                      <span>No claims yet</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.transactionHistory}>
+                <div className={styles.transactionHistoryHeader}>
+                  <h3>Transaction History</h3>
+                  <button 
+                    className={styles.refreshButton}
+                    onClick={fetchUserProfile}
+                    disabled={isProfileLoading}
+                  >
+                    {isProfileLoading ? 'Refreshing...' : 'Refresh'}
+                  </button>
+                </div>
+                <div className={styles.transactionList}>
+                  {userProfile.transactions.map((tx, index) => (
+                    <div key={index} className={styles.transactionCard}>
+                      <div className={styles.transactionHeader}>
+                        <span className={styles.stageBadge}>Stage {tx.stage + 1}</span>
+                        <span className={styles.timestamp}>{formatDate(tx.timestamp)}</span>
+                      </div>
+                      <div className={styles.transactionDetails}>
+                        <div className={styles.detailRow}>
+                          <span>Amount Paid:</span>
+                          <span>${tx.usdAmount.toFixed(2)} ({formatSolAmount(tx.solAmount)} SOL)</span>
+                        </div>
+                        <div className={styles.detailRow}>
+                          <span>Tokens Received:</span>
+                          <span>{formatTokenAmount(tx.tokenAmount)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </React.Fragment>
+          ) : (
+            <div className={styles.noProfileContainer}>
+              <p>No purchase history found. Buy some tokens to see your profile!</p>
             </div>
           )}
         </div>

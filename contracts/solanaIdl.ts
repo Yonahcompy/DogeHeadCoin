@@ -90,6 +90,22 @@ export type DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "getBuyerInfo",
+      "accounts": [
+        {
+          "name": "buyer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -229,6 +245,11 @@ export type DogePresale = {
       "code": 6004,
       "name": "Unauthorized",
       "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "BuyerInfoNotFound",
+      "msg": "Buyer info not found"
     }
   ]
 };
@@ -325,6 +346,22 @@ export const IDL: DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "getBuyerInfo",
+      "accounts": [
+        {
+          "name": "buyer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -464,6 +501,11 @@ export const IDL: DogePresale = {
       "code": 6004,
       "name": "Unauthorized",
       "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "BuyerInfoNotFound",
+      "msg": "Buyer info not found"
     }
   ]
 };

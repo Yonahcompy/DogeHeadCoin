@@ -8,7 +8,7 @@ mod instructions;
 use state::*;
 use errors::PresaleError;
 
-declare_id!("2c86DsQz3BZo7b5ceB85VBxfYgavGQ7cXzBnDoTJhZ21");
+declare_id!("3W2PH2XgGok4weSRpXEjhZ5d8cpcSz6g941yU9bkgZvF");
 
 #[program]
 pub mod doge_presale {

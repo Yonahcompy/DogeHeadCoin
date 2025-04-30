@@ -229,6 +229,11 @@ export type DogePresale = {
       "code": 6004,
       "name": "Unauthorized",
       "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "BuyerInfoNotFound",
+      "msg": "Buyer info not found"
     }
   ]
 };
@@ -464,6 +469,11 @@ export const IDL: DogePresale = {
       "code": 6004,
       "name": "Unauthorized",
       "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "BuyerInfoNotFound",
+      "msg": "Buyer info not found"
     }
   ]
 };
