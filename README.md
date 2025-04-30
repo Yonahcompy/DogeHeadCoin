@@ -79,3 +79,9 @@ MIT
 | 4     | 600,000,000     | 0.00202              |            |
 | 5     | 600,000,000     | 0.00313              |            |
 | TOTAL | 3,000,000,000   |                      |            |
+
+
+
+
+
+solana-keygen new --no-bip39-passphrase -o target/deploy/doge_presale-keypair.json --force

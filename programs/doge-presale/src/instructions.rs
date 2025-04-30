@@ -58,15 +58,68 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
         timestamp: Clock::get()?.unix_timestamp,
     };
 
-    // Update totals
+    // Update record totals first
     record.total_usd_sold += usd_amount;
     record.total_tokens_sold += token_amount;
     record.transactions.push(transaction);
     record.transaction_count += 1;
 
+    // Log the transaction details
     msg!("Transaction recorded successfully. New count: {}", record.transaction_count);
     msg!("Total USD sold: {}", record.total_usd_sold);
     msg!("Total tokens sold: {}", record.total_tokens_sold);
+
+    // Update buyer information
+    let buyer_key = ctx.accounts.buyer.key();
+    if let Some(buyer_info) = record.buyers.iter_mut().find(|info| info.buyer_address == buyer_key) {
+        buyer_info.total_paid_usd += usd_amount;
+        buyer_info.total_paid_sol += sol_amount;
+        buyer_info.total_tokens_bought += token_amount;
+        
+        // Log buyer information
+        msg!("Buyer total paid USD: {}", buyer_info.total_paid_usd);
+        msg!("Buyer total tokens bought: {}", buyer_info.total_tokens_bought);
+    } else {
+        // Create new buyer info
+        let new_info = BuyerInfo {
+            buyer_address: buyer_key,
+            total_paid_usd: usd_amount,
+            total_paid_sol: sol_amount,
+            total_tokens_bought: token_amount,
+            total_tokens_claimed: 0,
+            last_claim_timestamp: 0,
+        };
+        record.buyers.push(new_info);
+        
+        // Log new buyer information
+        msg!("New buyer added. Total paid USD: {}", usd_amount);
+        msg!("New buyer total tokens bought: {}", token_amount);
+    }
+
+    Ok(())
+}
+
+pub fn next_stage(ctx: Context<crate::NextStage>) -> Result<()> {
+    // Verify the signer is the authority
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    let record = &mut ctx.accounts.transaction_record;
+    
+    // Check if we can advance to next stage
+    require!(
+        record.current_stage < STAGE_COUNT - 1,
+        PresaleError::InvalidStage
+    );
+
+    // Advance to next stage
+    record.current_stage += 1;
+
+    // Log the stage advancement
+    msg!("Advanced to stage {}", record.current_stage);
+    msg!("New token price: {}", STAGE_PRICES[record.current_stage as usize]);
 
     Ok(())
 } 

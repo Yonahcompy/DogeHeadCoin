@@ -74,6 +74,22 @@ export type DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "nextStage",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -109,6 +125,14 @@ export type DogePresale = {
                 "defined": "Transaction"
               }
             }
+          },
+          {
+            "name": "buyers",
+            "type": {
+              "vec": {
+                "defined": "BuyerInfo"
+              }
+            }
           }
         ]
       }
@@ -142,6 +166,38 @@ export type DogePresale = {
           },
           {
             "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BuyerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyerAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPaidUsd",
+            "type": "f64"
+          },
+          {
+            "name": "totalPaidSol",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensBought",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimTimestamp",
             "type": "i64"
           }
         ]
@@ -253,6 +309,22 @@ export const IDL: DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "nextStage",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -288,6 +360,14 @@ export const IDL: DogePresale = {
                 "defined": "Transaction"
               }
             }
+          },
+          {
+            "name": "buyers",
+            "type": {
+              "vec": {
+                "defined": "BuyerInfo"
+              }
+            }
           }
         ]
       }
@@ -321,6 +401,38 @@ export const IDL: DogePresale = {
           },
           {
             "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BuyerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyerAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPaidUsd",
+            "type": "f64"
+          },
+          {
+            "name": "totalPaidSol",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensBought",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimTimestamp",
             "type": "i64"
           }
         ]

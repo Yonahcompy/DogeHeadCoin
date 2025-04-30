@@ -74,6 +74,22 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "nextStage",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -107,6 +123,14 @@
             "type": {
               "vec": {
                 "defined": "Transaction"
+              }
+            }
+          },
+          {
+            "name": "buyers",
+            "type": {
+              "vec": {
+                "defined": "BuyerInfo"
               }
             }
           }
@@ -146,6 +170,38 @@
           }
         ]
       }
+    },
+    {
+      "name": "BuyerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyerAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPaidUsd",
+            "type": "f64"
+          },
+          {
+            "name": "totalPaidSol",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensBought",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimTimestamp",
+            "type": "i64"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -176,6 +232,6 @@
     }
   ],
   "metadata": {
-    "address": "5miZUTH2rUeorzLRvzbd94zws3N2Y9eSsyQt9tpMkRZA"
+    "address": "2c86DsQz3BZo7b5ceB85VBxfYgavGQ7cXzBnDoTJhZ21"
   }
 }

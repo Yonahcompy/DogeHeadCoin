@@ -1,0 +1,1562 @@
+.presaleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-out;
+    overflow-x: hidden;
+  }
+  
+  .presaleCard {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(251, 191, 36, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  .tokenInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.5s ease-out 0.2s backwards;
+  }
+  
+  .tokenHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .tokenHeader h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s ease infinite;
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+  }
+  
+  .tokenSymbol {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+  }
+  
+  .presaleStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .statItem {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .statItem:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.1);
+  }
+  
+  .statLabel {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .statValue {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f3f4f6;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  
+  .progressBar {
+    height: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    padding: 0 10px;
+  }
+  
+  .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    border-radius: 12px;
+    transition: width 1s ease-out;
+    animation: gradientFlow 3s ease infinite;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+  }
+  
+  .progressText {
+    position: relative;
+    z-index: 2;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    color: white;
+    text-align: center;
+    letter-spacing: -0.2px;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* Responsive styles for progress bar */
+  @media (max-width: 768px) {
+    .progressBar {
+      height: 22px;
+      border-radius: 11px;
+      padding: 0 8px;
+    }
+  
+    .progress {
+      border-radius: 11px;
+    }
+  
+    .progressText {
+      font-size: 0.8rem;
+      letter-spacing: -0.3px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .progressBar {
+      height: 20px;
+      border-radius: 10px;
+      padding: 0 6px;
+    }
+  
+    .progress {
+      border-radius: 10px;
+    }
+  
+    .progressText {
+      font-size: 0.75rem;
+      letter-spacing: -0.5px;
+      font-weight: 700;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .progressBar {
+      height: 18px;
+      border-radius: 9px;
+      padding: 0 4px;
+    }
+  
+    .progress {
+      border-radius: 9px;
+    }
+  
+    .progressText {
+      font-size: 0.7rem;
+      letter-spacing: -0.6px;
+    }
+  }
+  
+  .walletSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: fadeIn 0.5s ease-out 0.8s backwards;
+  }
+  
+  .walletStatus {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .walletStatusItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .walletStatusItem:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+  }
+  
+  .walletLabel {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    min-width: 120px;
+  }
+  
+  .walletValue {
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #9ca3af;
+    flex-grow: 1;
+    transition: color 0.3s ease;
+  }
+  
+  .walletValue.connected {
+    color: #fbbf24;
+    animation: glow 2s infinite;
+  }
+  
+  .connectButton, .disconnectButton {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .connectButton {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .connectButton:hover {
+    background: #f59e0b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  }
+  
+  .connectButton:disabled {
+    background: #4b5563;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .disconnectButton {
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid #ef4444;
+  }
+  
+  .disconnectButton:hover {
+    background: rgba(239, 68, 68, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .chainInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .chainName {
+    font-size: 0.9rem;
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  
+  .chainName:hover {
+    background: rgba(251, 191, 36, 0.2);
+    transform: scale(1.05);
+  }
+  
+  .paymentOptions {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .paymentOptions h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    color: #f3f4f6;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  
+  .paymentOptionsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  
+  .paymentOption {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .paymentOption::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .paymentOption:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.1);
+  }
+  
+  .paymentOption:hover::before {
+    opacity: 1;
+  }
+  
+  .paymentOption.selected {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: #fbbf24;
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15);
+    animation: pulse 2s infinite;
+  }
+  
+  .paymentOption.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    position: relative;
+    background: rgba(0, 0, 0, 0.1);
+    transform: none;
+  }
+  
+  .disabledLabel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .chainIcon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.3));
+  }
+  
+  .paymentOption:hover .chainIcon {
+    transform: scale(1.1) rotate(5deg);
+  }
+  
+  .buySection {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .inputGroup {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .inputGroup:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.1);
+  }
+  
+  .input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    color: #f3f4f6;
+    font-size: 1.2rem;
+    width: 100%;
+    transition: all 0.3s ease;
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: #fbbf24;
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+  }
+  
+  .input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .tokenCalculation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .tokenCalculation:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+  }
+  
+  .tokenCalculation span {
+    font-size: 0.9rem;
+    color: #9ca3af;
+  }
+  
+  .tokenAmount {
+    font-weight: 600;
+    color: #fbbf24;
+    animation: glow 2s infinite;
+  }
+  
+  .buyButton {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    color: #000;
+    border: none;
+    border-radius: 16px;
+    padding: 1.25rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .buyButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: 0.5s;
+  }
+  
+  .buyButton:hover::before {
+    left: 100%;
+  }
+  
+  .buyButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 8px 24px rgba(251, 191, 36, 0.3),
+      0 0 0 2px rgba(251, 191, 36, 0.2);
+  }
+  
+  .buyButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes glow {
+    0% {
+      text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+    }
+    50% {
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+    }
+    100% {
+      text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+    }
+  }
+  
+  @keyframes gradientFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .presaleStats {
+      grid-template-columns: 1fr;
+    }
+    
+    .paymentOptionsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .walletStatusItem {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0.75rem;
+      gap: 0.5rem;
+    }
+    
+    .walletLabel {
+      margin-bottom: 0.25rem;
+      font-size: 0.8rem;
+    }
+    
+    .walletValue {
+      margin-bottom: 0.25rem;
+      font-size: 0.8rem;
+    }
+  
+    .presaleContainer {
+      padding: 0;
+      width: 100vw;
+      min-width: 0;
+      gap: 1.2rem;
+    }
+    .presaleCard,
+    .roadmapSection,
+    .futureListingsSection {
+      max-width: none;
+      width: 100vw;
+      border-radius: 0;
+      padding: 0.8rem 0.2rem;
+      box-sizing: border-box;
+      gap: 1rem;
+    }
+    .tokenInfo {
+      gap: 0.8rem;
+    }
+    .tokenHeader h2 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    .tokenSymbol {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+    }
+    .presaleStats {
+      gap: 0.7rem;
+    }
+    .statItem {
+      padding: 0.7rem;
+      border-radius: 8px;
+      gap: 0.3rem;
+    }
+    .statLabel {
+      font-size: 0.7rem;
+    }
+    .statValue {
+      font-size: 1rem;
+    }
+    .progressBar {
+      height: 7px;
+      border-radius: 3px;
+    }
+    .progress {
+      border-radius: 3px;
+    }
+    .walletSection {
+      gap: 1rem;
+    }
+    .paymentOptions h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    .paymentOption {
+      padding: 0.7rem;
+      border-radius: 8px;
+      gap: 0.5rem;
+    }
+    .chainIcon {
+      width: 36px;
+      height: 36px;
+    }
+    .buySection {
+      gap: 0.7rem;
+    }
+    .inputGroup {
+      padding: 0.7rem;
+      border-radius: 8px;
+      gap: 0.5rem;
+    }
+    .input {
+      font-size: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+    }
+    .tokenCalculation {
+      padding: 0.7rem;
+      border-radius: 8px;
+    }
+    .tokenCalculation span {
+      font-size: 0.8rem;
+    }
+    .tokenAmount {
+      font-size: 1rem;
+    }
+    .buyButton {
+      font-size: 1rem;
+      padding: 0.8rem;
+      border-radius: 8px;
+    }
+    .roadmapSection h2,
+    .futureListingsSection h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .roadmapTimeline {
+      gap: 1rem;
+    }
+    .roadmapItem {
+      gap: 1rem;
+      padding-left: 1.5rem;
+    }
+    .roadmapPhase {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.8rem;
+    }
+    .roadmapContent {
+      padding: 0.7rem;
+      border-radius: 8px;
+    }
+    .roadmapContent h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .roadmapContent p {
+      font-size: 0.85rem;
+    }
+    .listingsGrid {
+      gap: 0.7rem;
+    }
+    .listingCard {
+      padding: 1rem;
+      border-radius: 8px;
+      gap: 0.7rem;
+    }
+    .exchangeLogo {
+      width: 48px;
+      height: 48px;
+    }
+    .listingCard h3 {
+      font-size: 1rem;
+    }
+    .listingStatus {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+    }
+  }
+  
+  .roadmapSection {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 0.5s ease-out 1.2s backwards;
+  }
+  
+  .roadmapSection h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 2rem 0;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s ease infinite;
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .roadmapTimeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .roadmapTimeline::before {
+    content: '';
+    position: absolute;
+    left: 1.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+    animation: gradientFlow 3s ease infinite;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  
+  .roadmapItem {
+    display: flex;
+    gap: 2rem;
+    position: relative;
+    padding-left: 3rem;
+  }
+  
+  .roadmapPhase {
+    position: absolute;
+    left: 0;
+    width: 3rem;
+    height: 3rem;
+    background: #fbbf24;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 
+      0 0 20px rgba(251, 191, 36, 0.3),
+      0 0 0 4px rgba(251, 191, 36, 0.1);
+    animation: pulse 2s infinite;
+    z-index: 2;
+  }
+  
+  .roadmapContent {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    flex-grow: 1;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .roadmapContent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .roadmapContent:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.1);
+  }
+  
+  .roadmapContent:hover::before {
+    opacity: 1;
+  }
+  
+  .roadmapContent h3 {
+    color: #fbbf24;
+    margin: 0 0 1rem 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  
+  .roadmapContent p {
+    color: #f3f4f6;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .futureListingsSection {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 0.5s ease-out 1.4s backwards;
+  }
+  
+  .futureListingsSection h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 2rem 0;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s ease infinite;
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .listingsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .listingCard {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .listingCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .listingCard:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.1);
+  }
+  
+  .listingCard:hover::before {
+    opacity: 1;
+  }
+  
+  .exchangeLogo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.3));
+  }
+  
+  .listingCard:hover .exchangeLogo {
+    transform: scale(1.1) rotate(5deg);
+  }
+  
+  .listingCard h3 {
+    color: #f3f4f6;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  
+  .listingStatus {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+  }
+  
+  @media (max-width: 480px) {
+    .listingsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .roadmapContent {
+      padding: 1.25rem;
+    }
+    
+    .roadmapContent h3 {
+      font-size: 1.1rem;
+    }
+    
+    .roadmapContent p {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .adminControls {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .adminControls:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .adminControls h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #f3f4f6;
+    text-align: center;
+  }
+  
+  .adminButton {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .adminButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  }
+  
+  .adminButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(251, 191, 36, 0.2);
+  }
+  
+  .adminButton:disabled {
+    background: #4b5563;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+    transform: none;
+  }
+  
+  .initializedStatus {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
+    background: rgba(16, 185, 129, 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.18);
+  }
+  
+  .initializedText {
+    font-size: 1rem;
+    color: #10b981;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .initializedText::before {
+    content: "✓";
+    display: inline-block;
+    background: #10b981;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 0.8rem;
+  }
+  
+  .adminBadge {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .adminBadge::before {
+    content: "👑";
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    .adminControls {
+      padding: 1rem;
+      margin-top: 1rem;
+      gap: 0.7rem;
+    }
+    .adminControls h3 {
+      font-size: 1rem;
+    }
+    .adminButton {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
+    .initializedText, .adminBadge {
+      font-size: 0.85rem;
+    }
+  }
+  
+  /* Transaction Section Styles - Completely Redesigned */
+  .transactionsSection {
+    margin-top: 2rem;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 0.5s ease-out 1.6s backwards;
+  }
+  
+  .transactionsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .transactionsHeader h3 {
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+    margin: 0;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  
+  .transactionsFilter {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .filterButton {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .filterButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .filterButton:first-child {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+  }
+  
+  .transactionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .transactionItem {
+    perspective: 1000px;
+    height: 120px;
+  }
+  
+  .transactionCard {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+  
+  .transactionItem:hover .transactionCard {
+    transform: rotateY(180deg);
+  }
+  
+  .transactionCardFront,
+  .transactionCardBack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .transactionCardFront {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .transactionCardBack {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .transactionIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: white;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+  }
+  
+  .transactionMainInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .transactionType {
+    font-weight: 600;
+    color: #fff;
+    font-size: 1rem;
+  }
+  
+  .transactionAmount {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin: 0.25rem 0;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  }
+  
+  .transactionTime {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .transactionStage {
+    margin-left: auto;
+  }
+  
+  .stageBadge {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+  }
+  
+  .transactionDetails {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .detailGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .detailLabel {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.25rem;
+  }
+  
+  .detailValue {
+    font-size: 0.9rem;
+    color: #fff;
+    font-weight: 500;
+    word-break: break-all;
+  }
+  
+  .transactionActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  .actionButton {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .actionButton:hover {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .viewMoreContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+  
+  .viewMoreButton {
+    background: transparent;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .viewMoreButton:hover {
+    background: rgba(251, 191, 36, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .transactionsSection {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      border-radius: 16px;
+      width: 100%;
+      max-width: none;
+    }
+  
+    .transactionsHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+  
+    .transactionsHeader h3 {
+      font-size: 1.3rem;
+    }
+  
+    .transactionsFilter {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+  
+    .transactionsFilter::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  
+    .filterButton {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+  
+    .transactionsList {
+      gap: 0.8rem;
+    }
+  
+    .transactionItem {
+      height: auto;
+      perspective: none;
+    }
+  
+    .transactionCard {
+      transform-style: flat;
+      height: auto;
+    }
+  
+    .transactionItem:hover .transactionCard {
+      transform: none;
+    }
+  
+    .transactionCardFront,
+    .transactionCardBack {
+      position: relative;
+      height: auto;
+      min-height: 100px;
+      backface-visibility: visible;
+      transform: none;
+      margin-bottom: 0.5rem;
+    }
+  
+    .transactionCardBack {
+      display: none;
+      margin-top: 0.5rem;
+      padding: 0.8rem;
+    }
+  
+    .transactionItem:hover .transactionCardBack {
+      display: flex;
+    }
+  
+    .transactionIcon {
+      width: 36px;
+      height: 36px;
+      margin-right: 0.8rem;
+    }
+  
+    .transactionMainInfo {
+      gap: 0.3rem;
+    }
+  
+    .transactionType {
+      font-size: 0.9rem;
+    }
+  
+    .transactionAmount {
+      font-size: 1.1rem;
+    }
+  
+    .transactionTime {
+      font-size: 0.75rem;
+    }
+  
+    .stageBadge {
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+    }
+  
+    .transactionDetails {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+    }
+  
+    .detailGroup {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  
+    .detailLabel {
+      font-size: 0.75rem;
+      margin-bottom: 0.2rem;
+    }
+  
+    .detailValue {
+      font-size: 0.85rem;
+    }
+  
+    .transactionActions {
+      margin-top: 0.8rem;
+    }
+  
+    .actionButton {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
+    }
+  
+    .viewMoreContainer {
+      margin-top: 1.2rem;
+    }
+  
+    .viewMoreButton {
+      width: 100%;
+      justify-content: center;
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .transactionsSection {
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+  
+    .transactionsHeader h3 {
+      font-size: 1.2rem;
+    }
+  
+    .transactionCardFront {
+      padding: 0.8rem;
+    }
+  
+    .transactionIcon {
+      width: 32px;
+      height: 32px;
+    }
+  
+    .transactionType {
+      font-size: 0.85rem;
+    }
+  
+    .transactionAmount {
+      font-size: 1rem;
+    }
+  
+    .stageBadge {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+    }
+  }
+  

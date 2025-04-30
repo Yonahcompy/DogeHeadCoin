@@ -1,6 +1,4 @@
-import { IdlTypes, Idl } from "@coral-xyz/anchor";
-
-export type DogePresaleIDL = Idl &  {
+export type DogePresale = {
   "version": "0.1.0",
   "name": "doge_presale",
   "instructions": [
@@ -55,6 +53,43 @@ export type DogePresaleIDL = Idl &  {
           "type": "f64"
         }
       ]
+    },
+    {
+      "name": "resize",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "nextStage",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -72,6 +107,18 @@ export type DogePresaleIDL = Idl &  {
             "type": "u8"
           },
           {
+            "name": "transactionCount",
+            "type": "u64"
+          },
+          {
+            "name": "totalUsdSold",
+            "type": "f64"
+          },
+          {
+            "name": "totalTokensSold",
+            "type": "u64"
+          },
+          {
             "name": "transactions",
             "type": {
               "vec": {
@@ -80,8 +127,12 @@ export type DogePresaleIDL = Idl &  {
             }
           },
           {
-            "name": "transactionCount",
-            "type": "u64"
+            "name": "buyers",
+            "type": {
+              "vec": {
+                "defined": "BuyerInfo"
+              }
+            }
           }
         ]
       }
@@ -119,6 +170,38 @@ export type DogePresaleIDL = Idl &  {
           }
         ]
       }
+    },
+    {
+      "name": "BuyerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyerAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPaidUsd",
+            "type": "f64"
+          },
+          {
+            "name": "totalPaidSol",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensBought",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimTimestamp",
+            "type": "i64"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -141,15 +224,16 @@ export type DogePresaleIDL = Idl &  {
       "code": 6003,
       "name": "InvalidStage",
       "msg": "Invalid stage"
+    },
+    {
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
     }
   ]
 };
 
-;
-
-export type DogePresaleTypes = IdlTypes<DogePresaleIDL>;
-
-export const IDL: DogePresaleIDL =  {
+export const IDL: DogePresale = {
   "version": "0.1.0",
   "name": "doge_presale",
   "instructions": [
@@ -204,6 +288,43 @@ export const IDL: DogePresaleIDL =  {
           "type": "f64"
         }
       ]
+    },
+    {
+      "name": "resize",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "nextStage",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -221,6 +342,18 @@ export const IDL: DogePresaleIDL =  {
             "type": "u8"
           },
           {
+            "name": "transactionCount",
+            "type": "u64"
+          },
+          {
+            "name": "totalUsdSold",
+            "type": "f64"
+          },
+          {
+            "name": "totalTokensSold",
+            "type": "u64"
+          },
+          {
             "name": "transactions",
             "type": {
               "vec": {
@@ -229,8 +362,12 @@ export const IDL: DogePresaleIDL =  {
             }
           },
           {
-            "name": "transactionCount",
-            "type": "u64"
+            "name": "buyers",
+            "type": {
+              "vec": {
+                "defined": "BuyerInfo"
+              }
+            }
           }
         ]
       }
@@ -268,6 +405,38 @@ export const IDL: DogePresaleIDL =  {
           }
         ]
       }
+    },
+    {
+      "name": "BuyerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyerAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalPaidUsd",
+            "type": "f64"
+          },
+          {
+            "name": "totalPaidSol",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensBought",
+            "type": "u64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimTimestamp",
+            "type": "i64"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -290,7 +459,11 @@ export const IDL: DogePresaleIDL =  {
       "code": 6003,
       "name": "InvalidStage",
       "msg": "Invalid stage"
+    },
+    {
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
     }
   ]
 };
-;
