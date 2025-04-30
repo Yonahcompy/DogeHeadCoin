@@ -85,3 +85,19 @@ MIT
 
 
 solana-keygen new --no-bip39-passphrase -o target/deploy/doge_presale-keypair.json --force
+
+
+
+solana-keygen pubkey ./target/deploy/doge_presale-keypair.json
+
+
+
+solana program extend 8GQ6CBmSHELjpfTFNRpo4SyqfvPfCmh7DXnxEhKiNQN6 20000 -u devnet -k ./authority.json
+
+
+
+solana program write-buffer target/deploy/doge_presale.so --keypair ./authority.json
+
+
+
+solana program deploy --buffer ABTHzM47KhWcxvvRbgFXcep8cuuuevhnsSm45iUmZp2T --program-id 8GQ6CBmSHELjpfTFNRpo4SyqfvPfCmh7DXnxEhKiNQN6 --keypair ./authority.json

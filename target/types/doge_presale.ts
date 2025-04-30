@@ -42,6 +42,12 @@ export type DogePresale = {
           "isSigner": false
         },
         {
+          "name": "referrer",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": true
+        },
+        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -311,6 +317,12 @@ export const IDL: DogePresale = {
           "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
+        },
+        {
+          "name": "referrer",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": true
         },
         {
           "name": "systemProgram",

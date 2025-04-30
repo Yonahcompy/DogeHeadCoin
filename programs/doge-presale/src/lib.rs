@@ -8,7 +8,7 @@ mod instructions;
 use state::*;
 use errors::PresaleError;
 
-declare_id!("6kudkrD1EKSM6VCRy8VgpENqrAZKFzjZGsKoLGS3QLfs");
+declare_id!("8GQ6CBmSHELjpfTFNRpo4SyqfvPfCmh7DXnxEhKiNQN6");
 
 #[program]
 pub mod doge_presale {
@@ -142,6 +142,10 @@ pub struct Buy<'info> {
         bump
     )]
     pub transaction_record: Account<'info, TransactionRecord>,
+
+    /// CHECK: This is safe because we just transfer SOL to it
+    #[account(mut)]
+    pub referrer: Option<AccountInfo<'info>>,
 
     pub system_program: Program<'info, System>,
 }

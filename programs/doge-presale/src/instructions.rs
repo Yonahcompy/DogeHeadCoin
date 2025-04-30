@@ -42,21 +42,86 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     msg!("Current stage: {}", current_stage);
     msg!("Token price: {}", token_price);
 
-    // Transfer SOL from buyer to treasury
-    let transfer_instruction = system_instruction::transfer(
-        &ctx.accounts.buyer.key(),
-        &ctx.accounts.treasury.key(),
-        sol_amount,
-    );
+    // Check if buyer already exists
+    let buyer_key = ctx.accounts.buyer.key();
+    let existing_buyer = record.buyers.iter().find(|info| info.buyer_address == buyer_key);
+    
+    // Process SOL transfer based on whether this is a first purchase or subsequent purchase
+    if let Some(buyer) = existing_buyer {
+        // This is a subsequent purchase
+        if let Some(referrer_address) = buyer.referrer {
+            // Calculate referral reward (2% of sol_amount)
+            let referral_reward = (sol_amount as f64 * 0.02).round() as u64;
+            let treasury_amount = sol_amount - referral_reward;
 
-    anchor_lang::solana_program::program::invoke(
-        &transfer_instruction,
-        &[
-            ctx.accounts.buyer.to_account_info(),
-            ctx.accounts.treasury.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ],
-    )?;
+            // Transfer referral reward to referrer
+            let referral_transfer = system_instruction::transfer(
+                &ctx.accounts.buyer.key(),
+                &referrer_address,
+                referral_reward,
+            );
+
+            anchor_lang::solana_program::program::invoke(
+                &referral_transfer,
+                &[
+                    ctx.accounts.buyer.to_account_info(),
+                    ctx.accounts.referrer.as_ref().unwrap().to_account_info(),
+                    ctx.accounts.system_program.to_account_info(),
+                ],
+            )?;
+
+            // Transfer remaining amount to treasury
+            let treasury_transfer = system_instruction::transfer(
+                &ctx.accounts.buyer.key(),
+                &ctx.accounts.treasury.key(),
+                treasury_amount,
+            );
+
+            anchor_lang::solana_program::program::invoke(
+                &treasury_transfer,
+                &[
+                    ctx.accounts.buyer.to_account_info(),
+                    ctx.accounts.treasury.to_account_info(),
+                    ctx.accounts.system_program.to_account_info(),
+                ],
+            )?;
+
+            msg!("Processed referral reward: {} lamports to referrer", referral_reward);
+            msg!("Sent {} lamports to treasury", treasury_amount);
+        } else {
+            // No referrer, send all to treasury
+            let transfer_instruction = system_instruction::transfer(
+                &ctx.accounts.buyer.key(),
+                &ctx.accounts.treasury.key(),
+                sol_amount,
+            );
+
+            anchor_lang::solana_program::program::invoke(
+                &transfer_instruction,
+                &[
+                    ctx.accounts.buyer.to_account_info(),
+                    ctx.accounts.treasury.to_account_info(),
+                    ctx.accounts.system_program.to_account_info(),
+                ],
+            )?;
+        }
+    } else {
+        // This is a first purchase - send all to treasury regardless of referrer
+        let transfer_instruction = system_instruction::transfer(
+            &ctx.accounts.buyer.key(),
+            &ctx.accounts.treasury.key(),
+            sol_amount,
+        );
+
+        anchor_lang::solana_program::program::invoke(
+            &transfer_instruction,
+            &[
+                ctx.accounts.buyer.to_account_info(),
+                ctx.accounts.treasury.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+            ],
+        )?;
+    }
 
     // Record the transaction
     let transaction = Transaction {
@@ -80,7 +145,6 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     msg!("Total tokens sold: {}", record.total_tokens_sold);
 
     // Update buyer information
-    let buyer_key = ctx.accounts.buyer.key();
     if let Some(buyer_info) = record.buyers.iter_mut().find(|info| info.buyer_address == buyer_key) {
         buyer_info.total_paid_usd += usd_amount;
         buyer_info.total_paid_sol += sol_amount;
