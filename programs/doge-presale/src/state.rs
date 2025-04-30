@@ -29,4 +29,5 @@ pub struct BuyerInfo {
     pub total_tokens_bought: u64, // Total tokens bought by this buyer
     pub total_tokens_claimed: u64, // Total tokens claimed by this buyer
     pub last_claim_timestamp: i64, // Timestamp of last claim
+    pub referrer: Option<Pubkey>, // Optional referrer address
 }

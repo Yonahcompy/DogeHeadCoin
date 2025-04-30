@@ -3,7 +3,7 @@ use anchor_lang::solana_program::system_instruction;
 
 use crate::{state::*, errors::PresaleError, constants::*};
 
-pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
+pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) -> Result<()> {
     // Check if amount is valid
     require!(usd_amount > 0.0, PresaleError::InvalidAmount);
 
@@ -18,6 +18,16 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
     let current_stage = record.current_stage;
     require!(current_stage < STAGE_COUNT, PresaleError::InvalidStage);
     let token_price = STAGE_PRICES[current_stage as usize];
+
+    // Validate referrer if provided
+    if let Some(ref referrer_pubkey) = referrer {
+        // Check if referrer is a valid Solana address
+        require!(
+            referrer_pubkey != &ctx.accounts.buyer.key(),
+            PresaleError::InvalidReferrer
+        );
+        msg!("Valid referrer provided: {}", referrer_pubkey);
+    }
 
     // Calculate SOL amount from USD
     let sol_amount = (usd_amount * SOL_USD_PRICE * 1_000_000_000.0).round() as u64;
@@ -80,7 +90,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
         msg!("Buyer total paid USD: {}", buyer_info.total_paid_usd);
         msg!("Buyer total tokens bought: {}", buyer_info.total_tokens_bought);
     } else {
-        // Create new buyer info
+        // Create new buyer info with referrer if provided
         let new_info = BuyerInfo {
             buyer_address: buyer_key,
             total_paid_usd: usd_amount,
@@ -88,12 +98,16 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64) -> Result<()> {
             total_tokens_bought: token_amount,
             total_tokens_claimed: 0,
             last_claim_timestamp: 0,
+            referrer,
         };
         record.buyers.push(new_info);
         
         // Log new buyer information
         msg!("New buyer added. Total paid USD: {}", usd_amount);
         msg!("New buyer total tokens bought: {}", token_amount);
+        if let Some(ref referrer) = referrer {
+            msg!("Referrer: {}", referrer);
+        }
     }
 
     Ok(())

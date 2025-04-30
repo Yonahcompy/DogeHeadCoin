@@ -2,16 +2,16 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum PresaleError {
+    #[msg("Unauthorized access")]
+    Unauthorized,
     #[msg("Invalid amount")]
     InvalidAmount,
     #[msg("Transaction limit reached")]
     TransactionLimitReached,
-    #[msg("Arithmetic overflow")]
-    ArithmeticOverflow,
     #[msg("Invalid stage")]
     InvalidStage,
-    #[msg("Unauthorized")]
-    Unauthorized,
-    #[msg("Buyer info not found")]
-    BuyerInfoNotFound,
+    #[msg("Buyer not found")]
+    BuyerNotFound,
+    #[msg("Invalid referrer address")]
+    InvalidReferrer,
 } 

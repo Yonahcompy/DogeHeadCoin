@@ -8,7 +8,7 @@ mod instructions;
 use state::*;
 use errors::PresaleError;
 
-declare_id!("3W2PH2XgGok4weSRpXEjhZ5d8cpcSz6g941yU9bkgZvF");
+declare_id!("6kudkrD1EKSM6VCRy8VgpENqrAZKFzjZGsKoLGS3QLfs");
 
 #[program]
 pub mod doge_presale {
@@ -34,8 +34,8 @@ pub mod doge_presale {
         Ok(())
     }
 
-    pub fn buy(ctx: Context<Buy>, usd_amount: f64) -> Result<()> {
-        instructions::buy(ctx, usd_amount)
+    pub fn buy(ctx: Context<Buy>, usd_amount: f64, referrer: Option<Pubkey>) -> Result<()> {
+        instructions::buy(ctx, usd_amount, referrer)
     }
     
     pub fn resize(ctx: Context<Resize>) -> Result<()> {
@@ -88,6 +88,18 @@ pub mod doge_presale {
 
     pub fn next_stage(ctx: Context<NextStage>) -> Result<()> {
         instructions::next_stage(ctx)
+    }
+
+    pub fn get_buyer_info(ctx: Context<GetBuyerInfo>) -> Result<BuyerInfo> {
+        let record = &ctx.accounts.transaction_record;
+        
+        // Find the buyer info for the given address
+        let buyer_info = record.buyers
+            .iter()
+            .find(|info| info.buyer_address == ctx.accounts.buyer_address.key())
+            .ok_or(PresaleError::BuyerNotFound)?;
+            
+        Ok(buyer_info.clone())
     }
 }
 
@@ -156,6 +168,18 @@ pub struct NextStage<'info> {
     
     #[account(
         mut,
+        seeds = [b"transaction_record"],
+        bump
+    )]
+    pub transaction_record: Account<'info, TransactionRecord>,
+}
+
+#[derive(Accounts)]
+pub struct GetBuyerInfo<'info> {
+    /// CHECK: This is just a public key, no need to verify
+    pub buyer_address: AccountInfo<'info>,
+    
+    #[account(
         seeds = [b"transaction_record"],
         bump
     )]

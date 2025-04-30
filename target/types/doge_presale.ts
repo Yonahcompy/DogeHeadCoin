@@ -51,6 +51,12 @@ export type DogePresale = {
         {
           "name": "usdAmount",
           "type": "f64"
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          }
         }
       ]
     },
@@ -90,6 +96,25 @@ export type DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "getBuyerInfo",
+      "accounts": [
+        {
+          "name": "buyerAddress",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": {
+        "defined": "BuyerInfo"
+      }
     }
   ],
   "accounts": [
@@ -199,6 +224,12 @@ export type DogePresale = {
           {
             "name": "lastClaimTimestamp",
             "type": "i64"
+          },
+          {
+            "name": "referrer",
+            "type": {
+              "option": "publicKey"
+            }
           }
         ]
       }
@@ -207,18 +238,18 @@ export type DogePresale = {
   "errors": [
     {
       "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 6001,
       "name": "InvalidAmount",
       "msg": "Invalid amount"
     },
     {
-      "code": 6001,
+      "code": 6002,
       "name": "TransactionLimitReached",
       "msg": "Transaction limit reached"
-    },
-    {
-      "code": 6002,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic overflow"
     },
     {
       "code": 6003,
@@ -227,13 +258,13 @@ export type DogePresale = {
     },
     {
       "code": 6004,
-      "name": "Unauthorized",
-      "msg": "Unauthorized"
+      "name": "BuyerNotFound",
+      "msg": "Buyer not found"
     },
     {
       "code": 6005,
-      "name": "BuyerInfoNotFound",
-      "msg": "Buyer info not found"
+      "name": "InvalidReferrer",
+      "msg": "Invalid referrer address"
     }
   ]
 };
@@ -291,6 +322,12 @@ export const IDL: DogePresale = {
         {
           "name": "usdAmount",
           "type": "f64"
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          }
         }
       ]
     },
@@ -330,6 +367,25 @@ export const IDL: DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "getBuyerInfo",
+      "accounts": [
+        {
+          "name": "buyerAddress",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": {
+        "defined": "BuyerInfo"
+      }
     }
   ],
   "accounts": [
@@ -439,6 +495,12 @@ export const IDL: DogePresale = {
           {
             "name": "lastClaimTimestamp",
             "type": "i64"
+          },
+          {
+            "name": "referrer",
+            "type": {
+              "option": "publicKey"
+            }
           }
         ]
       }
@@ -447,18 +509,18 @@ export const IDL: DogePresale = {
   "errors": [
     {
       "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 6001,
       "name": "InvalidAmount",
       "msg": "Invalid amount"
     },
     {
-      "code": 6001,
+      "code": 6002,
       "name": "TransactionLimitReached",
       "msg": "Transaction limit reached"
-    },
-    {
-      "code": 6002,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic overflow"
     },
     {
       "code": 6003,
@@ -467,13 +529,13 @@ export const IDL: DogePresale = {
     },
     {
       "code": 6004,
-      "name": "Unauthorized",
-      "msg": "Unauthorized"
+      "name": "BuyerNotFound",
+      "msg": "Buyer not found"
     },
     {
       "code": 6005,
-      "name": "BuyerInfoNotFound",
-      "msg": "Buyer info not found"
+      "name": "InvalidReferrer",
+      "msg": "Invalid referrer address"
     }
   ]
 };
