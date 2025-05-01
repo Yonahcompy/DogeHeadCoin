@@ -44,7 +44,7 @@ class EventFormatter {
             const idl = require('./solanaidl.json');
             const bs58 = require('bs58');
 
-            // Initialize connection to Solana network
+            // Initialize connection to Solana network.
             const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com');
 
             // Load the program
