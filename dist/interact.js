@@ -189,7 +189,7 @@ const MultiChainPresale = () => {
         if (!provider)
             return null;
         // Create a proper PublicKey object for the program ID
-        const programId = new web3_js_1.PublicKey("8GQ6CBmSHELjpfTFNRpo4SyqfvPfCmh7DXnxEhKiNQN6");
+        const programId = new web3_js_1.PublicKey("72GhYfmtPPgrV8eJMRfNx8DwTUttc89RgqRBcVS5K2nP");
         // Pass the programId as the second parameter
         return new anchor_1.Program(solanaIdl_1.IDL, programId, provider);
     }, [getProvider]);

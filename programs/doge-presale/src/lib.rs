@@ -8,7 +8,7 @@ mod instructions;
 use state::*;
 use errors::PresaleError;
 
-declare_id!("8GQ6CBmSHELjpfTFNRpo4SyqfvPfCmh7DXnxEhKiNQN6");
+declare_id!("72GhYfmtPPgrV8eJMRfNx8DwTUttc89RgqRBcVS5K2nP");
 
 #[program]
 pub mod doge_presale {
@@ -101,6 +101,10 @@ pub mod doge_presale {
             
         Ok(buyer_info.clone())
     }
+
+    pub fn authority_buy(ctx: Context<AuthorityBuy>, usd_amount: f64, buyer_address: Pubkey) -> Result<()> {
+        instructions::authority_buy(ctx, usd_amount, buyer_address)
+    }
 }
 
 #[derive(Accounts)]
@@ -184,6 +188,19 @@ pub struct GetBuyerInfo<'info> {
     pub buyer_address: AccountInfo<'info>,
     
     #[account(
+        seeds = [b"transaction_record"],
+        bump
+    )]
+    pub transaction_record: Account<'info, TransactionRecord>,
+}
+
+#[derive(Accounts)]
+pub struct AuthorityBuy<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    
+    #[account(
+        mut,
         seeds = [b"transaction_record"],
         bump
     )]

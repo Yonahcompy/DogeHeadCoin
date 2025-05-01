@@ -121,6 +121,31 @@
       "returns": {
         "defined": "BuyerInfo"
       }
+    },
+    {
+      "name": "authorityBuy",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "usdAmount",
+          "type": "f64"
+        },
+        {
+          "name": "buyerAddress",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -272,5 +297,8 @@
       "name": "InvalidReferrer",
       "msg": "Invalid referrer address"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "72GhYfmtPPgrV8eJMRfNx8DwTUttc89RgqRBcVS5K2nP"
+  }
 }

@@ -121,6 +121,31 @@ export type DogePresale = {
       "returns": {
         "defined": "BuyerInfo"
       }
+    },
+    {
+      "name": "authorityBuy",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "usdAmount",
+          "type": "f64"
+        },
+        {
+          "name": "buyerAddress",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -398,6 +423,31 @@ export const IDL: DogePresale = {
       "returns": {
         "defined": "BuyerInfo"
       }
+    },
+    {
+      "name": "authorityBuy",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "usdAmount",
+          "type": "f64"
+        },
+        {
+          "name": "buyerAddress",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [

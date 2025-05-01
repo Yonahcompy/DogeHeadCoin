@@ -200,4 +200,86 @@ pub fn next_stage(ctx: Context<crate::NextStage>) -> Result<()> {
     msg!("New token price: {}", STAGE_PRICES[record.current_stage as usize]);
 
     Ok(())
+}
+
+pub fn authority_buy(ctx: Context<crate::AuthorityBuy>, usd_amount: f64, buyer_address: Pubkey) -> Result<()> {
+    // Verify the signer is the authority
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    // Check if amount is valid
+    require!(usd_amount > 0.0, PresaleError::InvalidAmount);
+
+    // Check if we can store more transactions
+    let record = &mut ctx.accounts.transaction_record;
+    require!(
+        record.transaction_count < MAX_TRANSACTIONS as u64,
+        PresaleError::TransactionLimitReached
+    );
+
+    // Get current stage and price
+    let current_stage = record.current_stage;
+    require!(current_stage < STAGE_COUNT, PresaleError::InvalidStage);
+    let token_price = STAGE_PRICES[current_stage as usize];
+
+    // Calculate SOL amount from USD (for record keeping only)
+    let sol_amount = (usd_amount * SOL_USD_PRICE * 1_000_000_000.0).round() as u64;
+
+    // Calculate token amount
+    let token_amount = (usd_amount / token_price * 1_000_000_000.0).round() as u64;
+
+    // Log the transaction details for debugging
+    msg!("Recording purchase for address: {}", buyer_address);
+    msg!("USD amount: {}", usd_amount);
+    msg!("Token amount: {}", token_amount);
+    msg!("Current stage: {}", current_stage);
+    msg!("Token price: {}", token_price);
+
+    // Check if buyer already exists
+    let _existing_buyer = record.buyers.iter().find(|info| info.buyer_address == buyer_address);
+    
+    // Record the transaction
+    let transaction = Transaction {
+        buyer: buyer_address,
+        usd_amount,
+        sol_amount,
+        token_amount,
+        stage: current_stage,
+        timestamp: Clock::get()?.unix_timestamp,
+    };
+
+    // Update record totals
+    record.total_usd_sold += usd_amount;
+    record.total_tokens_sold += token_amount;
+    record.transactions.push(transaction);
+    record.transaction_count += 1;
+
+    // Update buyer information
+    if let Some(buyer_info) = record.buyers.iter_mut().find(|info| info.buyer_address == buyer_address) {
+        buyer_info.total_paid_usd += usd_amount;
+        buyer_info.total_paid_sol += sol_amount;
+        buyer_info.total_tokens_bought += token_amount;
+        
+        msg!("Updated existing buyer. Total paid USD: {}", buyer_info.total_paid_usd);
+        msg!("Total tokens bought: {}", buyer_info.total_tokens_bought);
+    } else {
+        // Create new buyer info without referrer
+        let new_info = BuyerInfo {
+            buyer_address,
+            total_paid_usd: usd_amount,
+            total_paid_sol: sol_amount,
+            total_tokens_bought: token_amount,
+            total_tokens_claimed: 0,
+            last_claim_timestamp: 0,
+            referrer: None,
+        };
+        record.buyers.push(new_info);
+        
+        msg!("New buyer added. Total paid USD: {}", usd_amount);
+        msg!("Total tokens bought: {}", token_amount);
+    }
+
+    Ok(())
 } 
