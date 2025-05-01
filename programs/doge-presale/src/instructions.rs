@@ -209,7 +209,7 @@ pub fn authority_buy(ctx: Context<crate::AuthorityBuy>, usd_amount: f64, buyer_a
         PresaleError::Unauthorized
     );
 
-    // Check if amount is valid
+    // Check if amount is valid.
     require!(usd_amount > 0.0, PresaleError::InvalidAmount);
 
     // Check if we can store more transactions
