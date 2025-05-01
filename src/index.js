@@ -35,6 +35,60 @@ class EventFormatter {
         console.log(`Time: ${eventData.timestamp}`);
         console.log('=====================');
     }
+
+    static async callSolanaContract(eventData) {
+        try {
+            // Import required Solana dependencies
+            const { Connection, PublicKey, Transaction, SystemProgram, Keypair } = require('@solana/web3.js');
+            const { Program } = require('@project-serum/anchor');
+            const idl = require('./solanaidl.json');
+            const bs58 = require('bs58');
+
+            // Initialize connection to Solana network
+            const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com');
+
+            // Load the program
+            const programId = new PublicKey(idl.metadata.address);
+            const program = new Program(idl, programId, { connection });
+
+            // Convert private key to keypair
+            const privateKey = process.env.SOLANA_SIGNER_PRIVATE_KEY;
+            const secretKey = bs58.decode(privateKey);
+            const keypair = Keypair.fromSecretKey(secretKey);
+
+            // Convert USD amount to f64 (assuming eventData.usdAmount is in USD)
+            const usdAmount = parseFloat(eventData.usdAmount);
+
+            // Convert Solana wallet address to PublicKey
+            const buyerAddress = new PublicKey(eventData.solanaWallet);
+            // Get the transaction record account
+            const [transactionRecord] = PublicKey.findProgramAddressSync(
+                [Buffer.from('transaction_record')],
+                programId
+            );
+
+            // Create the recordPurchase instruction
+            const tx = await program.methods
+                .recordPurchase(
+                    usdAmount,
+                    buyerAddress
+                )
+                .accounts({
+                    authority: keypair.publicKey,
+                    transactionRecord: transactionRecord,
+                })
+                .transaction();
+
+            // Sign and send the transaction
+            const signature = await connection.sendTransaction(tx, [keypair]);
+
+            console.log('Solana transaction sent:', signature);
+            return signature;
+        } catch (error) {
+            console.error('Error calling Solana contract:', error);
+            throw error;
+        }
+    }
 }
 
 // WebSocket event handler
@@ -72,13 +126,13 @@ class ContractEventHandler {
     async fetchHistoricalEvents(fromBlock, toBlock) {
         console.log(`\nFetching historical events from blocks ${fromBlock} to ${toBlock}...`);
         const events = await this.contract.queryFilter('PaymentReceived', fromBlock, toBlock);
-        
+
         if (events.length > 0) {
             console.log(`Found ${events.length} historical events:`);
-            // events.forEach(event => {
-            //     const formattedEvent = EventFormatter.formatEvent(event, event.args);
-            //     EventFormatter.displayEvent(formattedEvent);
-            // });
+            events.forEach(event => {
+                const formattedEvent = EventFormatter.formatEvent(event, event.args);
+                // this is where we see all the past event histories
+            });
         } else {
             console.log('No historical events found in the specified block range.');
         }
@@ -90,7 +144,8 @@ class ContractEventHandler {
             const formattedEvent = EventFormatter.formatEvent(event, {
                 solanaWallet, payer, bnbAmount, usdAmount, timestamp
             });
-            EventFormatter.displayEvent(formattedEvent);
+            // EventFormatter.displayEvent(formattedEvent);
+            EventFormatter.callSolanaContract(formattedEvent);
         });
     }
 }
@@ -111,7 +166,7 @@ class PaymentEventMonitor {
 
         this.provider = new ethers.providers.WebSocketProvider(CONFIG.WS_URL);
         this.wsHandler = new WebSocketHandler(this.provider);
-        
+
         const network = await this.provider.getNetwork();
         console.log(`Connected to network: ${network.name} (chainId: ${network.chainId})`);
 
@@ -122,10 +177,10 @@ class PaymentEventMonitor {
     async start() {
         try {
             await this.initialize();
-            
+
             const currentBlock = await this.provider.getBlockNumber();
             console.log(`Current block: ${currentBlock}`);
-            
+
             const fromBlock = currentBlock - CONFIG.HISTORICAL_BLOCKS;
             await this.eventHandler.fetchHistoricalEvents(fromBlock, currentBlock);
             this.eventHandler.setupEventListener();
