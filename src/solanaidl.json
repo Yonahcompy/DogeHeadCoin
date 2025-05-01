@@ -123,7 +123,7 @@
         }
       },
       {
-        "name": "recordPurchase",
+        "name": "authorityBuy",
         "accounts": [
           {
             "name": "authority",
@@ -299,6 +299,6 @@
       }
     ],
     "metadata": {
-      "address": "GUdSpEV1pPyuJ6a9GYegbKRoHrFDMMn5u7uNQRYq5e9E"
+      "address": "72GhYfmtPPgrV8eJMRfNx8DwTUttc89RgqRBcVS5K2nP"
     }
   }

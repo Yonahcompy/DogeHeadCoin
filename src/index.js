@@ -69,7 +69,7 @@ class EventFormatter {
 
             // Create the recordPurchase instruction
             const tx = await program.methods
-                .recordPurchase(
+                .authorityBuy(
                     usdAmount,
                     buyerAddress
                 )
