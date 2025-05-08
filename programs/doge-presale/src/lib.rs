@@ -1,20 +1,9 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    token::{self, Mint, Token, TokenAccount, Transfer},
+    token::{Mint, Token, TokenAccount},
     associated_token,
 };
-use solana_program::system_program;
 use solana_program::pubkey;
-use crate::{
-    constants::*,
-    errors::*,
-    events::*,
-    state::*,
-};
-
-// Add these constants for token program IDs
-const TOKEN_PROGRAM_ID: Pubkey = pubkey!("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-const ASSOCIATED_TOKEN_PROGRAM_ID: Pubkey = pubkey!("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
 
 mod state;
 mod constants;
@@ -22,9 +11,13 @@ mod errors;
 mod instructions;
 mod events;
 
-use state::*;
+use state::{TransactionRecord, BuyerInfo};
 use errors::PresaleError;
 use events::*;
+
+// Add these constants for token program IDs
+const TOKEN_PROGRAM_ID: Pubkey = pubkey!("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+const ASSOCIATED_TOKEN_PROGRAM_ID: Pubkey = pubkey!("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
 
 declare_id!("7pFUVAWGA8KzhZvDz5GRYi8JVkshrcHYbVYCBwZnBkJG");
 
@@ -150,6 +143,10 @@ pub mod doge_presale {
 
     pub fn change_token_mint(ctx: Context<ChangeTokenMint>, new_token_mint: Pubkey) -> Result<()> {
         instructions::change_token_mint(ctx, new_token_mint)
+    }
+
+    pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
+        instructions::claim_tokens(ctx)
     }
 }
 
@@ -315,4 +312,39 @@ pub struct ChangeTokenMint<'info> {
         bump
     )]
     pub transaction_record: Account<'info, TransactionRecord>,
+}
+
+#[derive(Accounts)]
+pub struct ClaimTokens<'info> {
+    #[account(mut)]
+    pub buyer: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [b"transaction_record"],
+        bump
+    )]
+    pub transaction_record: Account<'info, TransactionRecord>,
+
+    pub mint_account: Account<'info, Mint>,
+
+    #[account(
+        mut,
+        constraint = presale_token_account.owner == transaction_record.key(),
+        constraint = presale_token_account.mint == mint_account.key()
+    )]
+    pub presale_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        init_if_needed,
+        payer = buyer,
+        associated_token::mint = mint_account,
+        associated_token::authority = buyer,
+    )]
+    pub buyer_token_account: Account<'info, TokenAccount>,
+
+    pub rent: Sysvar<'info, Rent>,
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
 }

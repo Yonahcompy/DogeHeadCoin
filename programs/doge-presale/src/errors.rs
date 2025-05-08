@@ -20,4 +20,10 @@ pub enum PresaleError {
     InvalidTokenAccount,
     #[msg("Arithmetic overflow")]
     Overflow,
+    #[msg("No tokens available to claim")]
+    NoTokensToClaim,
+    #[msg("Insufficient tokens in presale account")]
+    InsufficientTokens,
+    #[msg("Arithmetic operation would result in overflow")]
+    ArithmeticOverflow,
 } 

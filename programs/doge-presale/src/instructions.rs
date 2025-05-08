@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::system_instruction;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+use anchor_spl::token::{self, Transfer};
 
 use crate::{state::*, errors::PresaleError, constants::*, events::*};
 
@@ -370,6 +370,73 @@ pub fn change_token_mint(ctx: Context<crate::ChangeTokenMint>, new_token_mint: P
     });
 
     msg!("Token mint changed successfully from {} to {}", old_token_mint, new_token_mint);
+
+    Ok(())
+}
+
+pub fn claim_tokens(ctx: Context<crate::ClaimTokens>) -> Result<()> {
+    let buyer_key = ctx.accounts.buyer.key();
+    
+    // Get the transaction record info first
+    let transaction_record_info = ctx.accounts.transaction_record.to_account_info();
+    let record = &mut ctx.accounts.transaction_record;
+
+    // Find buyer info
+    let buyer_info = record.buyers
+        .iter_mut()
+        .find(|info| info.buyer_address == buyer_key)
+        .ok_or(PresaleError::BuyerNotFound)?;
+
+    // Calculate claimable amount
+    let claimable_amount = buyer_info.total_tokens_bought
+        .checked_sub(buyer_info.total_tokens_claimed)
+        .ok_or(PresaleError::InvalidAmount)?;
+
+    // Check if there are tokens to claim
+    require!(claimable_amount > 0, PresaleError::NoTokensToClaim);
+
+    // Check if presale account has enough tokens
+    require!(
+        ctx.accounts.presale_token_account.amount >= claimable_amount,
+        PresaleError::InsufficientTokens
+    );
+
+    // Transfer tokens to buyer
+    let transfer_ctx = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        Transfer {
+            from: ctx.accounts.presale_token_account.to_account_info(),
+            to: ctx.accounts.buyer_token_account.to_account_info(),
+            authority: transaction_record_info,
+        },
+    );
+
+    token::transfer(transfer_ctx, claimable_amount)?;
+
+    // Update buyer's claimed amount
+    buyer_info.total_tokens_claimed = buyer_info.total_tokens_claimed
+        .checked_add(claimable_amount)
+        .ok_or(PresaleError::ArithmeticOverflow)?;
+    buyer_info.last_claim_timestamp = Clock::get()?.unix_timestamp;
+
+    // Calculate remaining balance
+    let remaining_balance = buyer_info.total_tokens_bought
+        .checked_sub(buyer_info.total_tokens_claimed)
+        .ok_or(PresaleError::ArithmeticOverflow)?;
+
+    // Emit claim event
+    emit!(TokensClaimed {
+        buyer: buyer_key,
+        amount: claimable_amount,
+        total_claimed: buyer_info.total_tokens_claimed,
+        remaining_balance,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
+
+    msg!("Tokens claimed successfully");
+    msg!("Amount claimed: {}", claimable_amount);
+    msg!("Total claimed: {}", buyer_info.total_tokens_claimed);
+    msg!("Remaining balance: {}", remaining_balance);
 
     Ok(())
 } 

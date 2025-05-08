@@ -40,11 +40,20 @@ pub struct AccountResized {
     pub new_size: u64,
     pub timestamp: i64,
 }
-// 
+
 #[event]
 pub struct TokenMintChanged {
     pub authority: Pubkey,
     pub old_token_mint: Pubkey,
     pub new_token_mint: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct TokensClaimed {
+    pub buyer: Pubkey,
+    pub amount: u64,
+    pub total_claimed: u64,
+    pub remaining_balance: u64,
     pub timestamp: i64,
 } 
