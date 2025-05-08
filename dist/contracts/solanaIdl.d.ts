@@ -228,6 +228,73 @@ export type DogePresale = {
             "type": "publicKey"
           }
         ]
+      },
+      {
+        "name": "claimTokens",
+        "accounts": [
+          {
+            "name": "buyer",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "transactionRecord",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "mintAccount",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "presaleTokenAccount",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "buyerTokenAccount",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "rent",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "tokenProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "associatedTokenProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": []
+      },
+      {
+        "name": "endPresale",
+        "accounts": [
+          {
+            "name": "authority",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "transactionRecord",
+            "isMut": true,
+            "isSigner": false
+          }
+        ],
+        "args": []
       }
     ],
     "accounts": [
@@ -279,6 +346,10 @@ export type DogePresale = {
                   "defined": "BuyerInfo"
                 }
               }
+            },
+            {
+              "name": "presaleEndTime",
+              "type": "i64"
             }
           ]
         }
@@ -513,6 +584,61 @@ export type DogePresale = {
             "index": false
           }
         ]
+      },
+      {
+        "name": "TokensClaimed",
+        "fields": [
+          {
+            "name": "buyer",
+            "type": "publicKey",
+            "index": false
+          },
+          {
+            "name": "amount",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "totalClaimed",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "remainingBalance",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "timestamp",
+            "type": "i64",
+            "index": false
+          }
+        ]
+      },
+      {
+        "name": "PresaleEnded",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey",
+            "index": false
+          },
+          {
+            "name": "timestamp",
+            "type": "i64",
+            "index": false
+          },
+          {
+            "name": "totalBuyers",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "totalTokensSold",
+            "type": "u64",
+            "index": false
+          }
+        ]
       }
     ],
     "errors": [
@@ -560,6 +686,36 @@ export type DogePresale = {
         "code": 6008,
         "name": "Overflow",
         "msg": "Arithmetic overflow"
+      },
+      {
+        "code": 6009,
+        "name": "NoTokensToClaim",
+        "msg": "No tokens available to claim"
+      },
+      {
+        "code": 6010,
+        "name": "InsufficientTokens",
+        "msg": "Insufficient tokens in presale account"
+      },
+      {
+        "code": 6011,
+        "name": "ArithmeticOverflow",
+        "msg": "Arithmetic operation would result in overflow"
+      },
+      {
+        "code": 6012,
+        "name": "AlreadyClaimedInSection",
+        "msg": "Already claimed tokens in this time section"
+      },
+      {
+        "code": 6013,
+        "name": "AlreadyClaimedInitial",
+        "msg": "Already claimed initial 3% tokens"
+      },
+      {
+        "code": 6014,
+        "name": "PresaleNotEnded",
+        "msg": "Presale has not ended yet"
       }
     ]
   };
@@ -794,6 +950,73 @@ export type DogePresale = {
             "type": "publicKey"
           }
         ]
+      },
+      {
+        "name": "claimTokens",
+        "accounts": [
+          {
+            "name": "buyer",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "transactionRecord",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "mintAccount",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "presaleTokenAccount",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "buyerTokenAccount",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "rent",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "tokenProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "associatedTokenProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": []
+      },
+      {
+        "name": "endPresale",
+        "accounts": [
+          {
+            "name": "authority",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "transactionRecord",
+            "isMut": true,
+            "isSigner": false
+          }
+        ],
+        "args": []
       }
     ],
     "accounts": [
@@ -845,6 +1068,10 @@ export type DogePresale = {
                   "defined": "BuyerInfo"
                 }
               }
+            },
+            {
+              "name": "presaleEndTime",
+              "type": "i64"
             }
           ]
         }
@@ -1079,6 +1306,61 @@ export type DogePresale = {
             "index": false
           }
         ]
+      },
+      {
+        "name": "TokensClaimed",
+        "fields": [
+          {
+            "name": "buyer",
+            "type": "publicKey",
+            "index": false
+          },
+          {
+            "name": "amount",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "totalClaimed",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "remainingBalance",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "timestamp",
+            "type": "i64",
+            "index": false
+          }
+        ]
+      },
+      {
+        "name": "PresaleEnded",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey",
+            "index": false
+          },
+          {
+            "name": "timestamp",
+            "type": "i64",
+            "index": false
+          },
+          {
+            "name": "totalBuyers",
+            "type": "u64",
+            "index": false
+          },
+          {
+            "name": "totalTokensSold",
+            "type": "u64",
+            "index": false
+          }
+        ]
       }
     ],
     "errors": [
@@ -1126,6 +1408,36 @@ export type DogePresale = {
         "code": 6008,
         "name": "Overflow",
         "msg": "Arithmetic overflow"
+      },
+      {
+        "code": 6009,
+        "name": "NoTokensToClaim",
+        "msg": "No tokens available to claim"
+      },
+      {
+        "code": 6010,
+        "name": "InsufficientTokens",
+        "msg": "Insufficient tokens in presale account"
+      },
+      {
+        "code": 6011,
+        "name": "ArithmeticOverflow",
+        "msg": "Arithmetic operation would result in overflow"
+      },
+      {
+        "code": 6012,
+        "name": "AlreadyClaimedInSection",
+        "msg": "Already claimed tokens in this time section"
+      },
+      {
+        "code": 6013,
+        "name": "AlreadyClaimedInitial",
+        "msg": "Already claimed initial 3% tokens"
+      },
+      {
+        "code": 6014,
+        "name": "PresaleNotEnded",
+        "msg": "Presale has not ended yet"
       }
     ]
   };

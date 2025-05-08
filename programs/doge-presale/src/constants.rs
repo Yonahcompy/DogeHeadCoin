@@ -4,22 +4,22 @@ pub const MAX_TRANSACTIONS: usize = 100; // Maximum number of transactions to st
 
 // Stage prices in USD
 pub const STAGE_PRICES: [f64; 5] = [
-    0.0001,   // Stage 1: $0.0001
-    0.00033,  // Stage 2: $0.00033
-    0.000957, // Stage 3: $0.000957
-    0.00202,  // Stage 4: $0.00202
-    0.00313,  // Stage 5: $0.00313
+    0.0001,   // Stage 1: $0.0001 per token
+    0.00033,  // Stage 2: $0.00033 per token
+    0.000957, // Stage 3: $0.000957 per token
+    0.00202,  // Stage 4: $0.00202 per token
+    0.00313,  // Stage 5: $0.00313 per token
 ];
 
 pub const STAGE_COUNT: u8 = 5;  // Total number of stages (1-5)
 
-// Available tokens per stage (in token standard decimal 9)
-pub const STAGE_AVAILABLE_TOKENS: [u64; 5] = [
-    750_000_000_000_000_000,  // Stage 1: 750M tokens
-    600_000_000_000_000_000,  // Stage 2: 600M tokens
-    450_000_000_000_000_000,  // Stage 3: 450M tokens
-    600_000_000_000_000_000,  // Stage 4: 600M tokens
-    600_000_000_000_000_000,  // Stage 5: 600M tokens
+// USD thresholds for each stage
+pub const STAGE_USD_THRESHOLDS: [f64; 5] = [
+    75000.0,    // Stage 1: $75,000
+    198000.0,   // Stage 2: $198,000
+    430650.0,   // Stage 3: $430,650
+    1212000.0,  // Stage 4: $1,212,000
+    1878000.0,  // Stage 5: $1,878,000
 ];
 
 // Vesting constants
@@ -45,6 +45,13 @@ pub const VESTING_PERIODS: [u8; 5] = [
     8,  // Stage 3: 8 months vesting
     7,  // Stage 4: 7 months vesting
     6,  // Stage 5: 6 months vesting
+];
+
+// Claim schedule (days, percentage) tuples
+pub const CLAIM_SCHEDULE: [(i64, f64); 3] = [
+    (30, 0.10),  // First 30 days: 10%
+    (60, 0.30),  // Next 30 days: 30%
+    (100, 0.40), // Next 40 days: 40%
 ];
 
 // Time constants (in seconds)

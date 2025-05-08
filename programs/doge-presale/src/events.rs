@@ -56,4 +56,19 @@ pub struct TokensClaimed {
     pub total_claimed: u64,
     pub remaining_balance: u64,
     pub timestamp: i64,
+}
+
+#[event]
+pub struct PresaleEnded {
+    pub authority: Pubkey,
+    pub timestamp: i64,
+    pub total_buyers: u64,
+    pub total_tokens_sold: u64,
+}
+
+#[event]
+pub struct AuthorityChanged {
+    pub old_authority: Pubkey,
+    pub new_authority: Pubkey,
+    pub timestamp: i64,
 } 

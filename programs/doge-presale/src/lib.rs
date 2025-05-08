@@ -19,7 +19,7 @@ use events::*;
 const TOKEN_PROGRAM_ID: Pubkey = pubkey!("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 const ASSOCIATED_TOKEN_PROGRAM_ID: Pubkey = pubkey!("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
 
-declare_id!("7pFUVAWGA8KzhZvDz5GRYi8JVkshrcHYbVYCBwZnBkJG");
+declare_id!("6K7sJ3qMCCwmnmf1FGg8CN7Pdcq4NZo2c9yj8ge8SoTu");
 
 #[program]
 pub mod doge_presale {
@@ -75,6 +75,7 @@ pub mod doge_presale {
             8 + // total_usd_sold (f64)
             8 + // total_tokens_sold (u64)
             8 + // deposit_token_amount (u64)
+            8 + // presale_end_time (i64)
             4 + // Vec length prefix for transactions
             (32 + 8 + 8 + 8 + 1 + 8) * 50 + // Space for 50 transactions
             4 + // Vec length prefix for buyers
@@ -148,6 +149,14 @@ pub mod doge_presale {
     pub fn claim_tokens(ctx: Context<ClaimTokens>) -> Result<()> {
         instructions::claim_tokens(ctx)
     }
+
+    pub fn end_presale(ctx: Context<EndPresale>) -> Result<()> {
+        instructions::end_presale(ctx)
+    }
+
+    pub fn change_authority(ctx: Context<ChangeAuthority>, new_authority: Pubkey) -> Result<()> {
+        instructions::change_authority(ctx, new_authority)
+    }
 }
 
 // Helper function for PDA derivation
@@ -174,6 +183,7 @@ pub struct Initialize<'info> {
                 8 + // total_usd_sold (f64)
                 8 + // total_tokens_sold (u64)
                 8 + // deposit_token_amount (u64)
+                8 + // presale_end_time (i64)
                 4 + // Vec length prefix for transactions
                 (32 + 8 + 8 + 8 + 1 + 8) * 1 + // Space for 1 initial transaction
                 4 + // Vec length prefix for buyers
@@ -347,4 +357,25 @@ pub struct ClaimTokens<'info> {
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
+}
+
+#[derive(Accounts)]
+pub struct EndPresale<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [b"transaction_record"],
+        bump
+    )]
+    pub transaction_record: Account<'info, TransactionRecord>,
+}
+
+#[derive(Accounts)]
+pub struct ChangeAuthority<'info> {
+    #[account(mut)]
+    pub transaction_record: Account<'info, TransactionRecord>,
+    #[account(mut)]
+    pub authority: Signer<'info>,
 }

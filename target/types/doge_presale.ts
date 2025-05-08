@@ -279,6 +279,43 @@ export type DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "endPresale",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "changeAuthority",
+      "accounts": [
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -330,6 +367,10 @@ export type DogePresale = {
                 "defined": "BuyerInfo"
               }
             }
+          },
+          {
+            "name": "presaleEndTime",
+            "type": "i64"
           }
         ]
       }
@@ -594,6 +635,51 @@ export type DogePresale = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "PresaleEnded",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "totalBuyers",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalTokensSold",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AuthorityChanged",
+      "fields": [
+        {
+          "name": "oldAuthority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newAuthority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -656,6 +742,21 @@ export type DogePresale = {
       "code": 6011,
       "name": "ArithmeticOverflow",
       "msg": "Arithmetic operation would result in overflow"
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyClaimedInSection",
+      "msg": "Already claimed tokens in this time section"
+    },
+    {
+      "code": 6013,
+      "name": "AlreadyClaimedInitial",
+      "msg": "Already claimed initial 3% tokens"
+    },
+    {
+      "code": 6014,
+      "name": "PresaleNotEnded",
+      "msg": "Presale has not ended yet"
     }
   ]
 };
@@ -941,6 +1042,43 @@ export const IDL: DogePresale = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "endPresale",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "changeAuthority",
+      "accounts": [
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -992,6 +1130,10 @@ export const IDL: DogePresale = {
                 "defined": "BuyerInfo"
               }
             }
+          },
+          {
+            "name": "presaleEndTime",
+            "type": "i64"
           }
         ]
       }
@@ -1256,6 +1398,51 @@ export const IDL: DogePresale = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "PresaleEnded",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "totalBuyers",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalTokensSold",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AuthorityChanged",
+      "fields": [
+        {
+          "name": "oldAuthority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newAuthority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -1318,6 +1505,21 @@ export const IDL: DogePresale = {
       "code": 6011,
       "name": "ArithmeticOverflow",
       "msg": "Arithmetic operation would result in overflow"
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyClaimedInSection",
+      "msg": "Already claimed tokens in this time section"
+    },
+    {
+      "code": 6013,
+      "name": "AlreadyClaimedInitial",
+      "msg": "Already claimed initial 3% tokens"
+    },
+    {
+      "code": 6014,
+      "name": "PresaleNotEnded",
+      "msg": "Presale has not ended yet"
     }
   ]
 };

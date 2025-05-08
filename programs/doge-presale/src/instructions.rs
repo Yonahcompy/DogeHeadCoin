@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::system_instruction;
-use anchor_spl::token::{self, Transfer};
+use anchor_spl::token;
 
 use crate::{state::*, errors::PresaleError, constants::*, events::*};
 
@@ -376,67 +376,280 @@ pub fn change_token_mint(ctx: Context<crate::ChangeTokenMint>, new_token_mint: P
 
 pub fn claim_tokens(ctx: Context<crate::ClaimTokens>) -> Result<()> {
     let buyer_key = ctx.accounts.buyer.key();
+    let current_time = Clock::get()?.unix_timestamp;
     
     // Get the transaction record info first
     let transaction_record_info = ctx.accounts.transaction_record.to_account_info();
     let record = &mut ctx.accounts.transaction_record;
 
+    // Get necessary values before mutable borrow
+    let presale_end_time = record.presale_end_time;
+    let deposit_token_amount = record.deposit_token_amount;
+    let presale_ended = presale_end_time > 0;
+
     // Find buyer info
-    let buyer_info = record.buyers
-        .iter_mut()
-        .find(|info| info.buyer_address == buyer_key)
+    let buyer_index = record.buyers
+        .iter()
+        .position(|info| info.buyer_address == buyer_key)
         .ok_or(PresaleError::BuyerNotFound)?;
 
-    // Calculate claimable amount
-    let claimable_amount = buyer_info.total_tokens_bought
-        .checked_sub(buyer_info.total_tokens_claimed)
-        .ok_or(PresaleError::InvalidAmount)?;
+    // Get all necessary buyer info up front
+    let total_tokens = record.buyers[buyer_index].total_tokens_bought;
+    let already_claimed = record.buyers[buyer_index].total_tokens_claimed;
+    let last_claim_timestamp = record.buyers[buyer_index].last_claim_timestamp;
+
+    // If presale hasn't ended, check if this is the first claim
+    if !presale_ended && already_claimed == 0 {
+        // Calculate 3% of total tokens
+        let initial_claim_amount = (total_tokens as f64 * 0.03).round() as u64;
+        
+        // Check if there are tokens to claim
+        require!(initial_claim_amount > 0, PresaleError::NoTokensToClaim);
+
+        // Check if presale account has enough tokens
+        require!(
+            deposit_token_amount >= initial_claim_amount,
+            PresaleError::InsufficientTokens
+        );
+
+        // Get PDA bump from the account
+        let bump = ctx.bumps.transaction_record;
+
+        // Create PDA seeds array
+        let seeds = &[b"transaction_record" as &[u8], &[bump]];
+        let signer_seeds = &[&seeds[..]];
+
+        // Transfer tokens to buyer using PDA signer
+        let transfer_ctx = CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            token::Transfer {
+                from: ctx.accounts.presale_token_account.to_account_info(),
+                to: ctx.accounts.buyer_token_account.to_account_info(),
+                authority: transaction_record_info,
+            },
+            signer_seeds,
+        );
+
+        token::transfer(transfer_ctx, initial_claim_amount)?;
+
+        // Update buyer's claimed amount
+        let buyer_info = &mut record.buyers[buyer_index];
+        buyer_info.total_tokens_claimed = initial_claim_amount;
+        buyer_info.last_claim_timestamp = current_time;
+
+        // Update deposit amount
+        record.deposit_token_amount = deposit_token_amount
+            .checked_sub(initial_claim_amount)
+            .ok_or(PresaleError::ArithmeticOverflow)?;
+
+        // Calculate remaining balance
+        let remaining_balance = total_tokens.checked_sub(initial_claim_amount)
+            .ok_or(PresaleError::ArithmeticOverflow)?;
+
+        // Emit claim event
+        emit!(TokensClaimed {
+            buyer: buyer_key,
+            amount: initial_claim_amount,
+            total_claimed: initial_claim_amount,
+            remaining_balance,
+            timestamp: current_time,
+        });
+
+        msg!("Initial 3% tokens claimed successfully");
+        msg!("Amount claimed: {}", initial_claim_amount);
+        msg!("Total claimed: {}", initial_claim_amount);
+        msg!("Remaining balance: {}", remaining_balance);
+        msg!("Remaining deposit amount: {}", record.deposit_token_amount);
+
+        return Ok(());
+    }
+
+    // If presale has ended or user already claimed initial 3%, follow the regular vesting schedule
+    require!(presale_ended, PresaleError::PresaleNotEnded);
+
+    // Calculate time since presale ended
+    let time_since_presale_end = current_time - presale_end_time;
+    let days_since_presale_end = time_since_presale_end / (24 * 60 * 60); // Convert seconds to days
+
+    // Check if user has already claimed in this time section
+    let last_claim_days = if last_claim_timestamp > 0 {
+        (last_claim_timestamp - presale_end_time) / (24 * 60 * 60)
+    } else {
+        0
+    };
+
+    // Determine which time section the user is in and if they've already claimed in this section
+    let current_section = if days_since_presale_end <= CLAIM_SCHEDULE[0].0 {
+        0 // First section (0-30 days)
+    } else if days_since_presale_end <= CLAIM_SCHEDULE[1].0 {
+        1 // Second section (31-60 days)
+    } else if days_since_presale_end <= CLAIM_SCHEDULE[2].0 {
+        2 // Third section (61-100 days)
+    } else {
+        3 // Final section (after 100 days)
+    };
+
+    let last_claim_section = if last_claim_days <= CLAIM_SCHEDULE[0].0 {
+        0
+    } else if last_claim_days <= CLAIM_SCHEDULE[1].0 {
+        1
+    } else if last_claim_days <= CLAIM_SCHEDULE[2].0 {
+        2
+    } else {
+        3
+    };
+
+    // Check if user is trying to claim in the same section
+    require!(current_section > last_claim_section, PresaleError::AlreadyClaimedInSection);
+
+    // Determine claimable amount based on time period
+    let claimable_amount = if days_since_presale_end <= CLAIM_SCHEDULE[0].0 {
+        // First period (0-30 days): 10%
+        let period_amount = (total_tokens as f64 * CLAIM_SCHEDULE[0].1) as u64;
+        if already_claimed < period_amount {
+            period_amount - already_claimed
+        } else {
+            0
+        }
+    } else if days_since_presale_end <= CLAIM_SCHEDULE[1].0 {
+        // Second period (31-60 days): 30%
+        let period_amount = (total_tokens as f64 * CLAIM_SCHEDULE[1].1) as u64;
+        if already_claimed < period_amount {
+            period_amount - already_claimed
+        } else {
+            0
+        }
+    } else if days_since_presale_end <= CLAIM_SCHEDULE[2].0 {
+        // Third period (61-100 days): 40%
+        let period_amount = (total_tokens as f64 * CLAIM_SCHEDULE[2].1) as u64;
+        if already_claimed < period_amount {
+            period_amount - already_claimed
+        } else {
+            0
+        }
+    } else {
+        // After 100 days: remaining tokens
+        total_tokens.checked_sub(already_claimed).unwrap_or(0)
+    };
 
     // Check if there are tokens to claim
     require!(claimable_amount > 0, PresaleError::NoTokensToClaim);
 
     // Check if presale account has enough tokens
     require!(
-        ctx.accounts.presale_token_account.amount >= claimable_amount,
+        deposit_token_amount >= claimable_amount,
         PresaleError::InsufficientTokens
     );
 
-    // Transfer tokens to buyer
-    let transfer_ctx = CpiContext::new(
+    // Get PDA bump from the account
+    let bump = ctx.bumps.transaction_record;
+
+    // Create PDA seeds array
+    let seeds = &[b"transaction_record" as &[u8], &[bump]];
+    let signer_seeds = &[&seeds[..]];
+
+    // Transfer tokens to buyer using PDA signer
+    let transfer_ctx = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
-        Transfer {
+        token::Transfer {
             from: ctx.accounts.presale_token_account.to_account_info(),
             to: ctx.accounts.buyer_token_account.to_account_info(),
             authority: transaction_record_info,
         },
+        signer_seeds,
     );
 
     token::transfer(transfer_ctx, claimable_amount)?;
 
-    // Update buyer's claimed amount
-    buyer_info.total_tokens_claimed = buyer_info.total_tokens_claimed
-        .checked_add(claimable_amount)
+    // Update buyer's claimed amount and deposit amount
+    let new_total_claimed = already_claimed.checked_add(claimable_amount)
         .ok_or(PresaleError::ArithmeticOverflow)?;
-    buyer_info.last_claim_timestamp = Clock::get()?.unix_timestamp;
+
+    let buyer_info = &mut record.buyers[buyer_index];
+    buyer_info.total_tokens_claimed = new_total_claimed;
+    buyer_info.last_claim_timestamp = current_time;
+
+    // Update deposit amount
+    record.deposit_token_amount = deposit_token_amount
+        .checked_sub(claimable_amount)
+        .ok_or(PresaleError::ArithmeticOverflow)?;
 
     // Calculate remaining balance
-    let remaining_balance = buyer_info.total_tokens_bought
-        .checked_sub(buyer_info.total_tokens_claimed)
+    let remaining_balance = total_tokens
+        .checked_sub(new_total_claimed)
         .ok_or(PresaleError::ArithmeticOverflow)?;
 
     // Emit claim event
     emit!(TokensClaimed {
         buyer: buyer_key,
         amount: claimable_amount,
-        total_claimed: buyer_info.total_tokens_claimed,
+        total_claimed: new_total_claimed,
         remaining_balance,
-        timestamp: Clock::get()?.unix_timestamp,
+        timestamp: current_time,
     });
 
     msg!("Tokens claimed successfully");
     msg!("Amount claimed: {}", claimable_amount);
-    msg!("Total claimed: {}", buyer_info.total_tokens_claimed);
+    msg!("Total claimed: {}", new_total_claimed);
     msg!("Remaining balance: {}", remaining_balance);
+    msg!("Remaining deposit amount: {}", record.deposit_token_amount);
+    msg!("Days since presale end: {}", days_since_presale_end);
+    msg!("Current section: {}", current_section);
+
+    Ok(())
+}
+
+pub fn end_presale(ctx: Context<crate::EndPresale>) -> Result<()> {
+    // Verify the signer is the authority
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    let record = &mut ctx.accounts.transaction_record;
+    let current_time = Clock::get()?.unix_timestamp;
+
+    // Set presale end time
+    record.presale_end_time = current_time;
+
+    // Emit event for tracking
+    emit!(PresaleEnded {
+        authority: ctx.accounts.authority.key(),
+        timestamp: current_time,
+        total_buyers: record.buyers.len() as u64,
+        total_tokens_sold: record.total_tokens_sold,
+    });
+
+    msg!("Presale ended successfully");
+    msg!("Total buyers: {}", record.buyers.len());
+    msg!("Total tokens sold: {}", record.total_tokens_sold);
+
+    Ok(())
+}
+
+pub fn change_authority(ctx: Context<crate::ChangeAuthority>, new_authority: Pubkey) -> Result<()> {
+    // Verify the signer is the current authority
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    let record = &mut ctx.accounts.transaction_record;
+    
+    // Store the old authority for the event
+    let old_authority = record.authority;
+
+    // Update the authority
+    record.authority = new_authority;
+
+    // Emit event for tracking
+    emit!(AuthorityChanged {
+        old_authority,
+        new_authority,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
+
+    msg!("Authority changed successfully from {} to {}", old_authority, new_authority);
 
     Ok(())
 } 

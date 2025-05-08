@@ -26,4 +26,10 @@ pub enum PresaleError {
     InsufficientTokens,
     #[msg("Arithmetic operation would result in overflow")]
     ArithmeticOverflow,
+    #[msg("Already claimed tokens in this time section")]
+    AlreadyClaimedInSection,
+    #[msg("Already claimed initial 3% tokens")]
+    AlreadyClaimedInitial,
+    #[msg("Presale has not ended yet")]
+    PresaleNotEnded,
 } 

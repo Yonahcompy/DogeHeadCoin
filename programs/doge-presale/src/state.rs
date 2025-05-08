@@ -11,6 +11,7 @@ pub struct TransactionRecord {
     pub deposit_token_amount: u64, // Total tokens deposited (8 bytes)
     pub transactions: Vec<Transaction>, // Vec of transactions (4 bytes for length + 65 bytes per transaction)
     pub buyers: Vec<BuyerInfo>, // List of buyer information
+    pub presale_end_time: i64,  // When the presale ended (0 if not ended)
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
