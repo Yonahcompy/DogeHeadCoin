@@ -1,1003 +1,1131 @@
 export type DogePresale = {
-  "version": "0.1.0",
-  "name": "doge_presale",
-  "instructions": [
+  version: "0.1.0";
+  name: "doge_presale";
+  instructions: [
     {
-      "name": "initialize",
-      "accounts": [
+      name: "initialize";
+      accounts: [
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          name: "authority";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "tokenMint",
-          "type": "publicKey"
+          name: "tokenMint";
+          type: "publicKey";
         }
-      ]
+      ];
     },
     {
-      "name": "buy",
-      "accounts": [
+      name: "buy";
+      accounts: [
         {
-          "name": "buyer",
-          "isMut": true,
-          "isSigner": true
+          name: "buyer";
+          isMut: true;
+          isSigner: true;
         },
         {
-          "name": "treasury",
-          "isMut": true,
-          "isSigner": false
+          name: "treasury";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
         },
         {
-          "name": "referrer",
-          "isMut": true,
-          "isSigner": false,
-          "isOptional": true
+          name: "referrer";
+          isMut: true;
+          isSigner: false;
+          isOptional: true;
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
         }
-      ],
-      "args": [
+      ];
+      args: [
         {
-          "name": "usdAmount",
-          "type": "f64"
+          name: "usdAmount";
+          type: "f64";
         },
         {
-          "name": "referrer",
-          "type": {
-            "option": "publicKey"
+          name: "referrer";
+          type: {
+            option: "publicKey";
+          };
+        }
+      ];
+    },
+    {
+      name: "resize";
+      accounts: [
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "nextStage";
+      accounts: [
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "getBuyerInfo";
+      accounts: [
+        {
+          name: "buyerAddress";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "transactionRecord";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+      returns: {
+        defined: "BuyerInfo";
+      };
+    },
+    {
+      name: "authorityBuy";
+      accounts: [
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "usdAmount";
+          type: "f64";
+        },
+        {
+          name: "buyerAddress";
+          type: "publicKey";
+        }
+      ];
+    },
+    {
+      name: "depositToken";
+      accounts: [
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "mintAccount";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "fromTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "presaleTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "rent";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "associatedTokenProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "amount";
+          type: "u64";
+        }
+      ];
+    },
+    {
+      name: "changeTokenMint";
+      accounts: [
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "transactionRecord";
+          isMut: true;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "newTokenMint";
+          type: "publicKey";
+        }
+      ];
+    }
+  ];
+  accounts: [
+    {
+      name: "transactionRecord";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "authority";
+            type: "publicKey";
+          },
+          {
+            name: "tokenMint";
+            type: "publicKey";
+          },
+          {
+            name: "currentStage";
+            type: "u8";
+          },
+          {
+            name: "transactionCount";
+            type: "u64";
+          },
+          {
+            name: "totalUsdSold";
+            type: "f64";
+          },
+          {
+            name: "totalTokensSold";
+            type: "u64";
+          },
+          {
+            name: "depositTokenAmount";
+            type: "u64";
+          },
+          {
+            name: "transactions";
+            type: {
+              vec: {
+                defined: "Transaction";
+              };
+            };
+          },
+          {
+            name: "buyers";
+            type: {
+              vec: {
+                defined: "BuyerInfo";
+              };
+            };
           }
-        }
-      ]
-    },
-    {
-      "name": "resize",
-      "accounts": [
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "nextStage",
-      "accounts": [
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getBuyerInfo",
-      "accounts": [
-        {
-          "name": "buyerAddress",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "transactionRecord",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [],
-      "returns": {
-        "defined": "BuyerInfo"
-      }
-    },
-    {
-      "name": "authorityBuy",
-      "accounts": [
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "usdAmount",
-          "type": "f64"
-        },
-        {
-          "name": "buyerAddress",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "depositToken",
-      "accounts": [
-        {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fromTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "presaleTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
+        ];
+      };
     }
-  ],
-  "accounts": [
+  ];
+  types: [
     {
-      "name": "transactionRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "Transaction";
+      type: {
+        kind: "struct";
+        fields: [
           {
-            "name": "authority",
-            "type": "publicKey"
+            name: "buyer";
+            type: "publicKey";
           },
           {
-            "name": "tokenMint",
-            "type": "publicKey"
+            name: "usdAmount";
+            type: "f64";
           },
           {
-            "name": "currentStage",
-            "type": "u8"
+            name: "solAmount";
+            type: "u64";
           },
           {
-            "name": "transactionCount",
-            "type": "u64"
+            name: "tokenAmount";
+            type: "u64";
           },
           {
-            "name": "totalUsdSold",
-            "type": "f64"
+            name: "stage";
+            type: "u8";
           },
           {
-            "name": "totalTokensSold",
-            "type": "u64"
-          },
-          {
-            "name": "depositTokenAmount",
-            "type": "u64"
-          },
-          {
-            "name": "transactions",
-            "type": {
-              "vec": {
-                "defined": "Transaction"
-              }
-            }
-          },
-          {
-            "name": "buyers",
-            "type": {
-              "vec": {
-                "defined": "BuyerInfo"
-              }
-            }
+            name: "timestamp";
+            type: "i64";
           }
-        ]
-      }
-    }
-  ],
-  "types": [
+        ];
+      };
+    },
     {
-      "name": "Transaction",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "BuyerInfo";
+      type: {
+        kind: "struct";
+        fields: [
           {
-            "name": "buyer",
-            "type": "publicKey"
+            name: "buyerAddress";
+            type: "publicKey";
           },
           {
-            "name": "usdAmount",
-            "type": "f64"
+            name: "totalPaidUsd";
+            type: "f64";
           },
           {
-            "name": "solAmount",
-            "type": "u64"
+            name: "totalPaidSol";
+            type: "u64";
           },
           {
-            "name": "tokenAmount",
-            "type": "u64"
+            name: "totalTokensBought";
+            type: "u64";
           },
           {
-            "name": "stage",
-            "type": "u8"
+            name: "totalTokensClaimed";
+            type: "u64";
           },
           {
-            "name": "timestamp",
-            "type": "i64"
+            name: "lastClaimTimestamp";
+            type: "i64";
+          },
+          {
+            name: "referrer";
+            type: {
+              option: "publicKey";
+            };
           }
-        ]
-      }
-    },
-    {
-      "name": "BuyerInfo",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "buyerAddress",
-            "type": "publicKey"
-          },
-          {
-            "name": "totalPaidUsd",
-            "type": "f64"
-          },
-          {
-            "name": "totalPaidSol",
-            "type": "u64"
-          },
-          {
-            "name": "totalTokensBought",
-            "type": "u64"
-          },
-          {
-            "name": "totalTokensClaimed",
-            "type": "u64"
-          },
-          {
-            "name": "lastClaimTimestamp",
-            "type": "i64"
-          },
-          {
-            "name": "referrer",
-            "type": {
-              "option": "publicKey"
-            }
-          }
-        ]
-      }
+        ];
+      };
     }
-  ],
-  "events": [
+  ];
+  events: [
     {
-      "name": "TokenDeposited",
-      "fields": [
+      name: "TokenDeposited";
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority";
+          type: "publicKey";
+          index: false;
         },
         {
-          "name": "amount",
-          "type": "u64",
-          "index": false
+          name: "amount";
+          type: "u64";
+          index: false;
         },
         {
-          "name": "totalDeposited",
-          "type": "u64",
-          "index": false
+          name: "totalDeposited";
+          type: "u64";
+          index: false;
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
+          name: "timestamp";
+          type: "i64";
+          index: false;
         }
-      ]
+      ];
     },
     {
-      "name": "TokensPurchased",
-      "fields": [
+      name: "TokensPurchased";
+      fields: [
         {
-          "name": "buyer",
-          "type": "publicKey",
-          "index": false
+          name: "buyer";
+          type: "publicKey";
+          index: false;
         },
         {
-          "name": "usdAmount",
-          "type": "f64",
-          "index": false
+          name: "usdAmount";
+          type: "f64";
+          index: false;
         },
         {
-          "name": "solAmount",
-          "type": "u64",
-          "index": false
+          name: "solAmount";
+          type: "u64";
+          index: false;
         },
         {
-          "name": "tokenAmount",
-          "type": "u64",
-          "index": false
+          name: "tokenAmount";
+          type: "u64";
+          index: false;
         },
         {
-          "name": "stage",
-          "type": "u8",
-          "index": false
+          name: "stage";
+          type: "u8";
+          index: false;
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
+          name: "timestamp";
+          type: "i64";
+          index: false;
         },
         {
-          "name": "referrer",
-          "type": {
-            "option": "publicKey"
-          },
-          "index": false
+          name: "referrer";
+          type: {
+            option: "publicKey";
+          };
+          index: false;
         }
-      ]
+      ];
     },
     {
-      "name": "StageAdvanced",
-      "fields": [
+      name: "StageAdvanced";
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority";
+          type: "publicKey";
+          index: false;
         },
         {
-          "name": "oldStage",
-          "type": "u8",
-          "index": false
+          name: "oldStage";
+          type: "u8";
+          index: false;
         },
         {
-          "name": "newStage",
-          "type": "u8",
-          "index": false
+          name: "newStage";
+          type: "u8";
+          index: false;
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
+          name: "timestamp";
+          type: "i64";
+          index: false;
         }
-      ]
+      ];
     },
     {
-      "name": "PresaleInitialized",
-      "fields": [
+      name: "PresaleInitialized";
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority";
+          type: "publicKey";
+          index: false;
         },
         {
-          "name": "tokenMint",
-          "type": "publicKey",
-          "index": false
+          name: "tokenMint";
+          type: "publicKey";
+          index: false;
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
+          name: "timestamp";
+          type: "i64";
+          index: false;
         }
-      ]
+      ];
     },
     {
-      "name": "AccountResized",
-      "fields": [
+      name: "AccountResized";
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority";
+          type: "publicKey";
+          index: false;
         },
         {
-          "name": "newSize",
-          "type": {
-            "defined": "usize"
-          },
-          "index": false
+          name: "newSize";
+          type: "u64";
+          index: false;
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
+          name: "timestamp";
+          type: "i64";
+          index: false;
         }
-      ]
+      ];
+    },
+    {
+      name: "TokenMintChanged";
+      fields: [
+        {
+          name: "authority";
+          type: "publicKey";
+          index: false;
+        },
+        {
+          name: "oldTokenMint";
+          type: "publicKey";
+          index: false;
+        },
+        {
+          name: "newTokenMint";
+          type: "publicKey";
+          index: false;
+        },
+        {
+          name: "timestamp";
+          type: "i64";
+          index: false;
+        }
+      ];
     }
-  ],
-  "errors": [
+  ];
+  errors: [
     {
-      "code": 6000,
-      "name": "Unauthorized",
-      "msg": "Unauthorized access"
+      code: 6000;
+      name: "Unauthorized";
+      msg: "Unauthorized access";
     },
     {
-      "code": 6001,
-      "name": "InvalidAmount",
-      "msg": "Invalid amount"
+      code: 6001;
+      name: "InvalidAmount";
+      msg: "Invalid amount";
     },
     {
-      "code": 6002,
-      "name": "TransactionLimitReached",
-      "msg": "Transaction limit reached"
+      code: 6002;
+      name: "TransactionLimitReached";
+      msg: "Transaction limit reached";
     },
     {
-      "code": 6003,
-      "name": "InvalidStage",
-      "msg": "Invalid stage"
+      code: 6003;
+      name: "InvalidStage";
+      msg: "Invalid stage";
     },
     {
-      "code": 6004,
-      "name": "BuyerNotFound",
-      "msg": "Buyer not found"
+      code: 6004;
+      name: "BuyerNotFound";
+      msg: "Buyer not found";
     },
     {
-      "code": 6005,
-      "name": "InvalidReferrer",
-      "msg": "Invalid referrer address"
+      code: 6005;
+      name: "InvalidReferrer";
+      msg: "Invalid referrer address";
     },
     {
-      "code": 6006,
-      "name": "InvalidTokenMint",
-      "msg": "Invalid token mint"
+      code: 6006;
+      name: "InvalidTokenMint";
+      msg: "Invalid token mint";
     },
     {
-      "code": 6007,
-      "name": "InvalidTokenAccount",
-      "msg": "Invalid token account"
+      code: 6007;
+      name: "InvalidTokenAccount";
+      msg: "Invalid token account";
     },
     {
-      "code": 6008,
-      "name": "Overflow",
-      "msg": "Arithmetic overflow"
+      code: 6008;
+      name: "Overflow";
+      msg: "Arithmetic overflow";
     }
-  ]
+  ];
 };
 
 export const IDL: DogePresale = {
-  "version": "0.1.0",
-  "name": "doge_presale",
-  "instructions": [
+  version: "0.1.0",
+  name: "doge_presale",
+  instructions: [
     {
-      "name": "initialize",
-      "accounts": [
+      name: "initialize",
+      accounts: [
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          name: "authority",
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "tokenMint",
-          "type": "publicKey"
-        }
-      ]
+          name: "tokenMint",
+          type: "publicKey",
+        },
+      ],
     },
     {
-      "name": "buy",
-      "accounts": [
+      name: "buy",
+      accounts: [
         {
-          "name": "buyer",
-          "isMut": true,
-          "isSigner": true
+          name: "buyer",
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "treasury",
-          "isMut": true,
-          "isSigner": false
+          name: "treasury",
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "referrer",
-          "isMut": true,
-          "isSigner": false,
-          "isOptional": true
+          name: "referrer",
+          isMut: true,
+          isSigner: false,
+          isOptional: true,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "usdAmount",
-          "type": "f64"
+          name: "usdAmount",
+          type: "f64",
         },
         {
-          "name": "referrer",
-          "type": {
-            "option": "publicKey"
-          }
-        }
-      ]
+          name: "referrer",
+          type: {
+            option: "publicKey",
+          },
+        },
+      ],
     },
     {
-      "name": "resize",
-      "accounts": [
+      name: "resize",
+      accounts: [
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          name: "authority",
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": []
+      args: [],
     },
     {
-      "name": "nextStage",
-      "accounts": [
+      name: "nextStage",
+      accounts: [
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          name: "authority",
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
-        }
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
+        },
       ],
-      "args": []
+      args: [],
     },
     {
-      "name": "getBuyerInfo",
-      "accounts": [
+      name: "getBuyerInfo",
+      accounts: [
         {
-          "name": "buyerAddress",
-          "isMut": false,
-          "isSigner": false
+          name: "buyerAddress",
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "transactionRecord",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: "transactionRecord",
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [],
-      "returns": {
-        "defined": "BuyerInfo"
-      }
+      args: [],
+      returns: {
+        defined: "BuyerInfo",
+      },
     },
     {
-      "name": "authorityBuy",
-      "accounts": [
+      name: "authorityBuy",
+      accounts: [
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          name: "authority",
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
-        }
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "usdAmount",
-          "type": "f64"
+          name: "usdAmount",
+          type: "f64",
         },
         {
-          "name": "buyerAddress",
-          "type": "publicKey"
-        }
-      ]
+          name: "buyerAddress",
+          type: "publicKey",
+        },
+      ],
     },
     {
-      "name": "depositToken",
-      "accounts": [
+      name: "depositToken",
+      accounts: [
         {
-          "name": "authority",
-          "isMut": true,
-          "isSigner": true
+          name: "authority",
+          isMut: true,
+          isSigner: true,
         },
         {
-          "name": "transactionRecord",
-          "isMut": true,
-          "isSigner": false
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "fromTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "mintAccount",
+          isMut: false,
+          isSigner: false,
         },
         {
-          "name": "presaleTokenAccount",
-          "isMut": true,
-          "isSigner": false
+          name: "fromTokenAccount",
+          isMut: true,
+          isSigner: false,
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
+          name: "presaleTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "rent",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "associatedTokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      "args": [
+      args: [
         {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
-    }
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
+    {
+      name: "changeTokenMint",
+      accounts: [
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "transactionRecord",
+          isMut: true,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "newTokenMint",
+          type: "publicKey",
+        },
+      ],
+    },
   ],
-  "accounts": [
+  accounts: [
     {
-      "name": "transactionRecord",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "transactionRecord",
+      type: {
+        kind: "struct",
+        fields: [
           {
-            "name": "authority",
-            "type": "publicKey"
+            name: "authority",
+            type: "publicKey",
           },
           {
-            "name": "tokenMint",
-            "type": "publicKey"
+            name: "tokenMint",
+            type: "publicKey",
           },
           {
-            "name": "currentStage",
-            "type": "u8"
+            name: "currentStage",
+            type: "u8",
           },
           {
-            "name": "transactionCount",
-            "type": "u64"
+            name: "transactionCount",
+            type: "u64",
           },
           {
-            "name": "totalUsdSold",
-            "type": "f64"
+            name: "totalUsdSold",
+            type: "f64",
           },
           {
-            "name": "totalTokensSold",
-            "type": "u64"
+            name: "totalTokensSold",
+            type: "u64",
           },
           {
-            "name": "depositTokenAmount",
-            "type": "u64"
+            name: "depositTokenAmount",
+            type: "u64",
           },
           {
-            "name": "transactions",
-            "type": {
-              "vec": {
-                "defined": "Transaction"
-              }
-            }
+            name: "transactions",
+            type: {
+              vec: {
+                defined: "Transaction",
+              },
+            },
           },
           {
-            "name": "buyers",
-            "type": {
-              "vec": {
-                "defined": "BuyerInfo"
-              }
-            }
-          }
-        ]
-      }
-    }
+            name: "buyers",
+            type: {
+              vec: {
+                defined: "BuyerInfo",
+              },
+            },
+          },
+        ],
+      },
+    },
   ],
-  "types": [
+  types: [
     {
-      "name": "Transaction",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "Transaction",
+      type: {
+        kind: "struct",
+        fields: [
           {
-            "name": "buyer",
-            "type": "publicKey"
+            name: "buyer",
+            type: "publicKey",
           },
           {
-            "name": "usdAmount",
-            "type": "f64"
+            name: "usdAmount",
+            type: "f64",
           },
           {
-            "name": "solAmount",
-            "type": "u64"
+            name: "solAmount",
+            type: "u64",
           },
           {
-            "name": "tokenAmount",
-            "type": "u64"
+            name: "tokenAmount",
+            type: "u64",
           },
           {
-            "name": "stage",
-            "type": "u8"
+            name: "stage",
+            type: "u8",
           },
           {
-            "name": "timestamp",
-            "type": "i64"
-          }
-        ]
-      }
+            name: "timestamp",
+            type: "i64",
+          },
+        ],
+      },
     },
     {
-      "name": "BuyerInfo",
-      "type": {
-        "kind": "struct",
-        "fields": [
+      name: "BuyerInfo",
+      type: {
+        kind: "struct",
+        fields: [
           {
-            "name": "buyerAddress",
-            "type": "publicKey"
+            name: "buyerAddress",
+            type: "publicKey",
           },
           {
-            "name": "totalPaidUsd",
-            "type": "f64"
+            name: "totalPaidUsd",
+            type: "f64",
           },
           {
-            "name": "totalPaidSol",
-            "type": "u64"
+            name: "totalPaidSol",
+            type: "u64",
           },
           {
-            "name": "totalTokensBought",
-            "type": "u64"
+            name: "totalTokensBought",
+            type: "u64",
           },
           {
-            "name": "totalTokensClaimed",
-            "type": "u64"
+            name: "totalTokensClaimed",
+            type: "u64",
           },
           {
-            "name": "lastClaimTimestamp",
-            "type": "i64"
+            name: "lastClaimTimestamp",
+            type: "i64",
           },
           {
-            "name": "referrer",
-            "type": {
-              "option": "publicKey"
-            }
-          }
-        ]
-      }
-    }
+            name: "referrer",
+            type: {
+              option: "publicKey",
+            },
+          },
+        ],
+      },
+    },
   ],
-  "events": [
+  events: [
     {
-      "name": "TokenDeposited",
-      "fields": [
+      name: "TokenDeposited",
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority",
+          type: "publicKey",
+          index: false,
         },
         {
-          "name": "amount",
-          "type": "u64",
-          "index": false
+          name: "amount",
+          type: "u64",
+          index: false,
         },
         {
-          "name": "totalDeposited",
-          "type": "u64",
-          "index": false
+          name: "totalDeposited",
+          type: "u64",
+          index: false,
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
-        }
-      ]
+          name: "timestamp",
+          type: "i64",
+          index: false,
+        },
+      ],
     },
     {
-      "name": "TokensPurchased",
-      "fields": [
+      name: "TokensPurchased",
+      fields: [
         {
-          "name": "buyer",
-          "type": "publicKey",
-          "index": false
+          name: "buyer",
+          type: "publicKey",
+          index: false,
         },
         {
-          "name": "usdAmount",
-          "type": "f64",
-          "index": false
+          name: "usdAmount",
+          type: "f64",
+          index: false,
         },
         {
-          "name": "solAmount",
-          "type": "u64",
-          "index": false
+          name: "solAmount",
+          type: "u64",
+          index: false,
         },
         {
-          "name": "tokenAmount",
-          "type": "u64",
-          "index": false
+          name: "tokenAmount",
+          type: "u64",
+          index: false,
         },
         {
-          "name": "stage",
-          "type": "u8",
-          "index": false
+          name: "stage",
+          type: "u8",
+          index: false,
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
+          name: "timestamp",
+          type: "i64",
+          index: false,
         },
         {
-          "name": "referrer",
-          "type": {
-            "option": "publicKey"
+          name: "referrer",
+          type: {
+            option: "publicKey",
           },
-          "index": false
-        }
-      ]
+          index: false,
+        },
+      ],
     },
     {
-      "name": "StageAdvanced",
-      "fields": [
+      name: "StageAdvanced",
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority",
+          type: "publicKey",
+          index: false,
         },
         {
-          "name": "oldStage",
-          "type": "u8",
-          "index": false
+          name: "oldStage",
+          type: "u8",
+          index: false,
         },
         {
-          "name": "newStage",
-          "type": "u8",
-          "index": false
+          name: "newStage",
+          type: "u8",
+          index: false,
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
-        }
-      ]
+          name: "timestamp",
+          type: "i64",
+          index: false,
+        },
+      ],
     },
     {
-      "name": "PresaleInitialized",
-      "fields": [
+      name: "PresaleInitialized",
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority",
+          type: "publicKey",
+          index: false,
         },
         {
-          "name": "tokenMint",
-          "type": "publicKey",
-          "index": false
+          name: "tokenMint",
+          type: "publicKey",
+          index: false,
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
-        }
-      ]
+          name: "timestamp",
+          type: "i64",
+          index: false,
+        },
+      ],
     },
     {
-      "name": "AccountResized",
-      "fields": [
+      name: "AccountResized",
+      fields: [
         {
-          "name": "authority",
-          "type": "publicKey",
-          "index": false
+          name: "authority",
+          type: "publicKey",
+          index: false,
         },
         {
-          "name": "newSize",
-          "type": {
-            "defined": "usize"
-          },
-          "index": false
+          name: "newSize",
+          type: "u64",
+          index: false,
         },
         {
-          "name": "timestamp",
-          "type": "i64",
-          "index": false
-        }
-      ]
-    }
+          name: "timestamp",
+          type: "i64",
+          index: false,
+        },
+      ],
+    },
+    {
+      name: "TokenMintChanged",
+      fields: [
+        {
+          name: "authority",
+          type: "publicKey",
+          index: false,
+        },
+        {
+          name: "oldTokenMint",
+          type: "publicKey",
+          index: false,
+        },
+        {
+          name: "newTokenMint",
+          type: "publicKey",
+          index: false,
+        },
+        {
+          name: "timestamp",
+          type: "i64",
+          index: false,
+        },
+      ],
+    },
   ],
-  "errors": [
+  errors: [
     {
-      "code": 6000,
-      "name": "Unauthorized",
-      "msg": "Unauthorized access"
+      code: 6000,
+      name: "Unauthorized",
+      msg: "Unauthorized access",
     },
     {
-      "code": 6001,
-      "name": "InvalidAmount",
-      "msg": "Invalid amount"
+      code: 6001,
+      name: "InvalidAmount",
+      msg: "Invalid amount",
     },
     {
-      "code": 6002,
-      "name": "TransactionLimitReached",
-      "msg": "Transaction limit reached"
+      code: 6002,
+      name: "TransactionLimitReached",
+      msg: "Transaction limit reached",
     },
     {
-      "code": 6003,
-      "name": "InvalidStage",
-      "msg": "Invalid stage"
+      code: 6003,
+      name: "InvalidStage",
+      msg: "Invalid stage",
     },
     {
-      "code": 6004,
-      "name": "BuyerNotFound",
-      "msg": "Buyer not found"
+      code: 6004,
+      name: "BuyerNotFound",
+      msg: "Buyer not found",
     },
     {
-      "code": 6005,
-      "name": "InvalidReferrer",
-      "msg": "Invalid referrer address"
+      code: 6005,
+      name: "InvalidReferrer",
+      msg: "Invalid referrer address",
     },
     {
-      "code": 6006,
-      "name": "InvalidTokenMint",
-      "msg": "Invalid token mint"
+      code: 6006,
+      name: "InvalidTokenMint",
+      msg: "Invalid token mint",
     },
     {
-      "code": 6007,
-      "name": "InvalidTokenAccount",
-      "msg": "Invalid token account"
+      code: 6007,
+      name: "InvalidTokenAccount",
+      msg: "Invalid token account",
     },
     {
-      "code": 6008,
-      "name": "Overflow",
-      "msg": "Arithmetic overflow"
-    }
-  ]
+      code: 6008,
+      name: "Overflow",
+      msg: "Arithmetic overflow",
+    },
+  ],
 };

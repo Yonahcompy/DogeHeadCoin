@@ -92,7 +92,7 @@ solana-keygen pubkey ./target/deploy/doge_presale-keypair.json
 
 
 
-solana program extend 6LsqC27EVwj4RXcfxpf8WnUhGaB3tqEkXMxBwbxunzAq 20000 -u devnet -k ./authority.json
+solana program extend 7pFUVAWGA8KzhZvDz5GRYi8JVkshrcHYbVYCBwZnBkJG 20000 -u devnet -k ./authority.json
 
 
 
@@ -100,4 +100,4 @@ solana program write-buffer target/deploy/doge_presale.so --keypair ./authority.
 
 
 
-solana program deploy --buffer ABTHzM47KhWcxvvRbgFXcep8cuuuevhnsSm45iUmZp2T --program-id 6LsqC27EVwj4RXcfxpf8WnUhGaB3tqEkXMxBwbxunzAq --keypair ./authority.json
+solana program deploy --buffer ABTHzM47KhWcxvvRbgFXcep8cuuuevhnsSm45iUmZp2T --program-id 7pFUVAWGA8KzhZvDz5GRYi8JVkshrcHYbVYCBwZnBkJG --keypair ./authority.json

@@ -4,7 +4,7 @@ import { DogePresale } from '../target/types/doge_presale';
 import { connection } from './wallet';
 
 // Program ID from your deployment
-const PROGRAM_ID = new PublicKey("6LsqC27EVwj4RXcfxpf8WnUhGaB3tqEkXMxBwbxunzAq");
+const PROGRAM_ID = new PublicKey("7pFUVAWGA8KzhZvDz5GRYi8JVkshrcHYbVYCBwZnBkJG");
 
 let provider: AnchorProvider | null = null;
 let program: Program<DogePresale> | null = null;

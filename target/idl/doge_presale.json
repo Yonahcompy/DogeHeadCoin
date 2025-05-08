@@ -166,6 +166,11 @@
           "isSigner": false
         },
         {
+          "name": "mintAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "fromTokenAccount",
           "isMut": true,
           "isSigner": false
@@ -176,7 +181,22 @@
           "isSigner": false
         },
         {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         }
@@ -185,6 +205,27 @@
         {
           "name": "amount",
           "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "changeTokenMint",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newTokenMint",
+          "type": "publicKey"
         }
       ]
     }
@@ -438,9 +479,32 @@
         },
         {
           "name": "newSize",
-          "type": {
-            "defined": "usize"
-          },
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TokenMintChanged",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "oldTokenMint",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newTokenMint",
+          "type": "publicKey",
           "index": false
         },
         {
@@ -497,8 +561,5 @@
       "name": "Overflow",
       "msg": "Arithmetic overflow"
     }
-  ],
-  "metadata": {
-    "address": "6LsqC27EVwj4RXcfxpf8WnUhGaB3tqEkXMxBwbxunzAq"
-  }
+  ]
 }

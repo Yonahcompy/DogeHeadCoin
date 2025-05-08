@@ -1,6 +1,7 @@
 {
-    "name": "solana-token-presale-interaction",
+    "name": "solana-token-presale",
     "version": "1.0.0",
+    "private": true,
     "description": "Interaction script for Solana token presale contract",
     "main": "interact.ts",
     "scripts": {
@@ -11,17 +12,26 @@
         "postbuild": "node scripts/update-idl.js"
     },
     "dependencies": {
-        "@project-serum/anchor": "^0.26.0",
+        "@coral-xyz/anchor": "^0.28.0",
         "@solana/spl-token": "^0.3.8",
-        "@solana/web3.js": "^1.78.0"
+        "@solana/wallet-adapter-base": "^0.9.23",
+        "@solana/wallet-adapter-react": "^0.15.35",
+        "@solana/wallet-adapter-react-ui": "^0.9.34",
+        "@solana/wallet-adapter-wallets": "^0.19.23",
+        "@solana/web3.js": "^1.87.6",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-toastify": "^9.1.3",
+        "typescript": "^5.0.4",
+        "viem": "^1.19.1",
+        "wagmi": "^1.4.7"
     },
     "devDependencies": {
-        "@types/node": "^20.11.24",
-        "@typescript-eslint/eslint-plugin": "^7.1.0",
-        "@typescript-eslint/parser": "^7.1.0",
-        "eslint": "^8.57.0",
-        "prettier": "^3.2.5",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "@types/node": "^20.10.4",
+        "@types/react": "^18.2.45",
+        "@types/react-dom": "^18.2.17",
+        "autoprefixer": "^10.4.16",
+        "postcss": "^8.4.32",
+        "tailwindcss": "^3.3.6"
     }
 }

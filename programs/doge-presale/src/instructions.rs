@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::system_instruction;
+use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-use crate::{state::*, errors::PresaleError, constants::*};
+use crate::{state::*, errors::PresaleError, constants::*, events::*};
 
 pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) -> Result<()> {
     // Check if amount is valid
@@ -280,6 +281,95 @@ pub fn authority_buy(ctx: Context<crate::AuthorityBuy>, usd_amount: f64, buyer_a
         msg!("New buyer added. Total paid USD: {}", usd_amount);
         msg!("Total tokens bought: {}", token_amount);
     }
+
+    Ok(())
+}
+
+pub fn deposit_token(ctx: Context<crate::DepositToken>, amount: u64) -> Result<()> {
+    let transaction_record = &mut ctx.accounts.transaction_record;
+    
+    // Verify the signer is the authority
+    require!(
+        ctx.accounts.authority.key() == transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    // Verify mint account matches the transaction record
+    require!(
+        ctx.accounts.mint_account.key() == transaction_record.token_mint,
+        PresaleError::InvalidTokenMint
+    );
+
+    // Verify amount is greater than zero
+    require!(amount > 0, PresaleError::InvalidAmount);
+
+    // Log the deposit details for debugging
+    msg!("Depositing tokens from authority: {}", ctx.accounts.authority.key());
+    msg!("Amount: {}", amount);
+    msg!("From token account: {}", ctx.accounts.from_token_account.key());
+    msg!("To token account: {}", ctx.accounts.presale_token_account.key());
+
+    // Transfer tokens to the presale token account
+    token::transfer(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            token::Transfer {
+                from: ctx.accounts.from_token_account.to_account_info(),
+                to: ctx.accounts.presale_token_account.to_account_info(),
+                authority: ctx.accounts.authority.to_account_info(),
+            },
+        ),
+        amount,
+    )?;
+
+    // Update deposit amount with overflow check
+    transaction_record.deposit_token_amount = transaction_record.deposit_token_amount
+        .checked_add(amount)
+        .ok_or(PresaleError::Overflow)?;
+
+    // Emit event for tracking
+    emit!(TokenDeposited {
+        authority: ctx.accounts.authority.key(),
+        amount,
+        total_deposited: transaction_record.deposit_token_amount,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
+
+    msg!("Tokens deposited successfully. New total: {}", transaction_record.deposit_token_amount);
+
+    Ok(())
+}
+
+pub fn change_token_mint(ctx: Context<crate::ChangeTokenMint>, new_token_mint: Pubkey) -> Result<()> {
+    let transaction_record = &mut ctx.accounts.transaction_record;
+    
+    // Verify the signer is the authority
+    require!(
+        ctx.accounts.authority.key() == transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    // Verify the new mint is different from the current one
+    require!(
+        new_token_mint != transaction_record.token_mint,
+        PresaleError::InvalidTokenMint
+    );
+
+    // Store the old mint for the event
+    let old_token_mint = transaction_record.token_mint;
+
+    // Update the token mint
+    transaction_record.token_mint = new_token_mint;
+
+    // Emit event for tracking
+    emit!(TokenMintChanged {
+        authority: ctx.accounts.authority.key(),
+        old_token_mint,
+        new_token_mint,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
+
+    msg!("Token mint changed successfully from {} to {}", old_token_mint, new_token_mint);
 
     Ok(())
 } 

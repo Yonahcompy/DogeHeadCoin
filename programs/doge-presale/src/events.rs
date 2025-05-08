@@ -37,6 +37,14 @@ pub struct PresaleInitialized {
 #[event]
 pub struct AccountResized {
     pub authority: Pubkey,
-    pub new_size: usize,
+    pub new_size: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct TokenMintChanged {
+    pub authority: Pubkey,
+    pub old_token_mint: Pubkey,
+    pub new_token_mint: Pubkey,
     pub timestamp: i64,
 } 

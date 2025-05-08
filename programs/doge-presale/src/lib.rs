@@ -1,5 +1,20 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+use anchor_spl::{
+    token::{self, Mint, Token, TokenAccount, Transfer},
+    associated_token,
+};
+use solana_program::system_program;
+use solana_program::pubkey;
+use crate::{
+    constants::*,
+    errors::*,
+    events::*,
+    state::*,
+};
+
+// Add these constants for token program IDs
+const TOKEN_PROGRAM_ID: Pubkey = pubkey!("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+const ASSOCIATED_TOKEN_PROGRAM_ID: Pubkey = pubkey!("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
 
 mod state;
 mod constants;
@@ -11,7 +26,7 @@ use state::*;
 use errors::PresaleError;
 use events::*;
 
-declare_id!("6LsqC27EVwj4RXcfxpf8WnUhGaB3tqEkXMxBwbxunzAq");
+declare_id!("7pFUVAWGA8KzhZvDz5GRYi8JVkshrcHYbVYCBwZnBkJG");
 
 #[program]
 pub mod doge_presale {
@@ -100,7 +115,7 @@ pub mod doge_presale {
         // Emit resize event
         emit!(AccountResized {
             authority: ctx.accounts.authority.key(),
-            new_size: required_space,
+            new_size: required_space as u64,  // Convert usize to u64
             timestamp: Clock::get()?.unix_timestamp,
         });
         
@@ -130,61 +145,20 @@ pub mod doge_presale {
     }
 
     pub fn deposit_token(ctx: Context<DepositToken>, amount: u64) -> Result<()> {
-        let transaction_record = &mut ctx.accounts.transaction_record;
-        
-        // Verify the signer is the authority
-        require!(
-            ctx.accounts.authority.key() == transaction_record.authority,
-            PresaleError::Unauthorized
-        );
-
-        // Verify token accounts
-        require!(
-            ctx.accounts.from_token_account.mint == transaction_record.token_mint,
-            PresaleError::InvalidTokenMint
-        );
-        require!(
-            ctx.accounts.presale_token_account.mint == transaction_record.token_mint,
-            PresaleError::InvalidTokenMint
-        );
-        require!(
-            ctx.accounts.from_token_account.owner == ctx.accounts.authority.key(),
-            PresaleError::InvalidTokenAccount
-        );
-
-        // Verify amount is greater than zero
-        require!(amount > 0, PresaleError::InvalidAmount);
-
-        // Transfer tokens to the presale token account
-        token::transfer(
-            CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
-                Transfer {
-                    from: ctx.accounts.from_token_account.to_account_info(),
-                    to: ctx.accounts.presale_token_account.to_account_info(),
-                    authority: ctx.accounts.authority.to_account_info(),
-                },
-            ),
-            amount,
-        )?;
-
-        // Update deposit amount with overflow check
-        transaction_record.deposit_token_amount = transaction_record.deposit_token_amount
-            .checked_add(amount)
-            .ok_or(PresaleError::Overflow)?;
-
-        // Emit event for tracking
-        emit!(TokenDeposited {
-            authority: ctx.accounts.authority.key(),
-            amount,
-            total_deposited: transaction_record.deposit_token_amount,
-            timestamp: Clock::get()?.unix_timestamp,
-        });
-
-        msg!("Tokens deposited successfully. New total: {}", transaction_record.deposit_token_amount);
-
-        Ok(())
+        instructions::deposit_token(ctx, amount)
     }
+
+    pub fn change_token_mint(ctx: Context<ChangeTokenMint>, new_token_mint: Pubkey) -> Result<()> {
+        instructions::change_token_mint(ctx, new_token_mint)
+    }
+}
+
+// Helper function for PDA derivation
+pub fn get_transaction_record_pda(program_id: &Pubkey) -> (Pubkey, u8) {
+    Pubkey::find_program_address(
+        &[b"transaction_record"],
+        program_id,
+    )
 }
 
 #[derive(Accounts)]
@@ -303,17 +277,42 @@ pub struct DepositToken<'info> {
     )]
     pub transaction_record: Account<'info, TransactionRecord>,
 
+    pub mint_account: Account<'info, Mint>,
+
     #[account(
         mut,
-        constraint = from_token_account.owner == authority.key()
+        constraint = from_token_account.owner == authority.key(),
+        constraint = from_token_account.mint == mint_account.key()
     )]
     pub from_token_account: Account<'info, TokenAccount>,
 
     #[account(
-        mut,
-        constraint = presale_token_account.mint == transaction_record.token_mint
+        init_if_needed,
+        payer = authority,
+        associated_token::mint = mint_account,
+        associated_token::authority = transaction_record,
+        constraint = presale_token_account.key() == associated_token::get_associated_token_address(
+            &transaction_record.key(),
+            &mint_account.key()
+        )
     )]
     pub presale_token_account: Account<'info, TokenAccount>,
 
+    pub rent: Sysvar<'info, Rent>,
+    pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
+}
+
+#[derive(Accounts)]
+pub struct ChangeTokenMint<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [b"transaction_record"],
+        bump
+    )]
+    pub transaction_record: Account<'info, TransactionRecord>,
 }
