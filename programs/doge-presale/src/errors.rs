@@ -14,4 +14,10 @@ pub enum PresaleError {
     BuyerNotFound,
     #[msg("Invalid referrer address")]
     InvalidReferrer,
+    #[msg("Invalid token mint")]
+    InvalidTokenMint,
+    #[msg("Invalid token account")]
+    InvalidTokenAccount,
+    #[msg("Arithmetic overflow")]
+    Overflow,
 } 

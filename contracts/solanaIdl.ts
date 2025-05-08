@@ -21,7 +21,12 @@ export type DogePresale = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tokenMint",
+          "type": "publicKey"
+        }
+      ]
     },
     {
       "name": "buy",
@@ -42,6 +47,12 @@ export type DogePresale = {
           "isSigner": false
         },
         {
+          "name": "referrer",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": true
+        },
+        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -51,6 +62,12 @@ export type DogePresale = {
         {
           "name": "usdAmount",
           "type": "f64"
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          }
         }
       ]
     },
@@ -95,9 +112,9 @@ export type DogePresale = {
       "name": "getBuyerInfo",
       "accounts": [
         {
-          "name": "buyer",
+          "name": "buyerAddress",
           "isMut": false,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "transactionRecord",
@@ -105,7 +122,71 @@ export type DogePresale = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [],
+      "returns": {
+        "defined": "BuyerInfo"
+      }
+    },
+    {
+      "name": "authorityBuy",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "usdAmount",
+          "type": "f64"
+        },
+        {
+          "name": "buyerAddress",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "depositToken",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fromTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -116,6 +197,10 @@ export type DogePresale = {
         "fields": [
           {
             "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
             "type": "publicKey"
           },
           {
@@ -132,6 +217,10 @@ export type DogePresale = {
           },
           {
             "name": "totalTokensSold",
+            "type": "u64"
+          },
+          {
+            "name": "depositTokenAmount",
             "type": "u64"
           },
           {
@@ -215,26 +304,166 @@ export type DogePresale = {
           {
             "name": "lastClaimTimestamp",
             "type": "i64"
+          },
+          {
+            "name": "referrer",
+            "type": {
+              "option": "publicKey"
+            }
           }
         ]
       }
     }
   ],
+  "events": [
+    {
+      "name": "TokenDeposited",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalDeposited",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TokensPurchased",
+      "fields": [
+        {
+          "name": "buyer",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "usdAmount",
+          "type": "f64",
+          "index": false
+        },
+        {
+          "name": "solAmount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "stage",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "StageAdvanced",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "oldStage",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "newStage",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "PresaleInitialized",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "tokenMint",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AccountResized",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newSize",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 6001,
       "name": "InvalidAmount",
       "msg": "Invalid amount"
     },
     {
-      "code": 6001,
+      "code": 6002,
       "name": "TransactionLimitReached",
       "msg": "Transaction limit reached"
-    },
-    {
-      "code": 6002,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic overflow"
     },
     {
       "code": 6003,
@@ -243,13 +472,28 @@ export type DogePresale = {
     },
     {
       "code": 6004,
-      "name": "Unauthorized",
-      "msg": "Unauthorized"
+      "name": "BuyerNotFound",
+      "msg": "Buyer not found"
     },
     {
       "code": 6005,
-      "name": "BuyerInfoNotFound",
-      "msg": "Buyer info not found"
+      "name": "InvalidReferrer",
+      "msg": "Invalid referrer address"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidTokenMint",
+      "msg": "Invalid token mint"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidTokenAccount",
+      "msg": "Invalid token account"
+    },
+    {
+      "code": 6008,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
     }
   ]
 };
@@ -277,7 +521,12 @@ export const IDL: DogePresale = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tokenMint",
+          "type": "publicKey"
+        }
+      ]
     },
     {
       "name": "buy",
@@ -298,6 +547,12 @@ export const IDL: DogePresale = {
           "isSigner": false
         },
         {
+          "name": "referrer",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": true
+        },
+        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -307,6 +562,12 @@ export const IDL: DogePresale = {
         {
           "name": "usdAmount",
           "type": "f64"
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          }
         }
       ]
     },
@@ -351,9 +612,9 @@ export const IDL: DogePresale = {
       "name": "getBuyerInfo",
       "accounts": [
         {
-          "name": "buyer",
+          "name": "buyerAddress",
           "isMut": false,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "transactionRecord",
@@ -361,7 +622,71 @@ export const IDL: DogePresale = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [],
+      "returns": {
+        "defined": "BuyerInfo"
+      }
+    },
+    {
+      "name": "authorityBuy",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "usdAmount",
+          "type": "f64"
+        },
+        {
+          "name": "buyerAddress",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "depositToken",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fromTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "presaleTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -372,6 +697,10 @@ export const IDL: DogePresale = {
         "fields": [
           {
             "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
             "type": "publicKey"
           },
           {
@@ -388,6 +717,10 @@ export const IDL: DogePresale = {
           },
           {
             "name": "totalTokensSold",
+            "type": "u64"
+          },
+          {
+            "name": "depositTokenAmount",
             "type": "u64"
           },
           {
@@ -471,26 +804,166 @@ export const IDL: DogePresale = {
           {
             "name": "lastClaimTimestamp",
             "type": "i64"
+          },
+          {
+            "name": "referrer",
+            "type": {
+              "option": "publicKey"
+            }
           }
         ]
       }
     }
   ],
+  "events": [
+    {
+      "name": "TokenDeposited",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalDeposited",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TokensPurchased",
+      "fields": [
+        {
+          "name": "buyer",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "usdAmount",
+          "type": "f64",
+          "index": false
+        },
+        {
+          "name": "solAmount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "stage",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        },
+        {
+          "name": "referrer",
+          "type": {
+            "option": "publicKey"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "StageAdvanced",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "oldStage",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "newStage",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "PresaleInitialized",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "tokenMint",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AccountResized",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newSize",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 6001,
       "name": "InvalidAmount",
       "msg": "Invalid amount"
     },
     {
-      "code": 6001,
+      "code": 6002,
       "name": "TransactionLimitReached",
       "msg": "Transaction limit reached"
-    },
-    {
-      "code": 6002,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic overflow"
     },
     {
       "code": 6003,
@@ -499,13 +972,28 @@ export const IDL: DogePresale = {
     },
     {
       "code": 6004,
-      "name": "Unauthorized",
-      "msg": "Unauthorized"
+      "name": "BuyerNotFound",
+      "msg": "Buyer not found"
     },
     {
       "code": 6005,
-      "name": "BuyerInfoNotFound",
-      "msg": "Buyer info not found"
+      "name": "InvalidReferrer",
+      "msg": "Invalid referrer address"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidTokenMint",
+      "msg": "Invalid token mint"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidTokenAccount",
+      "msg": "Invalid token account"
+    },
+    {
+      "code": 6008,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
     }
   ]
 };

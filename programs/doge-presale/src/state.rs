@@ -3,10 +3,12 @@ use anchor_lang::prelude::*;
 #[account]
 pub struct TransactionRecord {
     pub authority: Pubkey,      // Treasury wallet address (32 bytes)
+    pub token_mint: Pubkey,     // Token mint address (32 bytes)
     pub current_stage: u8,      // Current stage (1-5) (1 byte)
     pub transaction_count: u64, // Number of transactions (8 bytes)
     pub total_usd_sold: f64,    // Total USD amount sold (8 bytes)
     pub total_tokens_sold: u64, // Total tokens sold (8 bytes)
+    pub deposit_token_amount: u64, // Total tokens deposited (8 bytes)
     pub transactions: Vec<Transaction>, // Vec of transactions (4 bytes for length + 65 bytes per transaction)
     pub buyers: Vec<BuyerInfo>, // List of buyer information
 }
