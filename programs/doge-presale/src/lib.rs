@@ -25,10 +25,11 @@ declare_id!("6K7sJ3qMCCwmnmf1FGg8CN7Pdcq4NZo2c9yj8ge8SoTu");
 pub mod doge_presale {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, token_mint: Pubkey) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>, token_mint: Pubkey, treasury_wallet: Pubkey) -> Result<()> {
         let transaction_record = &mut ctx.accounts.transaction_record;
         transaction_record.authority = ctx.accounts.authority.key();
         transaction_record.token_mint = token_mint;
+        transaction_record.treasury_wallet = treasury_wallet;
         transaction_record.current_stage = 0;
         transaction_record.transaction_count = 0;
         transaction_record.total_usd_sold = 0.0;
@@ -42,12 +43,14 @@ pub mod doge_presale {
         emit!(PresaleInitialized {
             authority: ctx.accounts.authority.key(),
             token_mint,
+            treasury_wallet,
             timestamp: Clock::get()?.unix_timestamp,
         });
         
         // Log initialization for debugging
         msg!("Transaction record initialized with authority: {}", ctx.accounts.authority.key());
         msg!("Token mint: {}", token_mint);
+        msg!("Treasury wallet: {}", treasury_wallet);
         msg!("Current stage: {}", transaction_record.current_stage);
         msg!("Transaction count: {}", transaction_record.transaction_count);
         msg!("Total USD sold: {}", transaction_record.total_usd_sold);
@@ -71,6 +74,7 @@ pub mod doge_presale {
         let required_space = 8 + // discriminator
             32 + // authority pubkey
             32 + // token_mint pubkey
+            32 + // treasury_wallet pubkey
             1 + // current_stage (u8)
             8 + // transaction_count (u64)
             8 + // total_usd_sold (f64)
@@ -81,7 +85,7 @@ pub mod doge_presale {
             4 + // Vec length prefix for transactions
             (32 + 8 + 8 + 8 + 1 + 8) * 50 + // Space for 50 transactions
             4 + // Vec length prefix for buyers
-            (32 + 8 + 8 + 8 + 8 + 8 + 1 + 32) * 50; // Space for 50 buyers (including Option<Pubkey> for referrer)
+            (32 + 8 + 8 + 8 + 8 + 8 + 1 + 32) * 50; // Space for 50 buyers
 
         // Resize the account
         let rent = Rent::get()?;
@@ -159,6 +163,10 @@ pub mod doge_presale {
     pub fn change_authority(ctx: Context<ChangeAuthority>, new_authority: Pubkey) -> Result<()> {
         instructions::change_authority(ctx, new_authority)
     }
+
+    pub fn change_treasury(ctx: Context<ChangeTreasury>, new_treasury: Pubkey) -> Result<()> {
+        instructions::change_treasury(ctx, new_treasury)
+    }
 }
 
 // Helper function for PDA derivation
@@ -180,6 +188,7 @@ pub struct Initialize<'info> {
         space = 8 + // discriminator
                 32 + // authority pubkey
                 32 + // token_mint pubkey
+                32 + // treasury_wallet pubkey
                 1 + // current_stage (u8)
                 8 + // transaction_count (u64)
                 8 + // total_usd_sold (f64)
@@ -204,16 +213,19 @@ pub struct Buy<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
 
-    /// CHECK: This is safe because we just transfer SOL to it
-    #[account(mut)]
-    pub treasury: AccountInfo<'info>,
-
     #[account(
         mut,
         seeds = [b"transaction_record"],
         bump
     )]
     pub transaction_record: Account<'info, TransactionRecord>,
+
+    /// CHECK: This is safe because we verify it matches the stored treasury wallet
+    #[account(
+        mut,
+        constraint = treasury.key() == transaction_record.treasury_wallet @ PresaleError::InvalidTreasury
+    )]
+    pub treasury: AccountInfo<'info>,
 
     /// CHECK: This is safe because we just transfer SOL to it
     #[account(mut)]
@@ -381,4 +393,17 @@ pub struct ChangeAuthority<'info> {
     pub transaction_record: Account<'info, TransactionRecord>,
     #[account(mut)]
     pub authority: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct ChangeTreasury<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [b"transaction_record"],
+        bump
+    )]
+    pub transaction_record: Account<'info, TransactionRecord>,
 }

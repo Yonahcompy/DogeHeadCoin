@@ -31,6 +31,7 @@ pub struct StageAdvanced {
 pub struct PresaleInitialized {
     pub authority: Pubkey,
     pub token_mint: Pubkey,
+    pub treasury_wallet: Pubkey,
     pub timestamp: i64,
 }
 
@@ -70,5 +71,13 @@ pub struct PresaleEnded {
 pub struct AuthorityChanged {
     pub old_authority: Pubkey,
     pub new_authority: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct TreasuryChanged {
+    pub authority: Pubkey,
+    pub old_treasury: Pubkey,
+    pub new_treasury: Pubkey,
     pub timestamp: i64,
 } 

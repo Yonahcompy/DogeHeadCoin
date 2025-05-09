@@ -25,6 +25,10 @@ export type DogePresale = {
         {
           "name": "tokenMint",
           "type": "publicKey"
+        },
+        {
+          "name": "treasuryWallet",
+          "type": "publicKey"
         }
       ]
     },
@@ -37,12 +41,12 @@ export type DogePresale = {
           "isSigner": true
         },
         {
-          "name": "treasury",
+          "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "transactionRecord",
+          "name": "treasury",
           "isMut": true,
           "isSigner": false
         },
@@ -316,6 +320,27 @@ export type DogePresale = {
           "type": "publicKey"
         }
       ]
+    },
+    {
+      "name": "changeTreasury",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newTreasury",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -330,6 +355,10 @@ export type DogePresale = {
           },
           {
             "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "treasuryWallet",
             "type": "publicKey"
           },
           {
@@ -559,6 +588,11 @@ export type DogePresale = {
           "index": false
         },
         {
+          "name": "treasuryWallet",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "timestamp",
           "type": "i64",
           "index": false
@@ -684,6 +718,31 @@ export type DogePresale = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "TreasuryChanged",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "oldTreasury",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newTreasury",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -761,6 +820,11 @@ export type DogePresale = {
       "code": 6014,
       "name": "PresaleNotEnded",
       "msg": "Presale has not ended yet"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidTreasury",
+      "msg": "Invalid treasury wallet"
     }
   ]
 };
@@ -792,6 +856,10 @@ export const IDL: DogePresale = {
         {
           "name": "tokenMint",
           "type": "publicKey"
+        },
+        {
+          "name": "treasuryWallet",
+          "type": "publicKey"
         }
       ]
     },
@@ -804,12 +872,12 @@ export const IDL: DogePresale = {
           "isSigner": true
         },
         {
-          "name": "treasury",
+          "name": "transactionRecord",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "transactionRecord",
+          "name": "treasury",
           "isMut": true,
           "isSigner": false
         },
@@ -1083,6 +1151,27 @@ export const IDL: DogePresale = {
           "type": "publicKey"
         }
       ]
+    },
+    {
+      "name": "changeTreasury",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "transactionRecord",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newTreasury",
+          "type": "publicKey"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -1097,6 +1186,10 @@ export const IDL: DogePresale = {
           },
           {
             "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "treasuryWallet",
             "type": "publicKey"
           },
           {
@@ -1326,6 +1419,11 @@ export const IDL: DogePresale = {
           "index": false
         },
         {
+          "name": "treasuryWallet",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "timestamp",
           "type": "i64",
           "index": false
@@ -1451,6 +1549,31 @@ export const IDL: DogePresale = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "TreasuryChanged",
+      "fields": [
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "oldTreasury",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "newTreasury",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -1528,6 +1651,11 @@ export const IDL: DogePresale = {
       "code": 6014,
       "name": "PresaleNotEnded",
       "msg": "Presale has not ended yet"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidTreasury",
+      "msg": "Invalid treasury wallet"
     }
   ]
 };

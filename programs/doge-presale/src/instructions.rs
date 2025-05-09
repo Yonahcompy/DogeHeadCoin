@@ -8,13 +8,8 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     // Check if amount is valid
     require!(usd_amount > 0.0, PresaleError::InvalidAmount);
 
-    // Check if we can store more transaction/s
     let record = &mut ctx.accounts.transaction_record;
-    // require!(
-    //     record.transaction_count < MAX_TRANSACTION/S as u64,
-    //     PresaleError::TransactionLimitReached
-    // );
-
+    
     // Get current stage and price
     let current_stage = record.current_stage;
     require!(current_stage < STAGE_COUNT, PresaleError::InvalidStage);
@@ -125,7 +120,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     }
 
     // Record the transaction
-    let transaction = Transaction {
+    let _transaction = Transaction {
         buyer: ctx.accounts.buyer.key(),
         usd_amount,
         sol_amount,
@@ -137,7 +132,6 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     // Update record totals first
     record.total_usd_sold += usd_amount;
     record.total_tokens_sold += token_amount;
-    // record.transaction/s.push(transactio/n);
     record.transaction_count += 1;
 
     // Log the transaction details
@@ -671,6 +665,40 @@ pub fn change_authority(ctx: Context<crate::ChangeAuthority>, new_authority: Pub
     });
 
     msg!("Authority changed successfully from {} to {}", old_authority, new_authority);
+
+    Ok(())
+}
+
+pub fn change_treasury(ctx: Context<crate::ChangeTreasury>, new_treasury: Pubkey) -> Result<()> {
+    // Verify the signer is the authority
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.transaction_record.authority,
+        PresaleError::Unauthorized
+    );
+
+    let record = &mut ctx.accounts.transaction_record;
+    
+    // Store the old treasury for the event
+    let old_treasury = record.treasury_wallet;
+
+    // Verify the new treasury is different from the current one
+    require!(
+        new_treasury != old_treasury,
+        PresaleError::InvalidTreasury
+    );
+
+    // Update the treasury wallet
+    record.treasury_wallet = new_treasury;
+
+    // Emit event for tracking
+    emit!(TreasuryChanged {
+        authority: ctx.accounts.authority.key(),
+        old_treasury,
+        new_treasury,
+        timestamp: Clock::get()?.unix_timestamp,
+    });
+
+    msg!("Treasury wallet changed successfully from {} to {}", old_treasury, new_treasury);
 
     Ok(())
 } 

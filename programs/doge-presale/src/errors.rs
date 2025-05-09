@@ -32,4 +32,6 @@ pub enum PresaleError {
     AlreadyClaimedInitial,
     #[msg("Presale has not ended yet")]
     PresaleNotEnded,
+    #[msg("Invalid treasury wallet")]
+    InvalidTreasury,
 } 

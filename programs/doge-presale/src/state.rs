@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 pub struct TransactionRecord {
     pub authority: Pubkey,      // Treasury wallet address (32 bytes)
     pub token_mint: Pubkey,     // Token mint address (32 bytes)
+    pub treasury_wallet: Pubkey, // Treasury wallet address (32 bytes)
     pub current_stage: u8,      // Current stage (1-5) (1 byte)
     pub transaction_count: u64, // Number of transactions (8 bytes)
     pub total_usd_sold: f64,    // Total USD amount sold (8 bytes)
