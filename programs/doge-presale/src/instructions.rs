@@ -15,16 +15,6 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     require!(current_stage < STAGE_COUNT, PresaleError::InvalidStage);
     let token_price = STAGE_PRICES[current_stage as usize];
 
-    // Validate referrer if provided
-    if let Some(ref referrer_pubkey) = referrer {
-        // Check if referrer is a valid Solana address
-        require!(
-            referrer_pubkey != &ctx.accounts.buyer.key(),
-            PresaleError::InvalidReferrer
-        );
-        msg!("Valid referrer provided: {}", referrer_pubkey);
-    }
-
     // Calculate SOL amount from USD
     let sol_amount = (usd_amount * SOL_USD_PRICE * 1_000_000_000.0).round() as u64;
 
@@ -38,13 +28,14 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     msg!("Current stage: {}", current_stage);
     msg!("Token price: {}", token_price);
 
-    // Check if buyer already exists.
+    // Check if buyer already exists
     let buyer_key = ctx.accounts.buyer.key();
     let existing_buyer = record.buyers.iter().find(|info| info.buyer_address == buyer_key);
     
-    // Process SOL transfer based on whether this is a first purchase or subsequent purchase
+    // Process SOL transfer
+    // Note: ctx.accounts.treasury is validated in the Buy struct to match record.treasury_wallet
     if let Some(buyer) = existing_buyer {
-        // This is a subsequent purchase
+        // This is a subsequent purchase - use stored referrer from buyer info
         if let Some(referrer_address) = buyer.referrer {
             // Calculate referral reward (2% of sol_amount)
             let referral_reward = (sol_amount as f64 * 0.02).round() as u64;
@@ -85,7 +76,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
             msg!("Processed referral reward: {} lamports to referrer", referral_reward);
             msg!("Sent {} lamports to treasury", treasury_amount);
         } else {
-            // No referrer, send all to treasury
+            // No stored referrer, send all to treasury
             let transfer_instruction = system_instruction::transfer(
                 &ctx.accounts.buyer.key(),
                 &ctx.accounts.treasury.key(),
@@ -102,7 +93,18 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
             )?;
         }
     } else {
-        // This is a first purchase - send all to treasury regardless of referrer
+        // This is a first-time purchase
+        // Validate referrer if provided
+        if let Some(ref referrer_pubkey) = referrer {
+            // Check if referrer is a valid Solana address and not the buyer
+            require!(
+                referrer_pubkey != &ctx.accounts.buyer.key(),
+                PresaleError::InvalidReferrer
+            );
+            msg!("Valid referrer provided for new buyer: {}", referrer_pubkey);
+        }
+
+        // Send all to treasury for first purchase
         let transfer_instruction = system_instruction::transfer(
             &ctx.accounts.buyer.key(),
             &ctx.accounts.treasury.key(),
@@ -129,7 +131,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
         timestamp: Clock::get()?.unix_timestamp,
     };
 
-    // Update record totals first
+    // Update record totals
     record.total_usd_sold += usd_amount;
     record.total_tokens_sold += token_amount;
     record.transaction_count += 1;
@@ -157,7 +159,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
             total_tokens_bought: token_amount,
             total_tokens_claimed: 0,
             last_claim_timestamp: 0,
-            referrer,
+            referrer, // Store the referrer (or None) for first-time buyers
         };
         record.buyers.push(new_info);
         
@@ -165,7 +167,9 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
         msg!("New buyer added. Total paid USD: {}", usd_amount);
         msg!("New buyer total tokens bought: {}", token_amount);
         if let Some(ref referrer) = referrer {
-            msg!("Referrer: {}", referrer);
+            msg!("Referrer stored: {}", referrer);
+        } else {
+            msg!("No referrer provided for new buyer");
         }
     }
 

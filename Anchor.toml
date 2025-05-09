@@ -6,13 +6,13 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-doge_presale = "6K7sJ3qMCCwmnmf1FGg8CN7Pdcq4NZo2c9yj8ge8SoTu"
+doge_presale = "9seEU8zKwmt5JztR7HsxHuoyftCBJNGcjXwDh2SDyBuk"
 
 [programs.devnet]
-doge_presale = "6K7sJ3qMCCwmnmf1FGg8CN7Pdcq4NZo2c9yj8ge8SoTu"
+doge_presale = "9seEU8zKwmt5JztR7HsxHuoyftCBJNGcjXwDh2SDyBuk"
 
 [programs.mainnet]
-doge_presale = "6K7sJ3qMCCwmnmf1FGg8CN7Pdcq4NZo2c9yj8ge8SoTu"
+doge_presale = "9seEU8zKwmt5JztR7HsxHuoyftCBJNGcjXwDh2SDyBuk"
 
 [registry]
 url = "https://api.apr.dev"

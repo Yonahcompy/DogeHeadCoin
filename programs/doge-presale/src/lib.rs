@@ -19,7 +19,7 @@ use events::*;
 const TOKEN_PROGRAM_ID: Pubkey = pubkey!("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 const ASSOCIATED_TOKEN_PROGRAM_ID: Pubkey = pubkey!("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
 
-declare_id!("6K7sJ3qMCCwmnmf1FGg8CN7Pdcq4NZo2c9yj8ge8SoTu");
+declare_id!("9seEU8zKwmt5JztR7HsxHuoyftCBJNGcjXwDh2SDyBuk");
 
 #[program]
 pub mod doge_presale {
