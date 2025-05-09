@@ -8,12 +8,12 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     // Check if amount is valid
     require!(usd_amount > 0.0, PresaleError::InvalidAmount);
 
-    // Check if we can store more transactions
+    // Check if we can store more transaction/s
     let record = &mut ctx.accounts.transaction_record;
-    require!(
-        record.transaction_count < MAX_TRANSACTIONS as u64,
-        PresaleError::TransactionLimitReached
-    );
+    // require!(
+    //     record.transaction_count < MAX_TRANSACTION/S as u64,
+    //     PresaleError::TransactionLimitReached
+    // );
 
     // Get current stage and price
     let current_stage = record.current_stage;
@@ -137,7 +137,7 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
     // Update record totals first
     record.total_usd_sold += usd_amount;
     record.total_tokens_sold += token_amount;
-    record.transactions.push(transaction);
+    // record.transaction/s.push(transactio/n);
     record.transaction_count += 1;
 
     // Log the transaction details
@@ -224,12 +224,12 @@ pub fn authority_buy(ctx: Context<crate::AuthorityBuy>, usd_amount: f64, buyer_a
     // Check if amount is valid.
     require!(usd_amount > 0.0, PresaleError::InvalidAmount);
 
-    // Check if we can store more transactions
+    // Check if we can store more transaction/s
     let record = &mut ctx.accounts.transaction_record;
-    require!(
-        record.transaction_count < MAX_TRANSACTIONS as u64,
-        PresaleError::TransactionLimitReached
-    );
+    // require!(
+    //     record.transaction_count < MAX_TRANSACTION/S as u64,
+    //     PresaleError::TransactionLimitReached
+    // );
 
     // Get current stage and price
     let current_stage = record.current_stage;
@@ -265,7 +265,7 @@ pub fn authority_buy(ctx: Context<crate::AuthorityBuy>, usd_amount: f64, buyer_a
     // Update record totals
     record.total_usd_sold += usd_amount;
     record.total_tokens_sold += token_amount;
-    record.transactions.push(transaction);
+    // record.transactio/ns.push(transactio/n);
     record.transaction_count += 1;
 
     // Update buyer information
