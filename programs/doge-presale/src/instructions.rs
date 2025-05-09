@@ -175,6 +175,17 @@ pub fn buy(ctx: Context<crate::Buy>, usd_amount: f64, referrer: Option<Pubkey>) 
         }
     }
 
+    // Emit purchase event
+    emit!(TokensPurchased {
+        buyer: buyer_key,
+        usd_amount,
+        sol_amount,
+        token_amount,
+        stage: current_stage,
+        timestamp: Clock::get()?.unix_timestamp,
+        referrer,
+    });
+
     Ok(())
 }
 
