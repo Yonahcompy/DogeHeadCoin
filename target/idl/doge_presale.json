@@ -826,8 +826,5 @@
       "name": "InvalidTreasury",
       "msg": "Invalid treasury wallet"
     }
-  ],
-  "metadata": {
-    "address": "9seEU8zKwmt5JztR7HsxHuoyftCBJNGcjXwDh2SDyBuk"
-  }
+  ]
 }
