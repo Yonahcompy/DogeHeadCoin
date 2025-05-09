@@ -371,6 +371,10 @@ export type DogePresale = {
           {
             "name": "presaleEndTime",
             "type": "i64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
           }
         ]
       }
@@ -1134,6 +1138,10 @@ export const IDL: DogePresale = {
           {
             "name": "presaleEndTime",
             "type": "i64"
+          },
+          {
+            "name": "totalTokensClaimed",
+            "type": "u64"
           }
         ]
       }

@@ -448,6 +448,11 @@ pub fn claim_tokens(ctx: Context<crate::ClaimTokens>) -> Result<()> {
         buyer_info.total_tokens_claimed = initial_claim_amount;
         buyer_info.last_claim_timestamp = current_time;
 
+        // Update total tokens claimed
+        record.total_tokens_claimed = record.total_tokens_claimed
+            .checked_add(initial_claim_amount)
+            .ok_or(PresaleError::ArithmeticOverflow)?;
+
         // Update deposit amount
         record.deposit_token_amount = deposit_token_amount
             .checked_sub(initial_claim_amount)
@@ -579,6 +584,11 @@ pub fn claim_tokens(ctx: Context<crate::ClaimTokens>) -> Result<()> {
     let buyer_info = &mut record.buyers[buyer_index];
     buyer_info.total_tokens_claimed = new_total_claimed;
     buyer_info.last_claim_timestamp = current_time;
+
+    // Update total tokens claimed
+    record.total_tokens_claimed = record.total_tokens_claimed
+        .checked_add(claimable_amount)
+        .ok_or(PresaleError::ArithmeticOverflow)?;
 
     // Update deposit amount
     record.deposit_token_amount = deposit_token_amount

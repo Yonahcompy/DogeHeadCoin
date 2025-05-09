@@ -36,6 +36,7 @@ pub mod doge_presale {
         transaction_record.deposit_token_amount = 0;
         transaction_record.transactions = Vec::new();
         transaction_record.buyers = Vec::new();
+        transaction_record.total_tokens_claimed = 0;
         
         // Emit initialization event
         emit!(PresaleInitialized {
@@ -76,6 +77,7 @@ pub mod doge_presale {
             8 + // total_tokens_sold (u64)
             8 + // deposit_token_amount (u64)
             8 + // presale_end_time (i64)
+            8 + // total_tokens_claimed (u64)
             4 + // Vec length prefix for transactions
             (32 + 8 + 8 + 8 + 1 + 8) * 50 + // Space for 50 transactions
             4 + // Vec length prefix for buyers
@@ -184,6 +186,7 @@ pub struct Initialize<'info> {
                 8 + // total_tokens_sold (u64)
                 8 + // deposit_token_amount (u64)
                 8 + // presale_end_time (i64)
+                8 + // total_tokens_claimed (u64)
                 4 + // Vec length prefix for transactions
                 (32 + 8 + 8 + 8 + 1 + 8) * 1 + // Space for 1 initial transaction
                 4 + // Vec length prefix for buyers
