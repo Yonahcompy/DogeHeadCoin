@@ -18,7 +18,7 @@ contract BscBnbDogeHeadCoin is Ownable {
         address payer;           // BSC address that made the payment
         uint256 paymentAmount;   // Amount paid in BNB (wei)
         uint256 usdAmount;       // USD value of the purchase (with 8 decimals)
-        uint256 timestamp;       // Transaction timestamp
+        uint256 timestamp;       // Transaction timestamp.
     }
 
     /// @notice Address of the treasury wallet
