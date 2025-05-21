@@ -1,8 +1,8 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("DogeHeadPaymentBridge", function () {
-  let DogeHeadPaymentBridge;
+describe("BscBnbDogeHeadCoin", function () {
+  let BscBnbDogeHeadCoin;
   let contract;
   let owner;
   let admin;
@@ -22,8 +22,8 @@ describe("DogeHeadPaymentBridge", function () {
     mockPriceFeed = await MockV3Aggregator.deploy(PRICE_FEED_DECIMALS, BNB_PRICE);
 
     // Deploy payment bridge
-    DogeHeadPaymentBridge = await ethers.getContractFactory("DogeHeadPaymentBridge");
-    contract = await DogeHeadPaymentBridge.deploy(
+    BscBnbDogeHeadCoin = await ethers.getContractFactory("BscBnbDogeHeadCoin");
+    contract = await BscBnbDogeHeadCoin.deploy(
       treasury.address,
       await mockPriceFeed.getAddress()
     );

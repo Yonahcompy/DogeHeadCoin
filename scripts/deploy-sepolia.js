@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  console.log("Deploying BaseHeadPaymentBridge to Sepolia network...");
+  console.log("Deploying BaseEthDogeHeadPayment to Sepolia network...");
 
   // ETH/USD Price Feed address for Sepolia
   // Source: https://docs.chain.link/data-feeds/price-feeds/addresses?network=ethereum&page=1#sepolia-testnet
@@ -11,8 +11,8 @@ async function main() {
   const TREASURY_WALLET = "REPLACE_WITH_YOUR_TREASURY_WALLET";
 
   // Deploy the contract
-  const BaseHeadPaymentBridge = await hre.ethers.getContractFactory("BaseHeadPaymentBridge");
-  const bridge = await BaseHeadPaymentBridge.deploy(
+  const BaseEthDogeHeadPayment = await hre.ethers.getContractFactory("BaseEthDogeHeadPayment");
+  const bridge = await BaseEthDogeHeadPayment.deploy(
     TREASURY_WALLET,
     ETH_USD_PRICE_FEED
   );
@@ -20,7 +20,7 @@ async function main() {
   await bridge.waitForDeployment();
   const address = await bridge.getAddress();
 
-  console.log(`BaseHeadPaymentBridge deployed to: ${address}`);
+  console.log(`BaseEthDogeHeadPayment deployed to: ${address}`);
   console.log("Contract deployment completed!");
 
   // Wait for a few block confirmations

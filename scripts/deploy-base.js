@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  console.log("Deploying BaseHeadPaymentBridge to Base network...");
+  console.log("Deploying BaseEthDogeHeadPayment to Base network...");
 
   // Price feed address for ETH/USD on Base
   const ETH_USD_PRICE_FEED = "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1";
@@ -10,8 +10,8 @@ async function main() {
   const TREASURY_WALLET = "0x1c8BD39aAA7Db8B3D2491fb18D033EDF8D0756f2";
 
   // Deploy the contract
-  const BaseHeadPaymentBridge = await hre.ethers.getContractFactory("BaseHeadPaymentBridge");
-  const bridge = await BaseHeadPaymentBridge.deploy(
+  const BaseEthDogeHeadPayment = await hre.ethers.getContractFactory("BaseEthDogeHeadPayment");
+  const bridge = await BaseEthDogeHeadPayment.deploy(
     TREASURY_WALLET,
     ETH_USD_PRICE_FEED
   );
@@ -19,7 +19,7 @@ async function main() {
   await bridge.waitForDeployment();
   const address = await bridge.getAddress();
 
-  console.log(`BaseHeadPaymentBridge deployed to: ${address}`);
+  console.log(`BaseEthDogeHeadPayment deployed to: ${address}`);
   console.log("Contract deployment completed!");
 
   // Wait for a few block confirmations

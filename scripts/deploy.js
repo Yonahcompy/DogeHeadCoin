@@ -2,11 +2,11 @@ require("dotenv").config();
 const hre = require("hardhat");
 
 async function main() {
-  console.log("Deploying DogeHeadPaymentBridge contract...");
+  console.log("Deploying BscBnbDogeHeadCoin contract...");
 
   // Get the contract factory
-  const DogeHeadPaymentBridge = await hre.ethers.getContractFactory(
-    "DogeHeadPaymentBridge"
+  const BscBnbDogeHeadCoin = await hre.ethers.getContractFactory(
+    "BscBnbDogeHeadCoin"
   );
 
   // BSC Testnet BNB/USD price feed address
@@ -21,7 +21,7 @@ async function main() {
   console.log(`- Price Feed: ${bnbUsdPriceFeed}`);
 
   // Deploy the contract
-  const contract = await DogeHeadPaymentBridge.deploy(
+  const contract = await BscBnbDogeHeadCoin.deploy(
     treasuryWallet,
     bnbUsdPriceFeed
   );
@@ -35,7 +35,7 @@ async function main() {
 
   // Get the contract address
   const address = await contract.getAddress();
-  console.log(`DogeHeadPaymentBridge deployed to: ${address}`);
+  console.log(`BscBnbDogeHeadCoin deployed to: ${address}`);
 
   // Wait for 15 block confirmations before verifying
   console.log("Waiting for 15 block confirmations...");

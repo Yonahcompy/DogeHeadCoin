@@ -6,17 +6,17 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { AggregatorV3Interface } from "./interfaces/AggregatorV3Interface.sol";
 
 /**
- * @title DogeHeadPaymentBridge
- * @notice Handles BNB payments for DogeHead presale and records Solana wallet addresses
+ * @title BaseEthDogeHeadPayment
+ * @notice Handles ETH payments for DogeHead presale on Base network and records Solana wallet addresses
  */
-contract DogeHeadPaymentBridge is Ownable {
+contract BaseEthDogeHeadPayment is Ownable {
     using Address for address payable;
 
     /// @notice Struct to store transaction details
     struct Transaction {
         string solanaWallet;     // Solana wallet address where tokens will be distributed
-        address payer;           // BSC address that made the payment
-        uint256 paymentAmount;   // Amount paid in BNB (wei)
+        address payer;           // Base address that made the payment
+        uint256 paymentAmount;   // Amount paid in ETH (wei)
         uint256 usdAmount;       // USD value of the purchase (with 8 decimals)
         uint256 timestamp;       // Transaction timestamp
     }
@@ -27,14 +27,14 @@ contract DogeHeadPaymentBridge is Ownable {
     /// @notice Address of the admin
     address public admin;
     
-    /// @notice Chainlink BNB/USD price feed
-    AggregatorV3Interface private bnbUsdPriceFeed;
+    /// @notice Chainlink ETH/USD price feed
+    AggregatorV3Interface private ethUsdPriceFeed;
     
     /// @notice Mapping to store transactions by Solana wallet address
     mapping(string => Transaction[]) private solanaWalletTransactions;
     
-    /// @notice Total amount raised in BNB (wei)
-    uint256 private totalRaisedBNB;
+    /// @notice Total amount raised in ETH (wei)
+    uint256 private totalRaisedETH;
     
     /// @notice Total amount raised in USD (with 8 decimals)
     uint256 private totalRaisedUSD;
@@ -55,7 +55,7 @@ contract DogeHeadPaymentBridge is Ownable {
     event PaymentReceived(
         string solanaWallet,
         address indexed payer,
-        uint256 bnbAmount,
+        uint256 ethAmount,
         uint256 usdAmount,
         uint256 timestamp
     );
@@ -63,18 +63,18 @@ contract DogeHeadPaymentBridge is Ownable {
     /**
      * @notice Constructor
      * @param _treasuryWallet Initial treasury wallet address
-     * @param _bnbUsdPriceFeed Address of the BNB/USD price feed
+     * @param _ethUsdPriceFeed Address of the ETH/USD price feed on Base
      */
     constructor(
         address _treasuryWallet,
-        address _bnbUsdPriceFeed
+        address _ethUsdPriceFeed
     ) Ownable(msg.sender) {
         require(_treasuryWallet != address(0), "Invalid treasury wallet address");
-        require(_bnbUsdPriceFeed != address(0), "Invalid price feed address");
+        require(_ethUsdPriceFeed != address(0), "Invalid price feed address");
         
         treasuryWallet = _treasuryWallet;
         admin = msg.sender;
-        bnbUsdPriceFeed = AggregatorV3Interface(_bnbUsdPriceFeed);
+        ethUsdPriceFeed = AggregatorV3Interface(_ethUsdPriceFeed);
     }
 
     /**
@@ -108,36 +108,36 @@ contract DogeHeadPaymentBridge is Ownable {
     }
 
     /**
-     * @notice Update the BNB/USD price feed address
+     * @notice Update the ETH/USD price feed address
      * @param _newPriceFeed Address of the new price feed
      */
     function updatePriceFeed(address _newPriceFeed) external onlyAdmin {
         require(_newPriceFeed != address(0), "Invalid price feed address");
-        address oldFeed = address(bnbUsdPriceFeed);
-        bnbUsdPriceFeed = AggregatorV3Interface(_newPriceFeed);
+        address oldFeed = address(ethUsdPriceFeed);
+        ethUsdPriceFeed = AggregatorV3Interface(_newPriceFeed);
         emit PriceFeedUpdated(oldFeed, _newPriceFeed);
     }
 
     /**
-     * @notice Calculate BNB amount needed for a given USD amount
+     * @notice Calculate ETH amount needed for a given USD amount
      * @param dollarAmount Amount in whole dollars (e.g., 1 for $1.00)
-     * @return bnbAmount Amount of BNB needed (in wei)
+     * @return ethAmount Amount of ETH needed (in wei)
      */
-    function calculateBNBAmount(uint256 dollarAmount) private view returns (uint256) {
+    function calculateETHAmount(uint256 dollarAmount) private view returns (uint256) {
         (
             ,
             int256 price,
             ,
             uint256 timeStamp,
             
-        ) = bnbUsdPriceFeed.latestRoundData();
+        ) = ethUsdPriceFeed.latestRoundData();
         
         require(timeStamp > 0, "Round not complete");
         require(price > 0, "Invalid price");
         
-        // Convert dollar amount to the same precision as BNB price (8 decimals)
+        // Convert dollar amount to the same precision as ETH price (8 decimals)
         uint256 usdAmount = dollarAmount * 1e8;
-        // Calculate BNB amount in wei (18 decimals)
+        // Calculate ETH amount in wei (18 decimals)
         return (usdAmount * 1e18) / uint256(price);
     }
 
@@ -153,9 +153,9 @@ contract DogeHeadPaymentBridge is Ownable {
         require(bytes(solanaWallet).length > 0, "Invalid Solana wallet");
         require(dollarAmount > 0, "Invalid dollar amount");
         
-        // Calculate required BNB amount directly from dollar amount
-        uint256 requiredBNB = calculateBNBAmount(dollarAmount);
-        require(msg.value >= requiredBNB, "Insufficient BNB sent");
+        // Calculate required ETH amount directly from dollar amount
+        uint256 requiredETH = calculateETHAmount(dollarAmount);
+        require(msg.value >= requiredETH, "Insufficient ETH sent");
 
         // Convert dollar amount to internal format (8 decimals)
         uint256 usdAmount = dollarAmount * 1e8;
@@ -170,13 +170,13 @@ contract DogeHeadPaymentBridge is Ownable {
         });
 
         // Update total raised
-        totalRaisedBNB += msg.value;
+        totalRaisedETH += msg.value;
         totalRaisedUSD += usdAmount;
 
         // Store transaction
         solanaWalletTransactions[solanaWallet].push(newTx);
 
-        // Transfer BNB to treasury
+        // Transfer ETH to treasury
         payable(treasuryWallet).transfer(msg.value);
 
         // Emit event
@@ -190,13 +190,13 @@ contract DogeHeadPaymentBridge is Ownable {
     }
 
     /**
-     * @notice Get required BNB amount for a purchase (for front-end use)
+     * @notice Get required ETH amount for a purchase (for front-end use)
      * @param dollarAmount Amount in whole dollars without decimals (e.g., 5 for $5.00)
-     * @return requiredBNB Required BNB amount in wei
+     * @return requiredETH Required ETH amount in wei
      */
-    function getQuote(uint256 dollarAmount) external view returns (uint256 requiredBNB) {
+    function getQuote(uint256 dollarAmount) external view returns (uint256 requiredETH) {
         require(dollarAmount > 0, "Dollar amount must be greater than 0");
-        return calculateBNBAmount(dollarAmount);
+        return calculateETHAmount(dollarAmount);
     }
 
     /**
@@ -218,4 +218,4 @@ contract DogeHeadPaymentBridge is Ownable {
         require(balance > 0, "No funds to withdraw");
         payable(_to).transfer(balance);
     }
-}
+} 

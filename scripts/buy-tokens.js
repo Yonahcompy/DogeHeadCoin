@@ -10,8 +10,8 @@ async function main() {
     }
 
     // Get the contract instance
-    const DogeHeadPaymentBridge = await hre.ethers.getContractFactory("DogeHeadPaymentBridge");
-    const contract = DogeHeadPaymentBridge.attach(contractAddress);
+    const BscBnbDogeHeadCoin = await hre.ethers.getContractFactory("BscBnbDogeHeadCoin");
+    const contract = BscBnbDogeHeadCoin.attach(contractAddress);
 
     // Example purchase parameters
     const dollarAmount = 100; // $100 USD

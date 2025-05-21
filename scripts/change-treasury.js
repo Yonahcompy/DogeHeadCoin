@@ -12,8 +12,8 @@ async function main() {
   console.log(`New treasury wallet: ${newTreasuryWallet}`);
   
   // Get the contract
-  const DogeHeadPaymentBridge = await hre.ethers.getContractFactory("DogeHeadPaymentBridge");
-  const contract = await DogeHeadPaymentBridge.attach(contractAddress);
+  const BscBnbDogeHeadCoin = await hre.ethers.getContractFactory("BscBnbDogeHeadCoin");
+  const contract = await BscBnbDogeHeadCoin.attach(contractAddress);
   
   // Get the current treasury wallet
   const currentTreasuryWallet = await contract.treasuryWallet();

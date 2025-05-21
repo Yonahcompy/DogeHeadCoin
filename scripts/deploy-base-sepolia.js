@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  console.log("Deploying BaseHeadPaymentBridge to Base Sepolia network...");
+  console.log("Deploying BaseEthDogeHeadPayment to Base Sepolia network...");
 
   // Get deployer's address
   const [deployer] = await hre.ethers.getSigners();
@@ -15,8 +15,8 @@ async function main() {
   console.log("Treasury wallet:", TREASURY_WALLET);
 
   // Deploy the contract
-  const BaseHeadPaymentBridge = await hre.ethers.getContractFactory("BaseHeadPaymentBridge");
-  const bridge = await BaseHeadPaymentBridge.deploy(
+  const BaseEthDogeHeadPayment = await hre.ethers.getContractFactory("BaseEthDogeHeadPayment");
+  const bridge = await BaseEthDogeHeadPayment.deploy(
     TREASURY_WALLET,
     ETH_USD_PRICE_FEED
   );
@@ -24,7 +24,7 @@ async function main() {
   await bridge.waitForDeployment();
   const address = await bridge.getAddress();
 
-  console.log(`BaseHeadPaymentBridge deployed to: ${address}`);
+  console.log(`BaseEthDogeHeadPayment deployed to: ${address}`);
   console.log("Contract deployment completed!");
 
   // Wait for a few block confirmations
