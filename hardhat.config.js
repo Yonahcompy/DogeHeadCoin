@@ -34,26 +34,21 @@ module.exports = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 8453
     },
-    baseGoerli: {
-      url: process.env.BASE_GOERLI_RPC_URL || "https://goerli.base.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 84531
-    }
   },
   etherscan: {
     apiKey: {
       baseSepolia: process.env.BASESCAN_API_KEY,
       bscTestnet: process.env.BSCSCAN_API_KEY
     },
-    customChains: [
-      {
-        network: "baseSepolia",
-        chainId: 84532,
-        urls: {
-          apiURL: "https://api-sepolia.basescan.org/api",
-          browserURL: "https://sepolia.basescan.org"
-        }
-      }
-    ]
+    // customChains: [
+    //   {
+    //     network: "baseSepolia",
+    //     chainId: 84532,
+    //     urls: {
+    //       apiURL: "https://api-sepolia.basescan.org/api",
+    //       browserURL: "https://sepolia.basescan.org"
+    //     }
+    //   }
+    // ]
   }
 }; 

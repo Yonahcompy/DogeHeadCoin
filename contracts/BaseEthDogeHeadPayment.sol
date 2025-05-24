@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { AggregatorV3Interface } from "./interfaces/AggregatorV3Interface.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {AggregatorV3Interface} from "./interfaces/AggregatorV3Interface.sol";
 
 /**
  * @title BaseEthDogeHeadPayment
@@ -14,43 +14,46 @@ contract BaseEthDogeHeadPayment is Ownable {
 
     /// @notice Struct to store transaction details
     struct Transaction {
-        string solanaWallet;     // Solana wallet address where tokens will be distributed
-        address payer;           // Base address that made the payment
-        uint256 paymentAmount;   // Amount paid in ETH (wei)
-        uint256 usdAmount;       // USD value of the purchase (with 8 decimals)
-        uint256 timestamp;       // Transaction timestamp
+        string solanaWallet; // Solana wallet address where tokens will be distributed
+        address payer; // Base address that made the payment
+        uint256 paymentAmount; // Amount paid in ETH (wei)
+        uint256 usdAmount; // USD value of the purchase (with 8 decimals)
+        uint256 timestamp; // Transaction timestamp
     }
 
     /// @notice Address of the treasury wallet
     address public treasuryWallet;
-    
+
     /// @notice Address of the admin
     address public admin;
-    
+
     /// @notice Chainlink ETH/USD price feed
     AggregatorV3Interface private ethUsdPriceFeed;
-    
+
     /// @notice Mapping to store transactions by Solana wallet address
     mapping(string => Transaction[]) private solanaWalletTransactions;
-    
+
     /// @notice Total amount raised in ETH (wei)
     uint256 private totalRaisedETH;
-    
+
     /// @notice Total amount raised in USD (with 8 decimals)
     uint256 private totalRaisedUSD;
 
     /// @notice Number of decimals in the price feed
     uint8 private constant PRICE_FEED_DECIMALS = 8;
-    
+
     /// @notice Event emitted when admin is changed
     event AdminChanged(address indexed previousAdmin, address indexed newAdmin);
-    
+
     /// @notice Event emitted when treasury wallet is changed
-    event TreasuryWalletChanged(address indexed previousTreasury, address indexed newTreasury);
-    
+    event TreasuryWalletChanged(
+        address indexed previousTreasury,
+        address indexed newTreasury
+    );
+
     /// @notice Event emitted when price feed is updated
     event PriceFeedUpdated(address indexed oldFeed, address indexed newFeed);
-    
+
     /// @notice Event emitted when a payment is received
     event PaymentReceived(
         string solanaWallet,
@@ -69,9 +72,12 @@ contract BaseEthDogeHeadPayment is Ownable {
         address _treasuryWallet,
         address _ethUsdPriceFeed
     ) Ownable(msg.sender) {
-        require(_treasuryWallet != address(0), "Invalid treasury wallet address");
+        require(
+            _treasuryWallet != address(0),
+            "Invalid treasury wallet address"
+        );
         require(_ethUsdPriceFeed != address(0), "Invalid price feed address");
-        
+
         treasuryWallet = _treasuryWallet;
         admin = msg.sender;
         ethUsdPriceFeed = AggregatorV3Interface(_ethUsdPriceFeed);
@@ -100,8 +106,13 @@ contract BaseEthDogeHeadPayment is Ownable {
      * @notice Change the treasury wallet address
      * @param _newTreasuryWallet Address of the new treasury wallet
      */
-    function changeTreasuryWallet(address _newTreasuryWallet) external onlyAdmin {
-        require(_newTreasuryWallet != address(0), "Invalid treasury wallet address");
+    function changeTreasuryWallet(
+        address _newTreasuryWallet
+    ) external onlyAdmin {
+        require(
+            _newTreasuryWallet != address(0),
+            "Invalid treasury wallet address"
+        );
         address previousTreasury = treasuryWallet;
         treasuryWallet = _newTreasuryWallet;
         emit TreasuryWalletChanged(previousTreasury, _newTreasuryWallet);
@@ -123,18 +134,15 @@ contract BaseEthDogeHeadPayment is Ownable {
      * @param dollarAmount Amount in whole dollars (e.g., 1 for $1.00)
      * @return ethAmount Amount of ETH needed (in wei)
      */
-    function calculateETHAmount(uint256 dollarAmount) private view returns (uint256) {
-        (
-            ,
-            int256 price,
-            ,
-            uint256 timeStamp,
-            
-        ) = ethUsdPriceFeed.latestRoundData();
-        
+    function calculateETHAmount(
+        uint256 dollarAmount
+    ) private view returns (uint256) {
+        (, int256 price, , uint256 timeStamp, ) = ethUsdPriceFeed
+            .latestRoundData();
+
         require(timeStamp > 0, "Round not complete");
         require(price > 0, "Invalid price");
-        
+
         // Convert dollar amount to the same precision as ETH price (8 decimals)
         uint256 usdAmount = dollarAmount * 1e8;
         // Calculate ETH amount in wei (18 decimals)
@@ -152,7 +160,7 @@ contract BaseEthDogeHeadPayment is Ownable {
     ) external payable {
         require(bytes(solanaWallet).length > 0, "Invalid Solana wallet");
         require(dollarAmount > 0, "Invalid dollar amount");
-        
+
         // Calculate required ETH amount directly from dollar amount
         uint256 requiredETH = calculateETHAmount(dollarAmount);
         require(msg.value >= requiredETH, "Insufficient ETH sent");
@@ -194,7 +202,9 @@ contract BaseEthDogeHeadPayment is Ownable {
      * @param dollarAmount Amount in whole dollars without decimals (e.g., 5 for $5.00)
      * @return requiredETH Required ETH amount in wei
      */
-    function getQuote(uint256 dollarAmount) external view returns (uint256 requiredETH) {
+    function getQuote(
+        uint256 dollarAmount
+    ) external view returns (uint256 requiredETH) {
         require(dollarAmount > 0, "Dollar amount must be greater than 0");
         return calculateETHAmount(dollarAmount);
     }
@@ -204,7 +214,9 @@ contract BaseEthDogeHeadPayment is Ownable {
      * @param _solanaWallet The Solana wallet address
      * @return Array of transactions
      */
-    function getTransactionsBySolanaWallet(string calldata _solanaWallet) external view returns (Transaction[] memory) {
+    function getTransactionsBySolanaWallet(
+        string calldata _solanaWallet
+    ) external view returns (Transaction[] memory) {
         return solanaWalletTransactions[_solanaWallet];
     }
 
@@ -218,4 +230,4 @@ contract BaseEthDogeHeadPayment is Ownable {
         require(balance > 0, "No funds to withdraw");
         payable(_to).transfer(balance);
     }
-} 
+}
