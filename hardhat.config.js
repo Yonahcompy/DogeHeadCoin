@@ -38,7 +38,9 @@ module.exports = {
   etherscan: {
     apiKey: {
       baseSepolia: process.env.BASESCAN_API_KEY,
-      bscTestnet: process.env.BSCSCAN_API_KEY
+      bscTestnet: process.env.BSCSCAN_API_KEY,
+      bsc: process.env.BSCSCAN_API_KEY,
+      baseMainnet: process.env.BASESCAN_API_KEY,
     },
     // customChains: [
     //   {
