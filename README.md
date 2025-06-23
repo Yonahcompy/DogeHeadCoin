@@ -200,3 +200,7 @@ npx hardhat run scripts/deploy-base-mainnet.js --network baseMainnet
 npx hardhat run scripts/deploy-bnb-mainnet.js --network bsc
 
 https://sepolia.basescan.org/address/0xb8407F5693a013e8377146cBDF356AD7B9A1458D#readContract
+
+
+
+oraclee-service connects the svm to the evm
